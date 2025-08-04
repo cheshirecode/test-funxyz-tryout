@@ -7,7 +7,7 @@ import App from '../App'
 // Mock the API service
 vi.mock('../services/api', () => ({
   apiService: {
-    getMockData: vi.fn().mockResolvedValue({
+    getAPIHealthCheck: vi.fn().mockResolvedValue({
       success: true,
       data: {
         message: 'Mock data from @funkit/api-base integration',

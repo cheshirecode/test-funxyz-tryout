@@ -18,15 +18,15 @@ function Demo() {
     queryFn: () => apiService.getStatus(),
   })
 
-  // API integration examples using @funkit/api-base
+  // API integration examples using real HTTP requests
   const {
     data: apiData,
     isLoading: apiLoading,
     error: apiError,
     refetch: refetchApiData
   } = useQuery({
-    queryKey: ['api-mock-data'],
-    queryFn: () => apiService.getMockData(),
+    queryKey: ['api-health-check'],
+    queryFn: () => apiService.getAPIHealthCheck(),
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 
@@ -141,13 +141,13 @@ function Demo() {
           {/* API Data Fetch Demo */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium text-gray-800">Mock API Data</h3>
+              <h3 className="text-lg font-medium text-gray-800">Real API Health Check</h3>
               <button
                 onClick={() => refetchApiData()}
                 disabled={apiLoading}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 transition-colors"
               >
-                {apiLoading ? 'Loading...' : 'Refresh'}
+                {apiLoading ? 'Loading...' : 'Refresh API'}
               </button>
             </div>
 
@@ -166,15 +166,29 @@ function Demo() {
 
             {apiData?.success && apiData.data && (
               <div className="p-4 bg-green-50 border border-green-200 rounded-md">
-                <p className="text-green-700 font-medium">{apiData.data.message}</p>
+                <p className="text-green-700 font-medium">✅ API Health Check Successful</p>
                 <div className="mt-2 text-sm text-green-600">
+                  <p><strong>Response Data:</strong> {JSON.stringify(apiData.data)}</p>
+                  <p className="mt-2"><strong>Timestamp:</strong> {new Date(apiData.timestamp).toLocaleTimeString()}</p>
+                </div>
+              </div>
+            )}
+
+            {apiData && !apiData.success && apiData.fallbackInfo && (
+              <div className="p-4 bg-orange-50 border border-orange-200 rounded-md">
+                <p className="text-orange-700 font-medium">⚠️ {apiData.fallbackInfo.message}</p>
+                <div className="mt-2 text-sm text-orange-600">
+                  <p><strong>API Configuration:</strong></p>
+                  <p>• Base URL: {apiData.fallbackInfo.baseUrl}</p>
+                  <p>• API Key: {apiData.fallbackInfo.apiKeyMasked}</p>
                   <p><strong>Features:</strong></p>
                   <ul className="list-disc list-inside mt-1">
-                    {apiData.data.features?.map((feature: string, index: number) => (
+                    {apiData.fallbackInfo.features?.map((feature: string, index: number) => (
                       <li key={index}>{feature}</li>
                     ))}
                   </ul>
-                  <p className="mt-2"><strong>Timestamp:</strong> {new Date(apiData.timestamp).toLocaleTimeString()}</p>
+                  <p className="mt-2"><strong>Error:</strong> {apiData.error}</p>
+                  <p><strong>Timestamp:</strong> {new Date(apiData.timestamp).toLocaleTimeString()}</p>
                 </div>
               </div>
             )}
