@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'wouter'
-import { apiClient as apiService, tokenService, apiConfig, isDevelopment } from '@api'
+import { apiClient as apiService, enhancedApiService, tokenService, apiConfig, isDevelopment } from '@api'
 
 function Demo() {
   const [count, setCount] = useState(0)
@@ -594,9 +594,22 @@ function Demo() {
           </div>
         </div>
 
+        {/* Enhanced API Capabilities Demo */}
+        <div className='bg-white rounded-lg shadow-lg p-8 mb-8'>
+          <h2 className='text-2xl font-semibold font-header text-gray-800 mb-6'>
+            Enhanced @funkit/api-base Capabilities
+          </h2>
+          <p className='text-gray-600 mb-6'>
+            Explore 124 additional functions beyond the basic 4 currently used. This demo showcases portfolio management,
+            gas estimation, chain information, NFT metadata, and security features.
+          </p>
+
+          <EnhancedAPIDemo />
+        </div>
+
         {/* Simple Tabs Demo */}
         <div className='bg-white rounded-lg shadow-lg p-8'>
-          <h2 className='text-2xl font-semibold text-gray-800 mb-6'>Simple Tabs Demo</h2>
+          <h2 className='text-2xl font-semibold font-header text-gray-800 mb-6'>Simple Tabs Demo</h2>
 
           {/* Tab Navigation */}
           <div className='flex space-x-1 rounded-lg bg-blue-900/20 p-1'>
@@ -620,6 +633,210 @@ function Demo() {
             <div className='rounded-lg bg-gray-50 p-6'>
               <p className='text-gray-700'>{tabs[activeTab].content}</p>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Enhanced API Demo Component
+function EnhancedAPIDemo() {
+  const [walletAddress, setWalletAddress] = useState('0x742d35Cc6634C0532925a3b8D84D8C23F8A76542')
+  const [chainId, setChainId] = useState('1')
+
+  // Enhanced API Demo Query
+  const enhancedDemoQuery = useQuery({
+    queryKey: ['enhanced-api-demo', walletAddress, chainId],
+    queryFn: () => enhancedApiService.getEnhancedAPIDemo(walletAddress as `0x${string}`, chainId),
+    enabled: false, // Only run when manually triggered
+  })
+
+  // Individual capability queries
+  const portfolioQuery = useQuery({
+    queryKey: ['portfolio', walletAddress, chainId],
+    queryFn: () => enhancedApiService.getWalletPortfolio(walletAddress as `0x${string}`, chainId),
+    enabled: false,
+  })
+
+  const chainInfoQuery = useQuery({
+    queryKey: ['chain-info', chainId],
+    queryFn: () => enhancedApiService.getChainInformation(chainId),
+    enabled: false,
+  })
+
+  const gasEstimationQuery = useQuery({
+    queryKey: ['gas-estimation', chainId],
+    queryFn: () => enhancedApiService.getGasEstimation(chainId),
+    enabled: false,
+  })
+
+  return (
+    <div className='space-y-6'>
+      {/* Configuration Inputs */}
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg'>
+        <div>
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
+            Demo Wallet Address
+          </label>
+          <input
+            type='text'
+            value={walletAddress}
+            onChange={(e) => setWalletAddress(e.target.value)}
+            className='w-full px-3 py-2 border border-gray-300 rounded-md text-sm'
+            placeholder='0x...'
+          />
+        </div>
+        <div>
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
+            Chain ID
+          </label>
+          <select
+            value={chainId}
+            onChange={(e) => setChainId(e.target.value)}
+            className='w-full px-3 py-2 border border-gray-300 rounded-md text-sm'
+          >
+            <option value='1'>Ethereum (1)</option>
+            <option value='137'>Polygon (137)</option>
+            <option value='8453'>Base (8453)</option>
+            <option value='42161'>Arbitrum (42161)</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className='flex flex-wrap gap-2'>
+        <button
+          onClick={() => enhancedDemoQuery.refetch()}
+          disabled={enhancedDemoQuery.isFetching}
+          className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 text-sm'
+        >
+          {enhancedDemoQuery.isFetching ? 'Running...' : 'Run Complete Demo'}
+        </button>
+        <button
+          onClick={() => portfolioQuery.refetch()}
+          disabled={portfolioQuery.isFetching}
+          className='px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 text-sm'
+        >
+          {portfolioQuery.isFetching ? 'Loading...' : 'Get Portfolio'}
+        </button>
+        <button
+          onClick={() => chainInfoQuery.refetch()}
+          disabled={chainInfoQuery.isFetching}
+          className='px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 text-sm'
+        >
+          {chainInfoQuery.isFetching ? 'Loading...' : 'Get Chain Info'}
+        </button>
+        <button
+          onClick={() => gasEstimationQuery.refetch()}
+          disabled={gasEstimationQuery.isFetching}
+          className='px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 disabled:opacity-50 text-sm'
+        >
+          {gasEstimationQuery.isFetching ? 'Loading...' : 'Get Gas Price'}
+        </button>
+      </div>
+
+      {/* Results Display */}
+      <div className='space-y-4'>
+        {/* Complete Demo Results */}
+        {enhancedDemoQuery.data && (
+          <div className='p-4 bg-blue-50 rounded-lg'>
+            <h4 className='font-medium text-blue-800 mb-3'>✨ Complete Enhanced Demo Results</h4>
+            <pre className='text-xs bg-white p-3 rounded border overflow-auto max-h-96'>
+              {JSON.stringify(enhancedDemoQuery.data, null, 2)}
+            </pre>
+          </div>
+        )}
+
+        {/* Portfolio Results */}
+        {portfolioQuery.data && (
+          <div className='p-4 bg-green-50 rounded-lg'>
+            <h4 className='font-medium text-green-800 mb-3'>🎯 Portfolio Management Results</h4>
+            <pre className='text-xs bg-white p-3 rounded border overflow-auto max-h-64'>
+              {JSON.stringify(portfolioQuery.data, null, 2)}
+            </pre>
+          </div>
+        )}
+
+        {/* Chain Info Results */}
+        {chainInfoQuery.data && (
+          <div className='p-4 bg-purple-50 rounded-lg'>
+            <h4 className='font-medium text-purple-800 mb-3'>⛓️ Chain Information Results</h4>
+            <pre className='text-xs bg-white p-3 rounded border overflow-auto max-h-64'>
+              {JSON.stringify(chainInfoQuery.data, null, 2)}
+            </pre>
+          </div>
+        )}
+
+        {/* Gas Estimation Results */}
+        {gasEstimationQuery.data && (
+          <div className='p-4 bg-orange-50 rounded-lg'>
+            <h4 className='font-medium text-orange-800 mb-3'>⛽ Gas Estimation Results</h4>
+            <pre className='text-xs bg-white p-3 rounded border overflow-auto max-h-64'>
+              {JSON.stringify(gasEstimationQuery.data, null, 2)}
+            </pre>
+          </div>
+        )}
+
+        {/* Error States */}
+        {(enhancedDemoQuery.error || portfolioQuery.error || chainInfoQuery.error || gasEstimationQuery.error) && (
+          <div className='p-4 bg-red-50 rounded-lg'>
+            <h4 className='font-medium text-red-800 mb-3'>❌ Errors</h4>
+            {enhancedDemoQuery.error && (
+              <p className='text-sm text-red-700 mb-2'>Complete Demo: {enhancedDemoQuery.error.message}</p>
+            )}
+            {portfolioQuery.error && (
+              <p className='text-sm text-red-700 mb-2'>Portfolio: {portfolioQuery.error.message}</p>
+            )}
+            {chainInfoQuery.error && (
+              <p className='text-sm text-red-700 mb-2'>Chain Info: {chainInfoQuery.error.message}</p>
+            )}
+            {gasEstimationQuery.error && (
+              <p className='text-sm text-red-700 mb-2'>Gas Estimation: {gasEstimationQuery.error.message}</p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Information Panel */}
+      <div className='p-4 bg-blue-50 rounded-lg'>
+        <h4 className='font-medium text-blue-800 mb-3'>📘 Enhanced Capabilities Overview</h4>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
+          <div>
+            <h5 className='font-medium text-gray-800 mb-2'>Portfolio Management</h5>
+            <ul className='text-gray-600 space-y-1'>
+              <li>• Complete token holdings</li>
+              <li>• NFT collection data</li>
+              <li>• Multi-chain balances</li>
+              <li>• Asset metadata</li>
+            </ul>
+          </div>
+          <div>
+            <h5 className='font-medium text-gray-800 mb-2'>Transaction & Gas</h5>
+            <ul className='text-gray-600 space-y-1'>
+              <li>• Real-time gas pricing</li>
+              <li>• Operation estimation</li>
+              <li>• Transaction receipts</li>
+              <li>• Chain information</li>
+            </ul>
+          </div>
+          <div>
+            <h5 className='font-medium text-gray-800 mb-2'>Security & Risk</h5>
+            <ul className='text-gray-600 space-y-1'>
+              <li>• Address risk assessment</li>
+              <li>• Transaction monitoring</li>
+              <li>• Compliance checks</li>
+              <li>• Fraud detection</li>
+            </ul>
+          </div>
+          <div>
+            <h5 className='font-medium text-gray-800 mb-2'>Fiat Integration</h5>
+            <ul className='text-gray-600 space-y-1'>
+              <li>• Stripe payment sessions</li>
+              <li>• Moonpay integration</li>
+              <li>• On/off ramp quotes</li>
+              <li>• Fiat limit checks</li>
+            </ul>
           </div>
         </div>
       </div>

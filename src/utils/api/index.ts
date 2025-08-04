@@ -1,6 +1,7 @@
 // API barrel export - organized API functionality
 export * from './config'
 export * from './client'
+export * from './enhancedService'
 export * from './tokenService'
 
 // Re-export types for convenience
