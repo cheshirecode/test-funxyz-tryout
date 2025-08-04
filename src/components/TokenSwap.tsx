@@ -115,13 +115,13 @@ export const TokenSwap = () => {
             </span>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-4 gap-2">
           {availableTokens.map((token) => {
             const isSource = sourceToken === token
             const isTarget = targetToken === token
             const isSelected = isSource || isTarget
-            
+
             return (
               <button
                 key={token}
@@ -150,12 +150,12 @@ export const TokenSwap = () => {
                     e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Ctext x='12' y='16' text-anchor='middle' font-size='8'%3E${token.charAt(0)}%3C/text%3E%3C/svg%3E`
                   }}
                 />
-                
+
                 {/* Token Symbol */}
                 <span className={isSelected ? 'text-gray-800' : 'text-gray-600'}>
                   {token}
                 </span>
-                
+
                 {/* Source/Target Indicator */}
                 {isSource && (
                   <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
@@ -171,7 +171,7 @@ export const TokenSwap = () => {
             )
           })}
         </div>
-        
+
         <div className="text-center text-xs text-gray-500 mt-2">
           Click to select source token • Right-click to select target token
         </div>
