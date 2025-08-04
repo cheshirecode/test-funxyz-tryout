@@ -1,7 +1,7 @@
 import { ChevronDownIcon } from 'lucide-react'
-import { type TokenData } from '../utils/tokenData'
-import { useDropdown } from '../utils/hooks/ui'
-import { handleTokenIconError, formatTokenBalance } from '../utils/helpers'
+import { type TokenData } from '@utils/tokenData'
+import { useDropdown } from '@hooks/ui'
+import { handleTokenIconError, formatTokenBalance } from '@helpers'
 
 interface TokenSelectorProps {
   selectedToken: string

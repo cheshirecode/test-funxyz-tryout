@@ -6,13 +6,13 @@ import {
   useSwapCalculations,
   useSwapExecution,
   useTokenSelection
-} from '../utils/hooks'
+} from '@hooks'
 import {
   getSwapButtonState,
   getBalanceTextStyle,
   handleTokenIconError,
   formatTokenBalance
-} from '../utils/helpers'
+} from '@helpers'
 
 export const TokenSwap = () => {
   // Custom hooks for all business logic

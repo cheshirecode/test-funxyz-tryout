@@ -13,7 +13,7 @@ export function createDerivedAtom<T, U extends readonly unknown[]>(
   compute: (...values: U) => T
 ): Atom<T> {
   return atom((get) => {
-    const values = dependencies.map(dep => get(dep)) as U
+    const values = dependencies.map(dep => get(dep)) as unknown as U
     return compute(...values)
   })
 }
@@ -26,7 +26,7 @@ export function createValidatedAtom<T>(
 ): WritableAtom<T, [T], void> {
   return atom(
     (get) => get(baseAtom),
-    (get, set, newValue: T) => {
+    (_get, set, newValue: T) => {
       if (validator(newValue)) {
         set(baseAtom, newValue)
       } else {
@@ -44,7 +44,7 @@ export function createResetAtom<T>(
 ): WritableAtom<null, [], void> {
   return atom(
     null,
-    (get, set) => {
+    (_get, set) => {
       set(targetAtom, initialValue)
     }
   )

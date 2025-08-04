@@ -7,7 +7,7 @@ import {
   swapStateAtom,
   setSwapStateAtom,
   swapTokenPositionsAtom
-} from '../../state/atoms/swapAtoms'
+} from '@state/atoms/swapAtoms'
 
 export interface UseSwapStateReturn {
   // Token selection state

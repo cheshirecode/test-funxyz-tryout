@@ -6,7 +6,7 @@ export interface UseDropdownReturn {
   setIsOpen: (open: boolean) => void
   toggle: () => void
   close: () => void
-  dropdownRef: React.RefObject<HTMLDivElement>
+  dropdownRef: React.RefObject<HTMLDivElement | null>
 }
 
 /**

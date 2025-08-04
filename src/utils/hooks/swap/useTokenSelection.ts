@@ -1,6 +1,6 @@
 // Custom hook for token selection logic
 import { useCallback } from 'react'
-import { getAvailableTokens } from '../../helpers/tokenUtils'
+import { getAvailableTokens } from '@helpers/tokenUtils'
 
 export interface UseTokenSelectionProps {
   sourceToken: string

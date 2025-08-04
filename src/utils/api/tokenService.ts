@@ -1,5 +1,5 @@
-import { apiClient } from '../client'
-import type { TokenData } from '../../types'
+import { apiClient } from './client'
+import type { TokenData } from '@types'
 
 // Default token configuration for fallback
 const defaultTokens: Record<string, TokenData> = {

@@ -1,7 +1,7 @@
 // Custom hook for swap amount calculations
 import { useState, useEffect } from 'react'
-import { calculateTokenAmount, calculateExchangeRate } from '../../helpers/tokenUtils'
-import type { TokenData } from '../../types'
+import { calculateTokenAmount, calculateExchangeRate } from '@helpers/tokenUtils'
+import type { TokenData } from '@types'
 
 export interface UseSwapCalculationsReturn {
   sourceTokenAmount: string

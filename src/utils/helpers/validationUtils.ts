@@ -1,5 +1,5 @@
 // Validation utility functions for swap operations
-import type { TokenData } from '../types'
+import type { TokenData } from '@types'
 
 /**
  * Check if there's insufficient balance for the swap

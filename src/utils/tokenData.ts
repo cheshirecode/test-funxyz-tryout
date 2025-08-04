@@ -1,13 +1,13 @@
 // Token data service with Funkit API integration
 import { useState, useEffect } from 'react'
-import { tokenService, defaultTokenData, type TokenData } from './api'
+import { tokenService, defaultTokenData, type TokenData } from '@api'
 
 // Export the token service for direct access
 export { tokenService, defaultTokenData }
 export type { TokenData }
 
 // Export swap atoms for state management
-export * from './state/atoms/swapAtoms'
+export * from '@state/atoms/swapAtoms'
 
 // Legacy export for backward compatibility
 // This will be replaced with real data from Funkit API
