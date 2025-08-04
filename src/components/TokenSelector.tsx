@@ -2,6 +2,7 @@ import { ChevronDownIcon } from 'lucide-react'
 import { type TokenData } from '@utils/tokenData'
 import { useDropdown } from '@hooks/ui'
 import { handleTokenIconError, formatTokenBalance } from '@helpers'
+import { BlockLoader } from './Loader'
 
 interface TokenSelectorProps {
   selectedToken: string
@@ -48,9 +49,9 @@ export const TokenSelector = ({
       {/* Dropdown menu - Right-aligned for mobile optimization */}
       {isOpen && (
         <div className='absolute right-0 mt-2 w-56 bg-surface-light dark:bg-surface-dark rounded-xl shadow-2xl border-2 border-neutral-200 dark:border-neutral-600 z-20 py-2 ring-1 ring-black/5 dark:ring-white/10'>
-          {isLoading ? (
-            <div className='px-4 py-3 text-sm text-text-light-muted dark:text-text-dark-muted'>Loading tokens...</div>
-          ) : (
+                {isLoading ? (
+        <BlockLoader text="Loading tokens..." />
+      ) : (
             Object.keys(tokenData).map((token) => (
               <button
                 key={token}

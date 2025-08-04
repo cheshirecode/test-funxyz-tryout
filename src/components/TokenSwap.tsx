@@ -5,6 +5,7 @@ import { TokenSelector } from './TokenSelector'
 import { ThemeSwitcher } from './ThemeSwitcher'
 import { Tooltip } from './Tooltip'
 import { ContractInfo } from './ContractInfo'
+import { InlineLoader } from './Loader'
 import {
   useTokenData,
   useSwapState,
@@ -63,7 +64,7 @@ export const TokenSwap = () => {
       }
     }
 
-    // Add target token pricing data  
+    // Add target token pricing data
     if (targetTokenPrice?.data) {
       updatedTokenData[targetToken] = {
         ...baseTokenData[targetToken],
@@ -339,8 +340,8 @@ export const TokenSwap = () => {
       <div className='flex justify-between text-sm text-text-light-muted dark:text-text-dark-muted mb-3'>
         <span>Exchange Rate</span>
         <span>
-          {tokensLoading || swapRateLoading ? (
-            'Loading...'
+                  {tokensLoading || swapRateLoading ? (
+          <InlineLoader />
           ) : realSwapRate?.success ? (
             <>
               1 {sourceToken} ≈ {realSwapRate.data.exchangeRate.toFixed(6)} {targetToken}
@@ -361,8 +362,8 @@ export const TokenSwap = () => {
         <div className='flex justify-between text-xs text-text-light-muted dark:text-text-dark-muted'>
           <span>{sourceToken} Price</span>
           <span>
-            {sourcePriceLoading ? (
-              'Loading...'
+                    {sourcePriceLoading ? (
+          <InlineLoader />
             ) : sourceTokenPrice?.success ? (
               <>${sourceTokenPrice.data.priceUsd.toFixed(2)}</>
             ) : (
@@ -373,8 +374,8 @@ export const TokenSwap = () => {
         <div className='flex justify-between text-xs text-text-light-muted dark:text-text-dark-muted'>
           <span>{targetToken} Price</span>
           <span>
-            {targetPriceLoading ? (
-              'Loading...'
+                    {targetPriceLoading ? (
+          <InlineLoader />
             ) : targetTokenPrice?.success ? (
               <>${targetTokenPrice.data.priceUsd.toFixed(2)}</>
             ) : (
@@ -387,8 +388,8 @@ export const TokenSwap = () => {
         <div className='flex justify-between text-xs text-text-light-muted dark:text-text-dark-muted'>
           <span>Estimated Gas Fee</span>
           <span>
-            {gasPriceLoading ? (
-              'Loading...'
+                    {gasPriceLoading ? (
+          <InlineLoader />
             ) : gasPrice?.success ? (
               <Tooltip content={`Gas Price: ${gasPrice.data.gasPriceGwei.toFixed(2)} Gwei | Limit: ~150,000`}>
                 <span className='cursor-help border-b border-dotted'>

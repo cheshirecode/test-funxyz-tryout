@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'wouter'
+import { InlineLoader, BlockLoader } from '../components/Loader'
 import { apiClient as apiService, enhancedApiService, pricingService, tokenService, apiConfig, isDevelopment } from '@api'
 
 function Demo() {
@@ -97,9 +98,9 @@ function Demo() {
             </Link>
             <div className='flex-1 text-center'>
               <h1 className='text-4xl font-bold font-header text-gray-900 mb-4'>React + Vite + Tailwind CSS Demo</h1>
-              <p className='text-lg text-gray-600'>
+          <p className='text-lg text-gray-600'>
                 Modern React development stack with React Query
-              </p>
+          </p>
             </div>
           </div>
         </header>
@@ -120,10 +121,7 @@ function Demo() {
             </p>
           </div>
           {isLoading && (
-            <div className='flex items-center justify-center p-4'>
-              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500'></div>
-              <span className='ml-2 text-gray-600'>Loading...</span>
-            </div>
+            <BlockLoader text="Loading API data..." />
           )}
           {error && (
             <div className='p-4 bg-red-50 border border-red-200 rounded-md'>
@@ -209,7 +207,7 @@ function Demo() {
                 disabled={apiLoading}
                 className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 transition-colors'
               >
-                {apiLoading ? 'Loading...' : 'Refresh Funkit API'}
+                {apiLoading ? <InlineLoader /> : 'Refresh Funkit API'}
               </button>
             </div>
 
@@ -289,7 +287,7 @@ function Demo() {
                 disabled={getAllowedAssetsMutation.isPending}
                 className='px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 disabled:opacity-50 transition-colors'
               >
-                {getAllowedAssetsMutation.isPending ? 'Loading...' : 'Test Get Allowed Assets'}
+                {getAllowedAssetsMutation.isPending ? <InlineLoader /> : 'Test Get Allowed Assets'}
               </button>
 
               {getAllowedAssetsMutation.data && getAllowedAssetsMutation.data.success && (
@@ -674,7 +672,7 @@ function EnhancedAPIDemo() {
           disabled={portfolioQuery.isFetching}
           className='px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 text-sm'
         >
-          {portfolioQuery.isFetching ? 'Loading...' : 'Get Portfolio'}
+                        {portfolioQuery.isFetching ? <InlineLoader /> : 'Get Portfolio'}
         </button>
         <button
           onClick={() => chainInfoQuery.refetch()}
@@ -877,7 +875,7 @@ function PricingDemo() {
           disabled={usdcPriceQuery.isFetching}
           className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 text-sm'
         >
-          {usdcPriceQuery.isFetching ? 'Loading...' : 'Get USDC Price'}
+          {usdcPriceQuery.isFetching ? <InlineLoader /> : 'Get USDC Price'}
         </button>
         <button
           onClick={() => ethPriceQuery.refetch()}
