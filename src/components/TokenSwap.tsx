@@ -1,17 +1,33 @@
 import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useAtom } from 'jotai'
 import { ArrowDownIcon, WalletIcon } from 'lucide-react'
 import { TokenSelector } from './TokenSelector'
-import { tokenService, defaultTokenData } from '../utils/tokenData'
+import {
+  tokenService,
+  defaultTokenData,
+  swapSourceTokenAtom,
+  swapTargetTokenAtom,
+  swapUsdAmountAtom,
+  swapStateAtom,
+  setSwapStateAtom,
+  swapTokenPositionsAtom
+} from '../utils/tokenData'
 
 export const TokenSwap = () => {
-  const [sourceToken, setSourceToken] = useState('USDC')
-  const [targetToken, setTargetToken] = useState('ETH')
-  const [usdAmount, setUsdAmount] = useState<string>('100')
+  // Use atoms for persisted state
+  const [sourceToken, setSourceToken] = useAtom(swapSourceTokenAtom)
+  const [targetToken, setTargetToken] = useAtom(swapTargetTokenAtom)
+  const [usdAmount, setUsdAmount] = useAtom(swapUsdAmountAtom)
+
+  // Local state for calculated values (not persisted)
   const [sourceTokenAmount, setSourceTokenAmount] = useState<string>('0')
   const [targetTokenAmount, setTargetTokenAmount] = useState<string>('0')
-  const [swapping, setSwapping] = useState(false)
-  const [swapComplete, setSwapComplete] = useState(false)
+
+  // Atom state for swap status
+  const [swapState] = useAtom(swapStateAtom)
+  const [, setSwapState] = useAtom(setSwapStateAtom)
+  const { swapping, swapComplete } = swapState
 
   // Fetch token data from Funkit API using React Query
   const { data: tokenData, isLoading: tokensLoading } = useQuery({
@@ -57,23 +73,22 @@ export const TokenSwap = () => {
     return parseFloat(sourceTokenAmount) > (safeTokenData[sourceToken]?.balance || 0)
   }
 
-  // Swap source and target tokens
+  // Swap source and target tokens using atom
+  const [, swapPositions] = useAtom(swapTokenPositionsAtom)
   const handleSwapPositions = () => {
-    setSourceToken(targetToken)
-    setTargetToken(sourceToken)
+    swapPositions()
   }
 
   // Execute the swap
   const executeSwap = () => {
     if (!usdAmount || isNaN(parseFloat(usdAmount)) || parseFloat(usdAmount) <= 0 || hasInsufficientBalance()) return
-    setSwapping(true)
+    setSwapState({ swapping: true })
     // Simulate API call with timeout
     setTimeout(() => {
-      setSwapping(false)
-      setSwapComplete(true)
+      setSwapState({ swapping: false, swapComplete: true })
       // Reset swap complete status after 3 seconds
       setTimeout(() => {
-        setSwapComplete(false)
+        setSwapState({ swapComplete: false })
       }, 3000)
     }, 1500)
   }

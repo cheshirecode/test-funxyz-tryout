@@ -6,6 +6,9 @@ import { tokenService, defaultTokenData, type TokenData } from '../services/toke
 export { tokenService, defaultTokenData }
 export type { TokenData }
 
+// Export swap atoms for state management
+export * from './atoms/swapAtoms'
+
 // Legacy export for backward compatibility
 // This will be replaced with real data from Funkit API
 export const tokenData = defaultTokenData
