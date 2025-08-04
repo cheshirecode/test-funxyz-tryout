@@ -1,17 +1,21 @@
 import { useEffect, useState, useRef } from 'react'
 import { ChevronDownIcon } from 'lucide-react'
-import { tokenData } from '../utils/tokenData'
+import { type TokenData } from '../utils/tokenData'
 
 interface TokenSelectorProps {
   selectedToken: string
   onSelectToken: (token: string) => void
   disabledToken?: string
+  tokenData: Record<string, TokenData>
+  isLoading?: boolean
 }
 
 export const TokenSelector = ({
   selectedToken,
   onSelectToken,
   disabledToken,
+  tokenData,
+  isLoading = false,
 }: TokenSelectorProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -45,7 +49,7 @@ export const TokenSelector = ({
         className="flex items-center space-x-2 py-2 px-3 bg-gray-100 rounded-lg hover:bg-gray-200 min-h-[44px] transition-colors"
       >
         <img
-          src={tokenData[selectedToken].icon}
+          src={tokenData[selectedToken]?.icon || ''}
           alt={selectedToken}
           className="w-6 h-6 rounded-full"
           onError={(e) => {
@@ -63,7 +67,10 @@ export const TokenSelector = ({
       {/* Dropdown menu - Right-aligned for mobile optimization */}
       {isOpen && (
         <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg z-20 border border-gray-100 py-2">
-          {Object.keys(tokenData).map((token) => (
+          {isLoading ? (
+            <div className="px-4 py-3 text-sm text-gray-500">Loading tokens...</div>
+          ) : (
+            Object.keys(tokenData).map((token) => (
             <button
               key={token}
               onClick={() => handleTokenSelect(token)}
@@ -94,7 +101,8 @@ export const TokenSelector = ({
                 <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
               )}
             </button>
-          ))}
+          ))
+          )}
         </div>
       )}
     </div>
