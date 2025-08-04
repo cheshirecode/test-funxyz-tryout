@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'wouter'
@@ -8,6 +7,7 @@ import { apiClient as apiService, tokenService, apiConfig, isDevelopment } from 
 function Demo() {
   const [count, setCount] = useState(0)
   const [demoUsdAmount, setDemoUsdAmount] = useState('100')
+  const [activeTab, setActiveTab] = useState(0)
   const queryClient = useQueryClient()
 
   // Demo token calculation variables
@@ -89,7 +89,7 @@ function Demo() {
     { name: 'Settings', content: 'Configure your application settings here.' },
     {
       name: 'About',
-      content: 'Built with React 18, Vite, Tailwind 4, Headless UI, and React Query.',
+      content: 'Built with React 18, Vite, Tailwind CSS, and React Query.',
     },
   ]
 
@@ -105,9 +105,9 @@ function Demo() {
               </button>
             </Link>
             <div className='flex-1 text-center'>
-              <h1 className='text-4xl font-bold text-gray-900 mb-4'>React + Vite + Tailwind 4 Demo</h1>
+              <h1 className='text-4xl font-bold text-gray-900 mb-4'>React + Vite + Tailwind CSS Demo</h1>
               <p className='text-lg text-gray-600'>
-                Modern React development stack with Headless UI and React Query
+                Modern React development stack with React Query
               </p>
             </div>
           </div>
@@ -594,31 +594,33 @@ function Demo() {
           </div>
         </div>
 
-        {/* Headless UI Tabs Demo */}
+        {/* Simple Tabs Demo */}
         <div className='bg-white rounded-lg shadow-lg p-8'>
-          <h2 className='text-2xl font-semibold text-gray-800 mb-6'>Headless UI Tabs Demo</h2>
-          <TabGroup>
-            <TabList className='flex space-x-1 rounded-lg bg-blue-900/20 p-1'>
-              {tabs.map((tab) => (
-                <Tab
-                  key={tab.name}
-                  className='w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2 data-[selected]:bg-white data-[selected]:shadow data-[hover]:bg-white/[0.12] data-[selected]:data-[hover]:bg-white/[0.16] data-[focus]:outline-1 data-[focus]:outline-white'
-                >
-                  {tab.name}
-                </Tab>
-              ))}
-            </TabList>
-            <TabPanels className='mt-6'>
-              {tabs.map((tab) => (
-                <TabPanel
-                  key={tab.name}
-                  className='rounded-lg bg-gray-50 p-6 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
-                >
-                  <p className='text-gray-700'>{tab.content}</p>
-                </TabPanel>
-              ))}
-            </TabPanels>
-          </TabGroup>
+          <h2 className='text-2xl font-semibold text-gray-800 mb-6'>Simple Tabs Demo</h2>
+
+          {/* Tab Navigation */}
+          <div className='flex space-x-1 rounded-lg bg-blue-900/20 p-1'>
+            {tabs.map((tab, index) => (
+              <button
+                key={tab.name}
+                onClick={() => setActiveTab(index)}
+                className={`w-full rounded-lg py-2.5 text-sm font-medium leading-5 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                  activeTab === index
+                    ? 'bg-white text-blue-700 shadow'
+                    : 'text-blue-700 hover:bg-white/20'
+                }`}
+              >
+                {tab.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Tab Content */}
+          <div className='mt-6'>
+            <div className='rounded-lg bg-gray-50 p-6'>
+              <p className='text-gray-700'>{tabs[activeTab].content}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

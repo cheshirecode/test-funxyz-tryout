@@ -37,7 +37,7 @@ The requirements document specified key constraints while leaving implementation
 #### User Experience Assumptions
 
 - **Responsive Design**: Assumed mobile-first approach for broad device compatibility
-- **Accessibility**: Assumed WCAG compliance through Headless UI components
+- **Accessibility**: Assumed WCAG compliance through semantic HTML and proper focus management
 - **Interactive Demo**: Assumed live API demonstration would showcase integration capabilities
 - **Loading States**: Assumed visual feedback for API operations was necessary
 
@@ -108,7 +108,6 @@ pnpm test:coverage # Run tests with coverage report
 ### Styling & UI
 
 - **Tailwind CSS 3.4.17** - Utility-first CSS framework
-- **Headless UI 2.2.7** - Accessible unstyled components
 - **PostCSS** - CSS processing with Autoprefixer
 
 ### State Management & Data Fetching
@@ -262,8 +261,8 @@ The application features **authentic Funkit API integration** using the official
 
 ### User Interface
 
-- **Tailwind CSS 4.0**: Modern styling with latest Tailwind features
-- **Headless UI**: Accessible tab components and interactive elements
+- **Tailwind CSS**: Modern styling with utility-first approach
+- **Semantic HTML**: Accessible interactive elements and proper focus management
 - **Responsive Design**: Works across different screen sizes
 - **Loading States**: Visual feedback for API operations
 - **Error Handling**: User-friendly error messages and fallbacks
@@ -294,7 +293,7 @@ Modern browsers supporting ES2020+ features.
 - ✅ React 18 + Vite 6.3.5 + TypeScript foundation
 - ✅ @vitejs/plugin-react-swc for fast compilation
 - ✅ Tailwind CSS 3.4.17 integration with PostCSS configuration
-- ✅ Headless UI component library setup
+- ✅ Semantic HTML components with accessibility features
 - ✅ TanStack React Query for state management
 - ✅ Vitest testing framework with React Testing Library
 
