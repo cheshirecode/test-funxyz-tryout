@@ -97,7 +97,7 @@ describe('TokenSwap App', () => {
       expect(fromInput).toHaveValue(100)
 
       // Should show converted amount (multiple ≈ symbols exist)
-      expect(screen.getAllByText(/≈/)).toHaveLength(3) // FROM, TO, and exchange rate
+      expect(screen.getAllByText(/≈/)).toHaveLength(2) // TO and exchange rate (USD field removed the FROM ≈ display)
     })
 
     it('updates conversion when amount changes', async () => {
@@ -124,6 +124,15 @@ describe('TokenSwap App', () => {
         button.textContent?.includes('USDC') || button.textContent?.includes('ETH')
       )
       expect(hasTokenSelectors).toBe(true)
+    })
+
+    it('displays USD input field', () => {
+      render(<App />)
+
+      // Check for USD input field
+      const usdInput = screen.getByDisplayValue('100')
+      expect(usdInput).toBeInTheDocument()
+      expect(usdInput).toHaveAttribute('type', 'number')
     })
   })
 
