@@ -1,7 +1,5 @@
 # React + Vite + Tailwind 4 + Funkit API Integration
 
-![Vercel Deploy](https://deploy-badge.vercel.app/vercel/test-funxyz-tryout?style=for-the-badge)
-
 Modern React application with comprehensive testing, routing, and **real Funkit platform API integration** using authentic `@funkit/api-base` library.
 
 ## Assumptions Based on Requirements
@@ -76,7 +74,7 @@ The requirements document specified key constraints while leaving implementation
 ## Prerequisites
 
 - Node.js 20+ (LTS)
-- pnpm 10.6.2+
+- pnpm 10+
 
 ## Installation
 
@@ -282,7 +280,7 @@ Modern browsers supporting ES2020+ features.
 
 - **Current Environment**: Node.js v20.3.0
 - **Recommended**: Node.js 20.18.1+ (Current LTS)
-- **Package Manager**: pnpm 10.6.2
+- **Package Manager**: pnpm 10
 
 ## Development History & Achievements
 

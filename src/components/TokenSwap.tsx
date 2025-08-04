@@ -290,9 +290,9 @@ export const TokenSwap = () => {
             chainId={tokenData[targetToken]?.chainId}
             symbol={targetToken}
           />
-          <div className='text-sm text-text-light-muted dark:text-text-dark-muted'>
+          {/* <div className='text-sm text-text-light-muted dark:text-text-dark-muted'>
             ≈ ${usdAmount}
-          </div>
+          </div> */}
         </div>
       </div>
 

@@ -1,8 +1,12 @@
 # Token Swap DApp with Real Funkit Integration
 
-![Vercel Deploy](https://deploy-badge.vercel.app/vercel/test-funxyz-tryout?style=for-the-badge)
-
 > **🚀 Modern React token swap application featuring authentic Funkit API integration and advanced state management**
+
+🔗 **Live Demo:** <https://test-funxyz-tryout.vercel.app/>
+
+<img width="700" src="https://raw.githubusercontent.com/cheshirecode/test-funxyz-tryout/refs/heads/lighthouse/lighthouse_results/desktop/pagespeed.svg"/>
+
+[Full lighthouse report](https://htmlpreview.github.io/?https://raw.githubusercontent.com/cheshirecode/test-funxyz-tryout/refs/heads/lighthouse/lighthouse_results/desktop/test_funxyz_tryout_vercel_app.html?token=GHSAT0AAAAAADIRZYYCRHEBLAU2CT2WD3JW2ERCIMQ)
 
 ## ⚡ Quick Start
 
@@ -100,6 +104,7 @@ flowchart TB
 - **🧪 Comprehensive Testing** - 100+ tests including API scenarios
 - **📱 Mobile-First Design** - Responsive with accessibility
 - **🔒 Type-Safe** - Strict TypeScript throughout
+- **🏆 Lighthouse CI** - Automated performance, accessibility, and SEO audits
 
 ## 📊 Stats
 
