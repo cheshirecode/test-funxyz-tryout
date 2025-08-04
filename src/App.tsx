@@ -125,7 +125,7 @@ function App() {
         {/* API Integration Demo */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">API Integration Demo (@funkit/api-base)</h2>
-          
+
           {/* Environment Variables Display */}
           <div className="bg-gray-50 border border-gray-200 rounded-md p-4 mb-6">
             <h3 className="text-lg font-medium text-gray-800 mb-3">Environment Configuration</h3>
@@ -148,20 +148,20 @@ function App() {
                 {apiLoading ? 'Loading...' : 'Refresh'}
               </button>
             </div>
-            
+
             {apiLoading && (
               <div className="flex items-center justify-center p-4">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                 <span className="ml-2 text-gray-600">Fetching API data...</span>
               </div>
             )}
-            
+
             {apiError && (
               <div className="p-4 bg-red-50 border border-red-200 rounded-md">
                 <p className="text-red-700">Error: {apiError.message}</p>
               </div>
             )}
-            
+
             {apiData?.success && apiData.data && (
               <div className="p-4 bg-green-50 border border-green-200 rounded-md">
                 <p className="text-green-700 font-medium">{apiData.data.message}</p>
@@ -216,13 +216,13 @@ function App() {
                 {createPostMutation.isPending ? 'Creating...' : 'Create Post'}
               </button>
             </form>
-            
+
             {createPostMutation.isSuccess && (
               <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
                 <p className="text-green-700">Post created successfully!</p>
               </div>
             )}
-            
+
             {createPostMutation.isError && (
               <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
                 <p className="text-red-700">Error creating post: {createPostMutation.error?.message}</p>
