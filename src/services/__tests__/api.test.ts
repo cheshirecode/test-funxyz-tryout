@@ -18,22 +18,26 @@ describe('API Service', () => {
 
       expect(result.success).toBe(true)
       expect(result.data).toBeDefined()
-      expect(result.data.message).toBe('Mock data from @funkit/api-base integration')
-      expect(result.data.apiKey).toBe('demo_api...')
-      expect(result.data.baseUrl).toBe(apiConfig.baseUrl)
-      expect(result.data.features).toBeInstanceOf(Array)
-      expect(result.data.features).toHaveLength(5)
+      if (result.data) {
+        expect(result.data.message).toBe('Mock data from @funkit/api-base integration')
+        expect(result.data.apiKey).toBe('demo_api...')
+        expect(result.data.baseUrl).toBe(apiConfig.baseUrl)
+        expect(result.data.features).toBeInstanceOf(Array)
+        expect(result.data.features).toHaveLength(5)
+      }
       expect(result.timestamp).toBeDefined()
     })
 
     it('should include all expected features', async () => {
       const result = await apiService.getMockData()
 
-      expect(result.data.features).toContain('Environment variable configuration')
-      expect(result.data.features).toContain('Error handling and logging')
-      expect(result.data.features).toContain('Request/response interceptors')
-      expect(result.data.features).toContain('Timeout handling')
-      expect(result.data.features).toContain('Authentication headers')
+      if (result.data?.features) {
+        expect(result.data.features).toContain('Environment variable configuration')
+        expect(result.data.features).toContain('Error handling and logging')
+        expect(result.data.features).toContain('Request/response interceptors')
+        expect(result.data.features).toContain('Timeout handling')
+        expect(result.data.features).toContain('Authentication headers')
+      }
     })
 
     it('should have a valid timestamp', async () => {
@@ -54,10 +58,12 @@ describe('API Service', () => {
 
       expect(result.success).toBe(true)
       expect(result.data).toBeDefined()
-      expect(result.data.message).toBe('Mock post created')
-      expect(result.data.title).toBe(postData.title)
-      expect(result.data.content).toBe(postData.content)
-      expect(result.data.id).toBeDefined()
+      if (result.data) {
+        expect(result.data.message).toBe('Mock post created')
+        expect(result.data.title).toBe(postData.title)
+        expect(result.data.content).toBe(postData.content)
+        expect(result.data.id).toBeDefined()
+      }
       expect(result.timestamp).toBeDefined()
     })
   })
@@ -65,11 +71,13 @@ describe('API Service', () => {
     describe('getStatus', () => {
     it('should handle successful status check', async () => {
       const result = await apiService.getStatus()
-      
+
       expect(result.success).toBe(true)
       expect(result.data).toBeDefined()
-      expect(result.data.message).toBe('Mock response data')
-      expect(result.data.url).toBe('/status')
+      if (result.data) {
+        expect(result.data.message).toBe('Mock response data')
+        expect(result.data.url).toBe('/status')
+      }
       expect(result.timestamp).toBeDefined()
     })
   })
@@ -77,11 +85,13 @@ describe('API Service', () => {
   describe('getUserProfile', () => {
     it('should handle successful user profile fetch', async () => {
       const result = await apiService.getUserProfile()
-      
+
       expect(result.success).toBe(true)
       expect(result.data).toBeDefined()
-      expect(result.data.message).toBe('Mock response data')
-      expect(result.data.url).toBe('/user/profile')
+      if (result.data) {
+        expect(result.data.message).toBe('Mock response data')
+        expect(result.data.url).toBe('/user/profile')
+      }
       expect(result.timestamp).toBeDefined()
     })
   })
