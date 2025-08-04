@@ -36,11 +36,11 @@ export const TokenSwap = () => {
       return
     }
     const usd = parseFloat(usdAmount)
-    
+
     // Calculate source token amount
     const sourceAmount = usd / (safeTokenData[sourceToken]?.usdPrice || 1)
     setSourceTokenAmount(sourceAmount.toFixed(safeTokenData[sourceToken]?.decimals || 2))
-    
+
     // Calculate target token amount
     const targetAmount = usd / (safeTokenData[targetToken]?.usdPrice || 1)
     setTargetTokenAmount(targetAmount.toFixed(safeTokenData[targetToken]?.decimals || 2))
@@ -134,7 +134,7 @@ export const TokenSwap = () => {
             Balance: {tokensLoading ? 'Loading...' : `${safeTokenData[sourceToken]?.balance || 0} ${sourceToken}`}
           </span>
         </div>
-        
+
         {/* USD Input Field */}
         <div className="mb-3">
           <div className="flex items-center">
@@ -163,7 +163,7 @@ export const TokenSwap = () => {
             isLoading={tokensLoading}
           />
         </div>
-        
+
         {hasInsufficientBalance() && (
           <div className="mt-2 text-error-500 text-sm">
             Insufficient {sourceToken} balance
