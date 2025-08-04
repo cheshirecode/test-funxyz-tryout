@@ -32,8 +32,8 @@ vi.mock('../services/api', () => ({
           'createUser()'
         ],
         configuration: {
-          apiKey: 'test_api...',
-          baseUrl: 'https://api.test.example.com',
+          apiKey: 'Z9SZaOwp...',
+          baseUrl: 'https://api.fun.xyz/v1',
           funkitApiBaseUrl: 'https://api.fun.xyz/v1'
         }
       },
@@ -55,8 +55,8 @@ vi.mock('../services/api', () => ({
 // Mock the config
 vi.mock('../config/api', () => ({
   apiConfig: {
-    apiKey: 'test_api_key_12345',
-    baseUrl: 'https://api.test.example.com',
+    apiKey: 'Z9SZaOwpmE40KX61mUKWm5hrpGh7WHVkaTvQJBxvdvuKZgfZLfEkLG0z2C5dBKrI',
+    baseUrl: 'https://api.fun.xyz/v1',
     timeout: 10000
   },
   isDevelopment: true

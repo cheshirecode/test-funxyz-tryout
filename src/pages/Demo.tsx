@@ -172,12 +172,12 @@ function Demo() {
                 <p className="text-orange-700 font-medium">⚠️ {apiData.fallbackInfo.message}</p>
                 <div className="mt-2 text-sm text-orange-600">
                   <p><strong>API Configuration:</strong></p>
-                  <p>• Base URL: {apiData.fallbackInfo.baseUrl}</p>
-                  <p>• API Key: {apiData.fallbackInfo.apiKeyMasked}</p>
-                  <p><strong>Features:</strong></p>
+                  <p>• Base URL: {apiData.fallbackInfo.configuration?.baseUrl || 'Not available'}</p>
+                  <p>• API Key: {apiData.fallbackInfo.configuration?.apiKey || 'Not available'}</p>
+                  <p><strong>Available Functions:</strong></p>
                   <ul className="list-disc list-inside mt-1">
-                    {apiData.fallbackInfo.features?.map((feature: string, index: number) => (
-                      <li key={index}>{feature}</li>
+                    {apiData.fallbackInfo.availableFunctions?.map((func: string, index: number) => (
+                      <li key={index}>{func}</li>
                     ))}
                   </ul>
                   <p className="mt-2"><strong>Error:</strong> {apiData.error}</p>

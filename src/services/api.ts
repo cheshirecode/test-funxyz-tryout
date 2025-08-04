@@ -31,7 +31,10 @@ export const apiService = {
   async getFunkitUserInfo() {
     try {
       console.log('🔍 Calling getUserUniqueId() from @funkit/api-base')
-      const userUniqueId = await getUserUniqueId()
+      const userUniqueId = await getUserUniqueId({ 
+        apiKey: apiConfig.apiKey,
+        authId: 'demo-auth-id' // Demo value for testing
+      })
 
       return {
         success: true,
@@ -61,7 +64,12 @@ export const apiService = {
   async getFunkitUserWallets() {
     try {
       console.log('🔍 Calling getUserWalletIdentities() from @funkit/api-base')
-      const walletIdentities = await getUserWalletIdentities()
+      const walletIdentities = await getUserWalletIdentities({ 
+        apiKey: apiConfig.apiKey,
+        authId: 'demo-auth-id',
+        chainId: '1', // Ethereum mainnet for demo
+        walletAddr: '0x0000000000000000000000000000000000000000' // Demo wallet address
+      })
 
       return {
         success: true,
@@ -91,7 +99,7 @@ export const apiService = {
   async getFunkitAllowedAssets() {
     try {
       console.log('🔍 Calling getAllowedAssets() from @funkit/api-base')
-      const allowedAssets = await getAllowedAssets()
+      const allowedAssets = await getAllowedAssets({ apiKey: apiConfig.apiKey })
 
       return {
         success: true,
@@ -121,7 +129,11 @@ export const apiService = {
   async getFunkitUserGroups() {
     try {
       console.log('🔍 Calling getGroups() from @funkit/api-base')
-      const groups = await getGroups()
+      const groups = await getGroups({ 
+        apiKey: apiConfig.apiKey,
+        groupIds: ['0x0000000000000000000000000000000000000001'], // Demo group IDs (hex format)
+        chainId: '1' // Ethereum mainnet for demo
+      })
 
       return {
         success: true,
@@ -168,21 +180,24 @@ export const apiService = {
         }>
       }
 
-      // Try getUserUniqueId
-      try {
-        const userUniqueId = await getUserUniqueId()
-        results.apiCalls.push({
-          function: 'getUserUniqueId()',
-          status: 'success',
-          result: userUniqueId
-        })
-      } catch (error) {
-        results.apiCalls.push({
-          function: 'getUserUniqueId()',
-          status: 'error',
-          error: error instanceof Error ? error.message : 'Unknown error'
-        })
-      }
+                // Try getUserUniqueId
+          try {
+            const userUniqueId = await getUserUniqueId({ 
+              apiKey: apiConfig.apiKey,
+              authId: 'demo-auth-id'
+            })
+            results.apiCalls.push({
+              function: 'getUserUniqueId()',
+              status: 'success',
+              result: userUniqueId
+            })
+          } catch (error) {
+            results.apiCalls.push({
+              function: 'getUserUniqueId()',
+              status: 'error',
+              error: error instanceof Error ? error.message : 'Unknown error'
+            })
+          }
 
       return {
         success: true,

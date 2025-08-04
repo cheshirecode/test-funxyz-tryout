@@ -6,8 +6,8 @@ describe('API Service', () => {
 
   describe('apiConfig', () => {
     it('should have correct test configuration', () => {
-      expect(apiConfig.apiKey).toBe('test_api_key_12345')
-      expect(apiConfig.baseUrl).toBe('https://api.test.example.com')
+      expect(apiConfig.apiKey).toBe('Z9SZaOwpmE40KX61mUKWm5hrpGh7WHVkaTvQJBxvdvuKZgfZLfEkLG0z2C5dBKrI')
+      expect(apiConfig.baseUrl).toBe('https://api.fun.xyz/v1')
       expect(apiConfig.timeout).toBe(10000)
     })
   })
