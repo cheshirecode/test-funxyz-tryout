@@ -3,32 +3,48 @@ import { pricingService } from '@api'
 
 /**
  * Hook for getting real-time token price by symbol
+ * Now supports query deduplication with refresh settings
  */
-export function useTokenPrice(chainId: string, symbol: string, enabled: boolean = true) {
+export function useTokenPrice(
+  chainId: string,
+  symbol: string,
+  enabled: boolean = true,
+  refreshInterval: number | false = 60 * 1000,
+  staleTime: number = 30 * 1000,
+  queryKeySuffix?: string
+) {
   return useQuery({
-    queryKey: ['token-price', chainId, symbol],
+    queryKey: ['token-price', chainId, symbol, queryKeySuffix].filter(Boolean),
     queryFn: () => pricingService.getTokenBySymbol(chainId, symbol),
     enabled: enabled && !!chainId && !!symbol,
-    staleTime: 30 * 1000, // 30 seconds
-    refetchInterval: 60 * 1000, // Refetch every minute
+    staleTime,
+    refetchInterval: refreshInterval || undefined,
   })
 }
 
 /**
  * Hook for getting real-time gas prices
+ * Now supports query deduplication with refresh settings
  */
-export function useGasPrice(chainId: string = '1', enabled: boolean = true) {
+export function useGasPrice(
+  chainId: string = '1',
+  enabled: boolean = true,
+  refreshInterval: number | false = 30 * 1000,
+  staleTime: number = 15 * 1000,
+  queryKeySuffix?: string
+) {
   return useQuery({
-    queryKey: ['gas-price', chainId],
+    queryKey: ['gas-price', chainId, queryKeySuffix].filter(Boolean),
     queryFn: () => pricingService.getGasPrice(chainId),
     enabled: enabled && !!chainId,
-    staleTime: 15 * 1000, // 15 seconds
-    refetchInterval: 30 * 1000, // Refetch every 30 seconds
+    staleTime,
+    refetchInterval: refreshInterval || undefined,
   })
 }
 
 /**
  * Hook for calculating swap rates with real prices
+ * Now supports query deduplication with refresh settings
  */
 export function useSwapRate(
   fromChainId: string,
@@ -36,14 +52,17 @@ export function useSwapRate(
   toChainId: string,
   toSymbol: string,
   amount: string = '1',
-  enabled: boolean = true
+  enabled: boolean = true,
+  refreshInterval: number | false = 60 * 1000,
+  staleTime: number = 30 * 1000,
+  queryKeySuffix?: string
 ) {
   return useQuery({
-    queryKey: ['swap-rate', fromChainId, fromSymbol, toChainId, toSymbol, amount],
+    queryKey: ['swap-rate', fromChainId, fromSymbol, toChainId, toSymbol, amount, queryKeySuffix].filter(Boolean),
     queryFn: () => pricingService.getSwapRate(fromChainId, fromSymbol, toChainId, toSymbol, amount),
     enabled: enabled && !!fromChainId && !!fromSymbol && !!toChainId && !!toSymbol && !!amount,
-    staleTime: 30 * 1000, // 30 seconds
-    refetchInterval: 60 * 1000, // Refetch every minute
+    staleTime,
+    refetchInterval: refreshInterval || undefined,
   })
 }
 

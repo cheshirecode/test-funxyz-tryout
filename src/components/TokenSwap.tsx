@@ -6,6 +6,7 @@ import { ThemeSwitcher } from './ThemeSwitcher'
 import { Tooltip } from './Tooltip'
 import { ContractInfo } from './ContractInfo'
 import { InlineLoader } from './Loader'
+import { RefreshToggle, useRefreshRate } from './RefreshToggle'
 import {
   useTokenData,
   useSwapState,
@@ -42,10 +43,19 @@ export const TokenSwap = () => {
     swapTokenPositions,
   } = useSwapState()
 
-  // Real-time pricing and gas estimation - declare hooks first
-  const { data: sourceTokenPrice, isLoading: sourcePriceLoading } = useTokenPrice('1', sourceToken)
-  const { data: targetTokenPrice, isLoading: targetPriceLoading } = useTokenPrice('1', targetToken)
-  const { data: gasPrice, isLoading: gasPriceLoading } = useGasPrice('1')
+  // Refresh rate management with refactored hooks
+  const { refreshRate, setRefreshRate, refreshInterval, staleTime, queryKeySuffix } = useRefreshRate('disabled')
+
+  // Real-time pricing and gas estimation with proper query deduplication
+  const { data: sourceTokenPrice, isLoading: sourcePriceLoading } = useTokenPrice(
+    '1', sourceToken, true, refreshInterval, staleTime, queryKeySuffix
+  )
+  const { data: targetTokenPrice, isLoading: targetPriceLoading } = useTokenPrice(
+    '1', targetToken, true, refreshInterval, staleTime, queryKeySuffix
+  )
+  const { data: gasPrice, isLoading: gasPriceLoading } = useGasPrice(
+    '1', true, refreshInterval, staleTime, queryKeySuffix
+  )
 
   // Integrate token metadata and real-time pricing data into token data atom
   React.useEffect(() => {
@@ -82,7 +92,7 @@ export const TokenSwap = () => {
     }
   }, [sourceTokenPrice, targetTokenPrice, sourceToken, targetToken, tokenData, setTokenData])
   const { data: realSwapRate, isLoading: swapRateLoading } = useSwapRate(
-    '1', sourceToken, '1', targetToken, usdAmount || '100'
+    '1', sourceToken, '1', targetToken, usdAmount || '100', true, refreshInterval, staleTime, queryKeySuffix
   )
 
   const { executeSwap, canExecuteSwap } = useSwapExecution({
@@ -337,8 +347,15 @@ export const TokenSwap = () => {
       </div>
 
       {/* Exchange Rate */}
-      <div className='flex justify-between text-sm text-text-light-muted dark:text-text-dark-muted mb-3'>
-        <span>Exchange Rate</span>
+      <div className='flex justify-between items-center text-sm text-text-light-muted dark:text-text-dark-muted mb-3'>
+        <div className='flex items-center gap-2'>
+          <span>Exchange Rate</span>
+          <RefreshToggle
+            refreshRate={refreshRate}
+            onRefreshRateChange={setRefreshRate}
+            isLoading={swapRateLoading || sourcePriceLoading || targetPriceLoading || gasPriceLoading}
+          />
+        </div>
         <span>
                   {tokensLoading || swapRateLoading ? (
           <InlineLoader />
