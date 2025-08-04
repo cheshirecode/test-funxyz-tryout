@@ -1,12 +1,6 @@
 // Button state utility functions for UI styling
 import { hasInsufficientBalance, isValidUsdAmount } from './validationUtils'
-import type { TokenData } from '../tokenData'
-
-export interface SwapButtonState {
-  className: string
-  disabled: boolean
-  text: string
-}
+import type { TokenData, SwapButtonState } from '../types'
 
 /**
  * Get swap button state based on current conditions

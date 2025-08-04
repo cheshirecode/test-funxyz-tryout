@@ -1,7 +1,7 @@
 // Swap-related atoms with localStorage persistence
 import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
-import type { TokenData } from '../tokenData'
+import type { TokenData, SwapState, SwapAtoms } from '../../types'
 
 // Persisted atoms for swap preferences
 export const swapSourceTokenAtom = atomWithStorage('swap-source-token', 'USDC')
@@ -53,17 +53,5 @@ export const swapTokenPositionsAtom = atom(
   }
 )
 
-// Type definitions for better TypeScript support
-export type SwapState = {
-  swapping: boolean
-  swapComplete: boolean
-}
-
-export type SwapAtoms = {
-  sourceToken: string
-  targetToken: string
-  usdAmount: string
-  sourceTokenAmount: string
-  targetTokenAmount: string
-  swapState: SwapState
-}
+// Re-export types for backward compatibility
+export type { SwapState, SwapAtoms } from '../../types'

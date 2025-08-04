@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { apiService } from '../services/api'
-import { tokenService } from '../services/tokenService'
-import { apiConfig, isDevelopment } from '../config/api'
+import { apiClient as apiService } from '../utils/api'
+import { tokenService } from '../utils/api'
+import { apiConfig, isDevelopment } from '../utils/api'
 
 
 

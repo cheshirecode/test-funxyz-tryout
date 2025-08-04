@@ -1,5 +1,5 @@
 // Token-related utility functions
-import type { TokenData } from '../tokenData'
+import type { TokenData } from '../types'
 
 /**
  * Generate fallback token icon SVG

@@ -1,5 +1,5 @@
 import * as FunkitApi from '@funkit/api-base'
-import { apiConfig, validateApiConfig } from '../config/api'
+import { apiConfig, validateApiConfig } from './config'
 
 // Extract the functions we need
 const {
@@ -26,7 +26,7 @@ console.log('Using @funkit/api-base with configuration:', {
 console.log('✅ @funkit/api-base functions imported and ready for use')
 
 // API service functions using real @funkit/api-base
-export const apiService = {
+export const apiClient = {
     // Get user unique ID using funkit API - requires real authId
   async getFunkitUserInfo(authId?: string) {
     const realAuthId = authId || 'demo-auth-id'
@@ -260,3 +260,6 @@ export type ApiResponse<T = any> = {
   error?: string
   timestamp: string
 }
+
+// Legacy export for backward compatibility
+export { apiClient as apiService }

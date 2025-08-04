@@ -1,7 +1,7 @@
 // Custom hook for swap execution logic
 import { useCallback } from 'react'
 import { isSwapValid } from '../../helpers/validationUtils'
-import type { TokenData } from '../../tokenData'
+import type { TokenData } from '../../types'
 
 export interface UseSwapExecutionProps {
   usdAmount: string

@@ -1,6 +1,6 @@
 // Custom hook for token data fetching and management
 import { useQuery } from '@tanstack/react-query'
-import { tokenService, defaultTokenData, type TokenData } from '../../tokenData'
+import { tokenService, defaultTokenData, type TokenData } from '../../api'
 
 export interface UseTokenDataReturn {
   tokenData: Record<string, TokenData>

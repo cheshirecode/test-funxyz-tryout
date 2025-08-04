@@ -1,16 +1,5 @@
-import { apiService } from './api'
-
-// Token interface
-export interface TokenData {
-  symbol: string
-  name: string
-  icon: string
-  usdPrice: number
-  balance: number
-  decimals: number
-  chainId?: string
-  contractAddress?: string
-}
+import { apiClient } from '../client'
+import type { TokenData } from '../../types'
 
 // Default token configuration for fallback
 const defaultTokens: Record<string, TokenData> = {
@@ -62,33 +51,33 @@ export const tokenService = {
   async getTokens(): Promise<Record<string, TokenData>> {
     try {
       console.log('🔍 Fetching token data from Funkit API...')
-      
+
       // Try to get allowed assets from Funkit API
-      const allowedAssetsResult = await apiService.getFunkitAllowedAssets()
-      
+      const allowedAssetsResult = await apiClient.getFunkitAllowedAssets()
+
       if (allowedAssetsResult.success && allowedAssetsResult.data?.allowedAssets) {
         // Transform Funkit API data to our token format
         const tokens: Record<string, TokenData> = {}
-        
+
         // Process allowed assets from Funkit API
         const assets = allowedAssetsResult.data.allowedAssets || []
-        
+
         // Map common tokens to our default structure
         const tokenMapping: Record<string, string> = {
           'USDC': 'USDC',
-          'USDT': 'USDT', 
+          'USDT': 'USDT',
           'ETH': 'ETH',
           'WETH': 'ETH',
           'WBTC': 'WBTC',
           'BTC': 'WBTC'
         }
-        
+
         // Process each asset from Funkit API
         if (Array.isArray(assets)) {
           assets.forEach((asset: any) => {
           const symbol = asset.symbol || asset.name
           const mappedSymbol = tokenMapping[symbol] || symbol
-          
+
                       if (mappedSymbol && defaultTokens[mappedSymbol]) {
               tokens[mappedSymbol] = {
                 ...defaultTokens[mappedSymbol],
@@ -100,13 +89,13 @@ export const tokenService = {
             }
           })
         }
-        
+
         // Fallback to default tokens if no data from API
         if (Object.keys(tokens).length === 0) {
           console.log('⚠️ No token data from Funkit API, using default tokens')
           return defaultTokens
         }
-        
+
         console.log('✅ Successfully fetched token data from Funkit API')
         return tokens
       } else {
@@ -140,15 +129,15 @@ export const tokenService = {
   async getUserBalances(authId?: string, walletAddr?: string): Promise<Record<string, number>> {
     try {
       console.log('🔍 Fetching user balances from Funkit API...')
-      
-      const userWalletsResult = await apiService.getFunkitUserWallets(authId, walletAddr as `0x${string}`)
-      
+
+      const userWalletsResult = await apiClient.getFunkitUserWallets(authId, walletAddr as `0x${string}`)
+
       if (userWalletsResult.success && userWalletsResult.data?.walletIdentities) {
         const balances: Record<string, number> = {}
-        
+
         // Process wallet identities from Funkit API
         const wallets = userWalletsResult.data.walletIdentities
-        
+
         wallets.forEach((wallet: any) => {
           if (wallet.assets) {
             wallet.assets.forEach((asset: any) => {
@@ -157,7 +146,7 @@ export const tokenService = {
             })
           }
         })
-        
+
         console.log('✅ Successfully fetched user balances from Funkit API')
         return balances
       } else {
@@ -182,14 +171,14 @@ export const tokenService = {
   async updateTokenBalances(tokens: Record<string, TokenData>): Promise<Record<string, TokenData>> {
     try {
       const balances = await this.getUserBalances()
-      
+
       const updatedTokens = { ...tokens }
       Object.keys(updatedTokens).forEach(symbol => {
         if (balances[symbol] !== undefined) {
           updatedTokens[symbol].balance = balances[symbol]
         }
       })
-      
+
       return updatedTokens
     } catch (error) {
       console.error('❌ Error updating token balances:', error)
@@ -199,4 +188,4 @@ export const tokenService = {
 }
 
 // Export default tokens for immediate use
-export const defaultTokenData = defaultTokens 
+export const defaultTokenData = defaultTokens
