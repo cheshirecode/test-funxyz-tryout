@@ -1,3 +1,4 @@
+import React from 'react'
 import { ArrowDownIcon, WalletIcon, HelpCircle } from 'lucide-react'
 import { Link } from 'wouter'
 import { TokenSelector } from './TokenSelector'
@@ -7,7 +8,6 @@ import { ContractInfo } from './ContractInfo'
 import {
   useTokenData,
   useSwapState,
-  useSwapCalculations,
   useSwapExecution,
   useTokenSelection,
 } from '@hooks'
@@ -28,18 +28,22 @@ export const TokenSwap = () => {
     setTargetToken,
     usdAmount,
     setUsdAmount,
+    sourceTokenAmount,
+    targetTokenAmount,
+    exchangeRate,
     swapping,
     swapComplete,
     setSwapState,
+    setTokenData,
     swapTokenPositions,
   } = useSwapState()
 
-  const { sourceTokenAmount, targetTokenAmount, exchangeRate } = useSwapCalculations({
-    usdAmount,
-    sourceToken,
-    targetToken,
-    tokenData,
-  })
+  // Connect React Query token data to Jotai atom
+  React.useEffect(() => {
+    if (tokenData) {
+      setTokenData(tokenData)
+    }
+  }, [tokenData, setTokenData])
 
   const { executeSwap, canExecuteSwap } = useSwapExecution({
     usdAmount,

@@ -8,17 +8,58 @@ export const swapSourceTokenAtom = atomWithStorage('swap-source-token', 'USDC')
 export const swapTargetTokenAtom = atomWithStorage('swap-target-token', 'ETH')
 export const swapUsdAmountAtom = atomWithStorage('swap-usd-amount', '100')
 
-// Derived atoms for calculated values (these are computed, no need to persist)
-export const swapSourceTokenAmountAtom = atom<string>(() => {
-  // This will be calculated in the component where token data is available
-  // We keep this as a separate atom for future extensibility
-  return '0'
+// Token data atom (to be set from React Query)
+export const tokenDataAtom = atom<Record<string, any>>({})
+
+// Derived atoms for calculated values using proper derivation
+export const swapSourceTokenAmountAtom = atom((get) => {
+  const usdAmount = get(swapUsdAmountAtom)
+  const sourceToken = get(swapSourceTokenAtom)
+  const tokenData = get(tokenDataAtom)
+  
+  if (!usdAmount || isNaN(parseFloat(usdAmount)) || !tokenData || !sourceToken || !tokenData[sourceToken]) {
+    return '0'
+  }
+  
+  // Calculate source token amount from USD
+  const price = tokenData[sourceToken]?.price || 0
+  if (price === 0) return '0'
+  
+  return (parseFloat(usdAmount) / price).toFixed(6)
 })
 
-export const swapTargetTokenAmountAtom = atom<string>(() => {
-  // This will be calculated in the component where token data is available
-  // We keep this as a separate atom for future extensibility
-  return '0'
+export const swapTargetTokenAmountAtom = atom((get) => {
+  const usdAmount = get(swapUsdAmountAtom)
+  const targetToken = get(swapTargetTokenAtom)
+  const tokenData = get(tokenDataAtom)
+  
+  if (!usdAmount || isNaN(parseFloat(usdAmount)) || !tokenData || !targetToken || !tokenData[targetToken]) {
+    return '0'
+  }
+  
+  // Calculate target token amount from USD
+  const price = tokenData[targetToken]?.price || 0
+  if (price === 0) return '0'
+  
+  return (parseFloat(usdAmount) / price).toFixed(6)
+})
+
+// Derived atom for exchange rate
+export const swapExchangeRateAtom = atom((get) => {
+  const sourceToken = get(swapSourceTokenAtom)
+  const targetToken = get(swapTargetTokenAtom)
+  const tokenData = get(tokenDataAtom)
+  
+  if (!tokenData || !sourceToken || !targetToken || !tokenData[sourceToken] || !tokenData[targetToken]) {
+    return 0
+  }
+  
+  const sourcePrice = tokenData[sourceToken]?.price || 0
+  const targetPrice = tokenData[targetToken]?.price || 0
+  
+  if (sourcePrice === 0 || targetPrice === 0) return 0
+  
+  return sourcePrice / targetPrice
 })
 
 // Atom for swap status (transient state, not persisted)
