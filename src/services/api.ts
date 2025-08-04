@@ -27,13 +27,15 @@ console.log('✅ @funkit/api-base functions imported and ready for use')
 
 // API service functions using real @funkit/api-base
 export const apiService = {
-  // Get user unique ID using funkit API
-  async getFunkitUserInfo() {
+    // Get user unique ID using funkit API - requires real authId
+  async getFunkitUserInfo(authId?: string) {
+    const realAuthId = authId || 'demo-auth-id'
+
     try {
       console.log('🔍 Calling getUserUniqueId() from @funkit/api-base')
-      const userUniqueId = await getUserUniqueId({ 
+      const userUniqueId = await getUserUniqueId({
         apiKey: apiConfig.apiKey,
-        authId: 'demo-auth-id' // Demo value for testing
+        authId: realAuthId
       })
 
       return {
@@ -41,7 +43,8 @@ export const apiService = {
         data: {
           userUniqueId,
           message: 'Successfully retrieved user unique ID from funkit API',
-          apiFunction: 'getUserUniqueId()'
+          apiFunction: 'getUserUniqueId()',
+          authId: realAuthId
         },
         timestamp: new Date().toISOString(),
       }
@@ -53,22 +56,27 @@ export const apiService = {
         fallbackInfo: {
           message: 'Real @funkit/api-base getUserUniqueId() integration',
           apiFunction: 'getUserUniqueId()',
-          description: 'Attempts to get unique user identifier from funkit platform'
+          description: 'Requires a real authId from Funkit platform. Demo authId will fail with "User not found".',
+          usedAuthId: realAuthId,
+          note: 'To test successfully, provide a real authId from your Funkit platform account'
         },
         timestamp: new Date().toISOString(),
       }
     }
   },
 
-    // Get user wallet identities using funkit API
-  async getFunkitUserWallets() {
+        // Get user wallet identities using funkit API - requires real user data
+  async getFunkitUserWallets(authId?: string, walletAddr?: `0x${string}`) {
+    const realAuthId = authId || 'demo-auth-id'
+    const realWalletAddr = walletAddr || '0x0000000000000000000000000000000000000000' as `0x${string}`
+
     try {
       console.log('🔍 Calling getUserWalletIdentities() from @funkit/api-base')
-      const walletIdentities = await getUserWalletIdentities({ 
+      const walletIdentities = await getUserWalletIdentities({
         apiKey: apiConfig.apiKey,
-        authId: 'demo-auth-id',
-        chainId: '1', // Ethereum mainnet for demo
-        walletAddr: '0x0000000000000000000000000000000000000000' // Demo wallet address
+        authId: realAuthId,
+        chainId: '1', // Ethereum mainnet
+        walletAddr: realWalletAddr
       })
 
       return {
@@ -76,7 +84,10 @@ export const apiService = {
         data: {
           walletIdentities,
           message: 'Successfully retrieved user wallet identities from funkit API',
-          apiFunction: 'getUserWalletIdentities()'
+          apiFunction: 'getUserWalletIdentities()',
+          authId: realAuthId,
+          walletAddr: realWalletAddr,
+          chainId: '1'
         },
         timestamp: new Date().toISOString(),
       }
@@ -88,7 +99,12 @@ export const apiService = {
         fallbackInfo: {
           message: 'Real @funkit/api-base getUserWalletIdentities() integration',
           apiFunction: 'getUserWalletIdentities()',
-          description: 'Attempts to get user wallet identities from funkit platform'
+          description: 'Requires real authId and walletAddr from Funkit platform. Demo values will fail with "User not found".',
+          usedAuthId: realAuthId,
+          usedWalletAddr: realWalletAddr,
+          chainId: '1',
+          note: 'To test successfully, provide real authId and walletAddr from your Funkit platform account',
+          docs: 'https://docs.fun.xyz'
         },
         timestamp: new Date().toISOString(),
       }
@@ -129,7 +145,7 @@ export const apiService = {
   async getFunkitUserGroups() {
     try {
       console.log('🔍 Calling getGroups() from @funkit/api-base')
-      const groups = await getGroups({ 
+      const groups = await getGroups({
         apiKey: apiConfig.apiKey,
         groupIds: ['0x0000000000000000000000000000000000000001'], // Demo group IDs (hex format)
         chainId: '1' // Ethereum mainnet for demo
@@ -182,7 +198,7 @@ export const apiService = {
 
                 // Try getUserUniqueId
           try {
-            const userUniqueId = await getUserUniqueId({ 
+            const userUniqueId = await getUserUniqueId({
               apiKey: apiConfig.apiKey,
               authId: 'demo-auth-id'
             })
