@@ -93,46 +93,48 @@ export const TokenSwap = () => {
           </div>
         </div>
 
-        <div className='grid grid-cols-4 gap-2'>
-          {availableTokens.map((token) => {
-            const { isSource, isTarget, isSelected } = getTokenSelectionState(token)
+        <div className='overflow-x-auto'>
+          <div className='flex gap-2 pb-2' style={{ minWidth: 'max-content' }}>
+            {availableTokens.map((token) => {
+              const { isSource, isTarget, isSelected } = getTokenSelectionState(token)
 
-            return (
-              <button
-                key={token}
-                onClick={() => handleQuickSelect(token)}
-                className={`relative p-3 rounded-xl min-h-[44px] font-medium text-sm transition-colors flex flex-col items-center justify-center
-                  ${
-                    isSelected
-                      ? 'bg-white border-2 shadow-md'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-              >
-                {/* Token Icon */}
-                <img
-                  src={tokenData[token]?.icon || ''}
-                  alt={token}
-                  className='w-6 h-6 rounded-full mb-1'
-                  onError={(e) => handleTokenIconError(e, token, 24)}
-                />
+              return (
+                <button
+                  key={token}
+                  onClick={() => handleQuickSelect(token)}
+                  className={`relative p-3 rounded-xl min-h-[44px] min-w-[80px] font-medium text-sm transition-colors flex flex-col items-center justify-center flex-shrink-0
+                    ${
+                      isSelected
+                        ? 'bg-white border-2 shadow-md'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                >
+                  {/* Token Icon */}
+                  <img
+                    src={tokenData[token]?.icon || ''}
+                    alt={token}
+                    className='w-6 h-6 rounded-full mb-1'
+                    onError={(e) => handleTokenIconError(e, token, 24)}
+                  />
 
-                {/* Token Symbol */}
-                <span className={isSelected ? 'text-gray-800' : 'text-gray-600'}>{token}</span>
+                  {/* Token Symbol */}
+                  <span className={isSelected ? 'text-gray-800' : 'text-gray-600'}>{token}</span>
 
-                {/* Source/Target Indicator */}
-                {isSource && (
-                  <div className='absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center font-bold'>
-                    S
-                  </div>
-                )}
-                {isTarget && (
-                  <div className='absolute -top-1 -right-1 w-5 h-5 bg-green-500 text-white text-xs rounded-full flex items-center justify-center font-bold'>
-                    T
-                  </div>
-                )}
-              </button>
-            )
-          })}
+                  {/* Source/Target Indicator */}
+                  {isSource && (
+                    <div className='absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center font-bold'>
+                      S
+                    </div>
+                  )}
+                  {isTarget && (
+                    <div className='absolute -top-1 -right-1 w-5 h-5 bg-green-500 text-white text-xs rounded-full flex items-center justify-center font-bold'>
+                      T
+                    </div>
+                  )}
+                </button>
+              )
+            })}
+          </div>
         </div>
 
         <div className='text-center text-xs text-gray-500 mt-2'>
