@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { ArrowLeft } from 'lucide-react'
+import { Link } from 'wouter'
 import { apiClient as apiService, tokenService, apiConfig, isDevelopment } from '@api'
 
 function Demo() {
@@ -95,11 +97,20 @@ function Demo() {
     <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8'>
       <div className='max-w-4xl mx-auto'>
         {/* Header */}
-        <header className='text-center mb-12'>
-          <h1 className='text-4xl font-bold text-gray-900 mb-4'>React + Vite + Tailwind 4 Demo</h1>
-          <p className='text-lg text-gray-600'>
-            Modern React development stack with Headless UI and React Query
-          </p>
+        <header className='mb-12'>
+          <div className='flex items-center mb-6'>
+            <Link href='/swap'>
+              <button className='p-2 rounded-full bg-white shadow-md hover:shadow-lg hover:bg-gray-50 min-h-[44px] min-w-[44px] flex items-center justify-center transition-all duration-200 mr-4'>
+                <ArrowLeft size={20} className='text-gray-600' />
+              </button>
+            </Link>
+            <div className='flex-1 text-center'>
+              <h1 className='text-4xl font-bold text-gray-900 mb-4'>React + Vite + Tailwind 4 Demo</h1>
+              <p className='text-lg text-gray-600'>
+                Modern React development stack with Headless UI and React Query
+              </p>
+            </div>
+          </div>
         </header>
 
         {/* Counter Section */}

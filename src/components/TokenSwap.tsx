@@ -1,7 +1,9 @@
-import { ArrowDownIcon, WalletIcon } from 'lucide-react'
+import { ArrowDownIcon, WalletIcon, HelpCircle } from 'lucide-react'
+import { Link } from 'wouter'
 import { TokenSelector } from './TokenSelector'
 import { ThemeSwitcher } from './ThemeSwitcher'
 import { Tooltip } from './Tooltip'
+import { ContractInfo } from './ContractInfo'
 import {
   useTokenData,
   useSwapState,
@@ -83,6 +85,13 @@ export const TokenSwap = () => {
                 <WalletIcon size={20} className='text-neutral-400 dark:text-neutral-500' />
               </button>
             </Tooltip>
+            <Tooltip content='View demo and API examples'>
+              <Link href='/demo'>
+                <button className='p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors'>
+                  <HelpCircle size={20} className='text-neutral-600 dark:text-neutral-400' />
+                </button>
+              </Link>
+            </Tooltip>
             <ThemeSwitcher />
           </div>
         </div>
@@ -119,7 +128,7 @@ export const TokenSwap = () => {
                     ${
                       isSelected
                         ? 'bg-surface-light dark:bg-surface-dark border-2 border-primary-200 dark:border-primary-700 shadow-md'
-                        : 'bg-neutral-100 dark:bg-neutral-800 text-text-light-secondary dark:text-text-dark-secondary hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                        : 'bg-neutral-100 dark:bg-neutral-700 text-text-light-secondary dark:text-text-dark-secondary hover:bg-neutral-200 dark:hover:bg-neutral-600'
                     }`}
                 >
                   {/* Token Icon */}
@@ -159,7 +168,7 @@ export const TokenSwap = () => {
         </div>
 
         <div className='text-center text-xs text-text-light-muted dark:text-text-dark-muted mt-2'>
-          Click to select source token • Right-click to select target token
+          Click to select source token • Right-click to select target token • Click again to swap source/target
         </div>
       </div>
 
@@ -181,7 +190,7 @@ export const TokenSwap = () => {
             type='number'
             value={usdAmount}
             onChange={(e) => setUsdAmount(e.target.value)}
-            className='bg-transparent text-4xl font-bold text-center outline-none text-text-light-primary dark:text-text-dark-primary placeholder-text-light-muted dark:placeholder-text-dark-muted min-w-0 flex-1 max-w-xs'
+            className='bg-transparent text-4xl font-bold text-center outline-none text-text-light-primary dark:text-text-dark-primary placeholder-text-light-muted dark:placeholder-text-dark-muted min-w-0 flex-1 max-w-xs focus:ring-2 focus:ring-primary-500/30 dark:focus:ring-primary-400/30 rounded-lg px-2 py-1 transition-all duration-200'
             placeholder='0.00'
             step='0.01'
           />
@@ -214,6 +223,15 @@ export const TokenSwap = () => {
             disabledToken={targetToken}
             tokenData={tokenData}
             isLoading={tokensLoading}
+          />
+        </div>
+
+        {/* Contract Information */}
+        <div className='mt-2 flex justify-between items-center'>
+          <ContractInfo
+            contractAddress={tokenData[sourceToken]?.contractAddress}
+            chainId={tokenData[sourceToken]?.chainId}
+            symbol={sourceToken}
           />
         </div>
 
@@ -260,8 +278,17 @@ export const TokenSwap = () => {
             isLoading={tokensLoading}
           />
         </div>
-        <div className='mt-1 text-right text-sm text-text-light-muted dark:text-text-dark-muted'>
-          ≈ ${usdAmount}
+
+        {/* Contract Information */}
+        <div className='mt-2 flex justify-between items-center'>
+          <ContractInfo
+            contractAddress={tokenData[targetToken]?.contractAddress}
+            chainId={tokenData[targetToken]?.chainId}
+            symbol={targetToken}
+          />
+          <div className='text-sm text-text-light-muted dark:text-text-dark-muted'>
+            ≈ ${usdAmount}
+          </div>
         </div>
       </div>
 
