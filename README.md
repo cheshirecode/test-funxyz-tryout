@@ -15,7 +15,7 @@ pnpm dev
 ## 🏗️ Tech Stack Architecture
 
 ```mermaid
-graph TB
+flowchart TB
     subgraph "🎨 UI Layer"
         A[React 18 + TypeScript]
         B[Tailwind + Dark/Light Theme]
@@ -30,7 +30,7 @@ graph TB
 
     subgraph "🔌 API Layer"
         G[Real Funkit API]
-        H[@funkit/api-base]
+        H[funkit API Base]
         I[TanStack Query]
     end
 
