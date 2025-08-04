@@ -232,7 +232,7 @@ function Demo() {
               >
                 {getAllowedAssetsMutation.isPending ? 'Loading...' : 'Test Get Allowed Assets'}
               </button>
-              
+
               {getAllowedAssetsMutation.data && getAllowedAssetsMutation.data.success && (
                 <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
                   <h4 className="font-medium text-green-800">✅ Allowed Assets Success:</h4>
@@ -241,7 +241,7 @@ function Demo() {
                   </pre>
                 </div>
               )}
-              
+
               {getAllowedAssetsMutation.data && !getAllowedAssetsMutation.data.success && (
                 <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
                   <h4 className="font-medium text-red-800">❌ Allowed Assets Error:</h4>
@@ -250,7 +250,7 @@ function Demo() {
                   </p>
                 </div>
               )}
-              
+
               {getAllowedAssetsMutation.error && (
                 <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
                   <h4 className="font-medium text-red-800">Network Error:</h4>
