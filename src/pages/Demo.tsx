@@ -179,9 +179,9 @@ function Demo() {
               <p><strong>Environment:</strong> {isDevelopment ? 'Development' : 'Production'}</p>
               <p><strong>API Base URL:</strong> {apiConfig.baseUrl}</p>
               <p><strong>API Key:</strong> {apiConfig.apiKey.substring(0, 8)}...</p>
-              <p><strong>API Status:</strong> 
+              <p><strong>API Status:</strong>
                 <span className={`ml-2 px-2 py-1 rounded text-xs ${
-                  apiData?.success ? 'bg-green-100 text-green-800' : 
+                  apiData?.success ? 'bg-green-100 text-green-800' :
                   apiData ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'
                 }`}>
                   {apiData?.success ? '✅ Connected' : apiData ? '❌ Error' : '⏳ Testing...'}
@@ -249,7 +249,7 @@ function Demo() {
           {/* Comprehensive API Testing */}
           <div className="mb-6">
             <h3 className="text-lg font-medium text-gray-800 mb-4">Comprehensive API Testing</h3>
-            
+
             {/* Allowed Assets Test */}
             <div className="space-y-4 mb-6">
               <div className="p-3 bg-green-50 border border-green-200 rounded-md">
@@ -442,7 +442,7 @@ function Demo() {
         {/* Token Swap Integration Test */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">Token Swap Integration Test</h2>
-          
+
           <div className="space-y-4">
             <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-md">
               <p className="text-indigo-700 font-medium">🔄 Test Token Swap with Real API Data</p>

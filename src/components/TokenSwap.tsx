@@ -94,42 +94,96 @@ export const TokenSwap = () => {
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Token Price Explorer</h1>
         <div className="flex items-center justify-between">
           <span className="text-sm text-gray-600">Swap Tokens</span>
-          <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 min-h-[44px] min-w-[44px] flex items-center justify-center">
-            <WalletIcon size={20} className="text-gray-600" />
+          <button className="p-2 rounded-full bg-gray-100 min-h-[44px] min-w-[44px] flex items-center justify-center opacity-50 cursor-not-allowed">
+            <WalletIcon size={20} className="text-gray-400" />
           </button>
         </div>
       </div>
 
-      {/* Token Selector Buttons - Horizontal row at top as per wireframe */}
-      <div className="grid grid-cols-4 gap-2 mb-8">
-        {availableTokens.map((token) => (
-          <button
-            key={token}
-            onClick={() => {
-              if (sourceToken === token) {
-                setSourceToken(targetToken)
-                setTargetToken(token)
-              } else if (targetToken === token) {
-                setTargetToken(sourceToken)
-                setSourceToken(token)
-              } else {
-                setSourceToken(token)
-              }
-            }}
-            className={`p-3 rounded-xl min-h-[44px] font-medium text-sm transition-colors
-              ${sourceToken === token || targetToken === token
-                ? 'bg-primary-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-          >
-            {token}
-          </button>
-        ))}
+      {/* Quick Select Token Buttons */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-semibold text-gray-800">Quick Select</h3>
+          <div className="flex items-center space-x-2 text-xs text-gray-500">
+            <span className="flex items-center">
+              <div className="w-2 h-2 bg-blue-500 rounded-full mr-1"></div>
+              Source
+            </span>
+            <span className="flex items-center">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
+              Target
+            </span>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-4 gap-2">
+          {availableTokens.map((token) => {
+            const isSource = sourceToken === token
+            const isTarget = targetToken === token
+            const isSelected = isSource || isTarget
+            
+            return (
+              <button
+                key={token}
+                onClick={() => {
+                  if (isSource) {
+                    setSourceToken(targetToken)
+                    setTargetToken(token)
+                  } else if (isTarget) {
+                    setTargetToken(sourceToken)
+                    setSourceToken(token)
+                  } else {
+                    setSourceToken(token)
+                  }
+                }}
+                className={`relative p-3 rounded-xl min-h-[44px] font-medium text-sm transition-colors flex flex-col items-center justify-center
+                  ${isSelected
+                    ? 'bg-white border-2 shadow-md'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              >
+                {/* Token Icon */}
+                <img
+                  src={safeTokenData[token]?.icon || ''}
+                  alt={token}
+                  className="w-6 h-6 rounded-full mb-1"
+                  onError={(e) => {
+                    e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Ctext x='12' y='16' text-anchor='middle' font-size='8'%3E${token.charAt(0)}%3C/text%3E%3C/svg%3E`
+                  }}
+                />
+                
+                {/* Token Symbol */}
+                <span className={isSelected ? 'text-gray-800' : 'text-gray-600'}>
+                  {token}
+                </span>
+                
+                {/* Source/Target Indicator */}
+                {isSource && (
+                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                    S
+                  </div>
+                )}
+                {isTarget && (
+                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                    T
+                  </div>
+                )}
+              </button>
+            )
+          })}
+        </div>
+        
+        <div className="text-center text-xs text-gray-500 mt-2">
+          Click to select source token • Right-click to select target token
+        </div>
       </div>
 
       {/* Source Token Section - FROM */}
       <div className="p-4 bg-gray-50 rounded-xl mb-2">
         <div className="flex justify-between mb-2">
-          <span className="text-sm text-gray-500">From</span>
+          <div className="flex items-center">
+            <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+            <span className="text-sm font-medium text-blue-600">From</span>
+          </div>
           <span className={`text-sm ${hasInsufficientBalance() ? 'text-error-500' : 'text-gray-500'}`}>
             Balance: {tokensLoading ? 'Loading...' : `${safeTokenData[sourceToken]?.balance || 0} ${sourceToken}`}
           </span>
@@ -184,7 +238,10 @@ export const TokenSwap = () => {
               {/* Target Token Section - TO */}
         <div className="p-4 bg-gray-50 rounded-xl mt-2 mb-6">
           <div className="flex justify-between mb-2">
-            <span className="text-sm text-gray-500">To</span>
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span className="text-sm font-medium text-green-600">To</span>
+            </div>
             <span className="text-sm text-gray-500">
               Balance: {tokensLoading ? 'Loading...' : `${safeTokenData[targetToken]?.balance || 0} ${targetToken}`}
             </span>
