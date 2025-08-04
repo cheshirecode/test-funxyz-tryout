@@ -16,6 +16,51 @@ Object.defineProperty(window, 'import.meta', {
   },
 })
 
+// Mock localStorage
+const localStorageMock = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+}
+
+Object.defineProperty(global, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+})
+
+// Mock window.matchMedia
+const matchMediaMock = vi.fn().mockImplementation((query) => ({
+  matches: false,
+  media: query,
+  onchange: null,
+  addListener: vi.fn(),
+  removeListener: vi.fn(),
+  addEventListener: vi.fn(),
+  removeEventListener: vi.fn(),
+  dispatchEvent: vi.fn(),
+}))
+
+Object.defineProperty(window, 'matchMedia', {
+  value: matchMediaMock,
+  writable: true,
+})
+
+// Mock document.documentElement for theme application
+const documentClassListMock = {
+  add: vi.fn(),
+  remove: vi.fn(),
+  contains: vi.fn(),
+  toggle: vi.fn(),
+}
+
+Object.defineProperty(document, 'documentElement', {
+  value: {
+    classList: documentClassListMock,
+  },
+  writable: true,
+})
+
 // Mock console methods to avoid noise in tests
 const originalConsoleError = console.error
 const originalConsoleWarn = console.warn

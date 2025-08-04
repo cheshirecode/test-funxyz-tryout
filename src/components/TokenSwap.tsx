@@ -1,5 +1,7 @@
 import { ArrowDownIcon, WalletIcon } from 'lucide-react'
 import { TokenSelector } from './TokenSelector'
+import { ThemeSwitcher } from './ThemeSwitcher'
+import { Tooltip } from './Tooltip'
 import {
   useTokenData,
   useSwapState,
@@ -65,29 +67,40 @@ export const TokenSwap = () => {
   )
 
   return (
-    <div className='w-full max-w-md mx-auto p-6 bg-white rounded-2xl shadow-lg'>
+    <div className='w-full max-w-md mx-auto p-6 bg-surface-light dark:bg-surface-dark rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700'>
       {/* Header - Token Price Explorer as per wireframe */}
       <div className='text-center mb-6'>
-        <h1 className='text-2xl font-bold text-gray-900 mb-2'>Token Price Explorer</h1>
+        <h1 className='text-2xl font-bold text-text-light-primary dark:text-text-dark-primary mb-2'>
+          Token Price Explorer
+        </h1>
         <div className='flex items-center justify-between'>
-          <span className='text-sm text-gray-600'>Swap Tokens</span>
-          <button className='p-2 rounded-full bg-gray-100 min-h-[44px] min-w-[44px] flex items-center justify-center opacity-50 cursor-not-allowed'>
-            <WalletIcon size={20} className='text-gray-400' />
-          </button>
+          <span className='text-sm text-text-light-secondary dark:text-text-dark-secondary'>
+            Swap Tokens
+          </span>
+          <div className='flex items-center gap-2'>
+            <Tooltip content='incoming funkit wallet integration'>
+              <button className='p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 min-h-[44px] min-w-[44px] flex items-center justify-center opacity-50 cursor-not-allowed'>
+                <WalletIcon size={20} className='text-neutral-400 dark:text-neutral-500' />
+              </button>
+            </Tooltip>
+            <ThemeSwitcher />
+          </div>
         </div>
       </div>
 
       {/* Quick Select Token Buttons */}
       <div className='mb-6'>
         <div className='flex items-center justify-between mb-3'>
-          <h3 className='text-lg font-semibold text-gray-800'>Quick Select</h3>
-          <div className='flex items-center space-x-2 text-xs text-gray-500'>
+          <h3 className='text-lg font-semibold text-text-light-primary dark:text-text-dark-primary'>
+            Quick Select
+          </h3>
+          <div className='flex items-center space-x-2 text-xs text-text-light-muted dark:text-text-dark-muted'>
             <span className='flex items-center'>
-              <div className='w-2 h-2 bg-blue-500 rounded-full mr-1'></div>
+              <div className='w-2 h-2 bg-primary-500 rounded-full mr-1'></div>
               Source
             </span>
             <span className='flex items-center'>
-              <div className='w-2 h-2 bg-green-500 rounded-full mr-1'></div>
+              <div className='w-2 h-2 bg-success-500 rounded-full mr-1'></div>
               Target
             </span>
           </div>
@@ -105,8 +118,8 @@ export const TokenSwap = () => {
                   className={`relative p-3 rounded-xl min-h-[44px] min-w-[80px] font-medium text-sm transition-colors flex flex-col items-center justify-center flex-shrink-0
                     ${
                       isSelected
-                        ? 'bg-white border-2 shadow-md'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-surface-light dark:bg-surface-dark border-2 border-primary-200 dark:border-primary-700 shadow-md'
+                        : 'bg-neutral-100 dark:bg-neutral-800 text-text-light-secondary dark:text-text-dark-secondary hover:bg-neutral-200 dark:hover:bg-neutral-700'
                     }`}
                 >
                   {/* Token Icon */}
@@ -118,16 +131,24 @@ export const TokenSwap = () => {
                   />
 
                   {/* Token Symbol */}
-                  <span className={isSelected ? 'text-gray-800' : 'text-gray-600'}>{token}</span>
+                  <span
+                    className={
+                      isSelected
+                        ? 'text-text-light-primary dark:text-text-dark-primary'
+                        : 'text-text-light-secondary dark:text-text-dark-secondary'
+                    }
+                  >
+                    {token}
+                  </span>
 
                   {/* Source/Target Indicator */}
                   {isSource && (
-                    <div className='absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center font-bold'>
+                    <div className='absolute -top-1 -right-1 w-5 h-5 bg-primary-500 text-white text-xs rounded-full flex items-center justify-center font-bold'>
                       S
                     </div>
                   )}
                   {isTarget && (
-                    <div className='absolute -top-1 -right-1 w-5 h-5 bg-green-500 text-white text-xs rounded-full flex items-center justify-center font-bold'>
+                    <div className='absolute -top-1 -right-1 w-5 h-5 bg-success-500 text-white text-xs rounded-full flex items-center justify-center font-bold'>
                       T
                     </div>
                   )}
@@ -137,17 +158,42 @@ export const TokenSwap = () => {
           </div>
         </div>
 
-        <div className='text-center text-xs text-gray-500 mt-2'>
+        <div className='text-center text-xs text-text-light-muted dark:text-text-dark-muted mt-2'>
           Click to select source token • Right-click to select target token
         </div>
       </div>
 
+      {/* USD Amount Section - Prominent placement */}
+      <div className='p-6 bg-surface-light dark:bg-surface-dark rounded-xl mb-6 border border-neutral-200 dark:border-neutral-700 shadow-sm'>
+        <div className='text-center mb-4'>
+          <h3 className='text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-2'>
+            Enter Amount
+          </h3>
+          <div className='text-sm text-text-light-muted dark:text-text-dark-muted'>
+            Specify the USD value to swap
+          </div>
+        </div>
+        <div className='flex items-center justify-center'>
+          <span className='text-2xl font-medium text-text-light-muted dark:text-text-dark-muted mr-3'>
+            $
+          </span>
+          <input
+            type='number'
+            value={usdAmount}
+            onChange={(e) => setUsdAmount(e.target.value)}
+            className='bg-transparent text-4xl font-bold text-center outline-none text-text-light-primary dark:text-text-dark-primary placeholder-text-light-muted dark:placeholder-text-dark-muted min-w-0 flex-1 max-w-xs'
+            placeholder='0.00'
+            step='0.01'
+          />
+        </div>
+      </div>
+
       {/* Source Token Section - FROM */}
-      <div className='p-4 bg-gray-50 rounded-xl mb-2'>
+      <div className='p-4 bg-surface-light-secondary dark:bg-surface-dark-secondary rounded-xl mb-2 border border-neutral-200 dark:border-neutral-700'>
         <div className='flex justify-between mb-2'>
           <div className='flex items-center'>
-            <div className='w-2 h-2 bg-blue-500 rounded-full mr-2'></div>
-            <span className='text-sm font-medium text-blue-600'>From</span>
+            <div className='w-2 h-2 bg-primary-500 rounded-full mr-2'></div>
+            <span className='text-sm font-medium text-primary-600 dark:text-primary-400'>From</span>
           </div>
           <span
             className={`text-sm ${getBalanceTextStyle(sourceTokenAmount, sourceToken, tokenData)}`}
@@ -157,24 +203,9 @@ export const TokenSwap = () => {
           </span>
         </div>
 
-        {/* USD Input Field */}
-        <div className='mb-3'>
-          <div className='flex items-center'>
-            <span className='text-sm text-gray-500 mr-2'>USD Amount</span>
-            <input
-              type='number'
-              value={usdAmount}
-              onChange={(e) => setUsdAmount(e.target.value)}
-              className='w-full bg-transparent text-token-amount outline-none text-gray-900'
-              placeholder='0.00'
-              step='0.01'
-            />
-          </div>
-        </div>
-
         {/* Source Token Amount Display */}
         <div className='flex items-center'>
-          <div className='w-full bg-transparent text-token-amount outline-none text-gray-900'>
+          <div className='w-full bg-transparent text-token-amount outline-none text-text-light-primary dark:text-text-dark-primary'>
             {sourceTokenAmount}
           </div>
           <TokenSelector
@@ -196,26 +227,29 @@ export const TokenSwap = () => {
       <div className='flex justify-center -my-3 relative z-10'>
         <button
           onClick={swapTokenPositions}
-          className='p-3 rounded-full bg-white border-2 border-gray-200 hover:border-primary-500 hover:bg-primary-50 min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors'
+          className='p-3 rounded-full bg-surface-light dark:bg-surface-dark border-2 border-neutral-200 dark:border-neutral-700 hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors'
         >
-          <ArrowDownIcon size={20} className='text-gray-600' />
+          <ArrowDownIcon
+            size={20}
+            className='text-text-light-secondary dark:text-text-dark-secondary'
+          />
         </button>
       </div>
 
       {/* Target Token Section - TO */}
-      <div className='p-4 bg-gray-50 rounded-xl mt-2 mb-6'>
+      <div className='p-4 bg-surface-light-secondary dark:bg-surface-dark-secondary rounded-xl mt-2 mb-6 border border-neutral-200 dark:border-neutral-700'>
         <div className='flex justify-between mb-2'>
           <div className='flex items-center'>
-            <div className='w-2 h-2 bg-green-500 rounded-full mr-2'></div>
-            <span className='text-sm font-medium text-green-600'>To</span>
+            <div className='w-2 h-2 bg-success-500 rounded-full mr-2'></div>
+            <span className='text-sm font-medium text-success-600 dark:text-success-400'>To</span>
           </div>
-          <span className='text-sm text-gray-500'>
+          <span className='text-sm text-text-light-muted dark:text-text-dark-muted'>
             Balance:{' '}
             {formatTokenBalance(tokenData[targetToken]?.balance || 0, targetToken, tokensLoading)}
           </span>
         </div>
         <div className='flex items-center'>
-          <div className='w-full bg-transparent text-token-amount outline-none text-gray-900'>
+          <div className='w-full bg-transparent text-token-amount outline-none text-text-light-primary dark:text-text-dark-primary'>
             {targetTokenAmount}
           </div>
           <TokenSelector
@@ -226,11 +260,13 @@ export const TokenSwap = () => {
             isLoading={tokensLoading}
           />
         </div>
-        <div className='mt-1 text-right text-sm text-gray-500'>≈ ${usdAmount}</div>
+        <div className='mt-1 text-right text-sm text-text-light-muted dark:text-text-dark-muted'>
+          ≈ ${usdAmount}
+        </div>
       </div>
 
       {/* Exchange Rate */}
-      <div className='flex justify-between text-sm text-gray-500 mb-6'>
+      <div className='flex justify-between text-sm text-text-light-muted dark:text-text-dark-muted mb-6'>
         <span>Exchange Rate</span>
         <span>
           {tokensLoading ? (
