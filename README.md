@@ -60,7 +60,7 @@ flowchart TB
     class J,K build
 ```
 
-## 🎯 Cool Technical Decisions
+## 🎯 Main technical Decisions
 
 ### 🔥 **Real API Integration (No Mocks)**
 
