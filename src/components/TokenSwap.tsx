@@ -10,6 +10,9 @@ import {
   useSwapState,
   useSwapExecution,
   useTokenSelection,
+  useTokenPrice,
+  useGasPrice,
+  useSwapRate,
 } from '@hooks'
 import {
   getSwapButtonState,
@@ -38,12 +41,48 @@ export const TokenSwap = () => {
     swapTokenPositions,
   } = useSwapState()
 
-  // Connect React Query token data to Jotai atom
+  // Real-time pricing and gas estimation - declare hooks first
+  const { data: sourceTokenPrice, isLoading: sourcePriceLoading } = useTokenPrice('1', sourceToken)
+  const { data: targetTokenPrice, isLoading: targetPriceLoading } = useTokenPrice('1', targetToken)
+  const { data: gasPrice, isLoading: gasPriceLoading } = useGasPrice('1')
+
+  // Integrate token metadata and real-time pricing data into token data atom
   React.useEffect(() => {
-    if (tokenData) {
-      setTokenData(tokenData)
+    const baseTokenData = tokenData || {}
+    const updatedTokenData = { ...baseTokenData }
+
+    // Add source token pricing data
+    if (sourceTokenPrice?.data) {
+      updatedTokenData[sourceToken] = {
+        ...baseTokenData[sourceToken],
+        symbol: sourceToken,
+        price: sourceTokenPrice.data.priceUsd,
+        priceUsd: sourceTokenPrice.data.priceUsd,
+        decimals: sourceTokenPrice.data.decimals || 18,
+        name: sourceTokenPrice.data.name || sourceToken,
+      }
     }
-  }, [tokenData, setTokenData])
+
+    // Add target token pricing data  
+    if (targetTokenPrice?.data) {
+      updatedTokenData[targetToken] = {
+        ...baseTokenData[targetToken],
+        symbol: targetToken,
+        price: targetTokenPrice.data.priceUsd,
+        priceUsd: targetTokenPrice.data.priceUsd,
+        decimals: targetTokenPrice.data.decimals || 18,
+        name: targetTokenPrice.data.name || targetToken,
+      }
+    }
+
+    // Only update if we have pricing data for at least one token
+    if (sourceTokenPrice?.data || targetTokenPrice?.data) {
+      setTokenData(updatedTokenData)
+    }
+  }, [sourceTokenPrice, targetTokenPrice, sourceToken, targetToken, tokenData, setTokenData])
+  const { data: realSwapRate, isLoading: swapRateLoading } = useSwapRate(
+    '1', sourceToken, '1', targetToken, usdAmount || '100'
+  )
 
   const { executeSwap, canExecuteSwap } = useSwapExecution({
     usdAmount,
@@ -297,17 +336,70 @@ export const TokenSwap = () => {
       </div>
 
       {/* Exchange Rate */}
-      <div className='flex justify-between text-sm text-text-light-muted dark:text-text-dark-muted mb-6'>
+      <div className='flex justify-between text-sm text-text-light-muted dark:text-text-dark-muted mb-3'>
         <span>Exchange Rate</span>
         <span>
-          {tokensLoading ? (
+          {tokensLoading || swapRateLoading ? (
             'Loading...'
+          ) : realSwapRate?.success ? (
+            <>
+              1 {sourceToken} ≈ {realSwapRate.data.exchangeRate.toFixed(6)} {targetToken}
+              <span className='text-xs text-green-600 ml-2'>• Live</span>
+            </>
           ) : (
             <>
               1 {sourceToken} ≈ {exchangeRate.toFixed(6)} {targetToken}
+              <span className='text-xs text-yellow-600 ml-2'>• Estimated</span>
             </>
           )}
         </span>
+      </div>
+
+      {/* Real-time Pricing Information */}
+      <div className='space-y-2 mb-4'>
+        {/* Token Prices */}
+        <div className='flex justify-between text-xs text-text-light-muted dark:text-text-dark-muted'>
+          <span>{sourceToken} Price</span>
+          <span>
+            {sourcePriceLoading ? (
+              'Loading...'
+            ) : sourceTokenPrice?.success ? (
+              <>${sourceTokenPrice.data.priceUsd.toFixed(2)}</>
+            ) : (
+              'Price unavailable'
+            )}
+          </span>
+        </div>
+        <div className='flex justify-between text-xs text-text-light-muted dark:text-text-dark-muted'>
+          <span>{targetToken} Price</span>
+          <span>
+            {targetPriceLoading ? (
+              'Loading...'
+            ) : targetTokenPrice?.success ? (
+              <>${targetTokenPrice.data.priceUsd.toFixed(2)}</>
+            ) : (
+              'Price unavailable'
+            )}
+          </span>
+        </div>
+
+        {/* Gas Estimation */}
+        <div className='flex justify-between text-xs text-text-light-muted dark:text-text-dark-muted'>
+          <span>Estimated Gas Fee</span>
+          <span>
+            {gasPriceLoading ? (
+              'Loading...'
+            ) : gasPrice?.success ? (
+              <Tooltip content={`Gas Price: ${gasPrice.data.gasPriceGwei.toFixed(2)} Gwei | Limit: ~150,000`}>
+                <span className='cursor-help border-b border-dotted'>
+                  ~${(gasPrice.data.estimatedCosts.tokenSwap.costEth * 3500).toFixed(2)} ({gasPrice.data.estimatedCosts.tokenSwap.costEth.toFixed(6)} ETH)
+                </span>
+              </Tooltip>
+            ) : (
+              'Gas unavailable'
+            )}
+          </span>
+        </div>
       </div>
 
       {/* Swap Button - Prominent, elevated design with proper states */}

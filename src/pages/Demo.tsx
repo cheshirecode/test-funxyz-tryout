@@ -2,12 +2,10 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'wouter'
-import { apiClient as apiService, enhancedApiService, tokenService, apiConfig, isDevelopment } from '@api'
+import { apiClient as apiService, enhancedApiService, pricingService, tokenService, apiConfig, isDevelopment } from '@api'
 
 function Demo() {
-  const [count, setCount] = useState(0)
   const [demoUsdAmount, setDemoUsdAmount] = useState('100')
-  const [activeTab, setActiveTab] = useState(0)
   const queryClient = useQueryClient()
 
   // Demo token calculation variables
@@ -84,14 +82,7 @@ function Demo() {
     userBalancesMutation.mutate()
   }
 
-  const tabs = [
-    { name: 'Dashboard', content: 'Welcome to the dashboard!' },
-    { name: 'Settings', content: 'Configure your application settings here.' },
-    {
-      name: 'About',
-      content: 'Built with React 18, Vite, Tailwind CSS, and React Query.',
-    },
-  ]
+
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8'>
@@ -113,27 +104,7 @@ function Demo() {
           </div>
         </header>
 
-        {/* Counter Section */}
-        <div className='bg-white rounded-lg shadow-lg p-8 mb-8'>
-          <h2 className='text-2xl font-semibold text-gray-800 mb-4'>Counter Demo</h2>
-          <div className='flex items-center justify-center space-x-4'>
-            <button
-              onClick={() => setCount(count - 1)}
-              className='px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors'
-            >
-              -
-            </button>
-            <span className='text-3xl font-bold text-gray-900 min-w-[3rem] text-center'>
-              {count}
-            </span>
-            <button
-              onClick={() => setCount(count + 1)}
-              className='px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors'
-            >
-              +
-            </button>
-          </div>
-        </div>
+
 
         {/* React Query Demo */}
         <div className='bg-white rounded-lg shadow-lg p-8 mb-8'>
@@ -607,34 +578,19 @@ function Demo() {
           <EnhancedAPIDemo />
         </div>
 
-        {/* Simple Tabs Demo */}
-        <div className='bg-white rounded-lg shadow-lg p-8'>
-          <h2 className='text-2xl font-semibold font-header text-gray-800 mb-6'>Simple Tabs Demo</h2>
+        {/* Real-time Pricing & Gas Demo */}
+        <div className='bg-white rounded-lg shadow-lg p-8 mb-8'>
+          <h2 className='text-2xl font-semibold font-header text-gray-800 mb-6'>
+            Real-time Pricing & Gas Estimation
+          </h2>
+          <p className='text-gray-600 mb-6'>
+            Live demonstration of getAssetPriceInfo and getUserOpGasPrice integration for real token pricing and gas costs.
+          </p>
 
-          {/* Tab Navigation */}
-          <div className='flex space-x-1 rounded-lg bg-blue-900/20 p-1'>
-            {tabs.map((tab, index) => (
-              <button
-                key={tab.name}
-                onClick={() => setActiveTab(index)}
-                className={`w-full rounded-lg py-2.5 text-sm font-medium leading-5 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                  activeTab === index
-                    ? 'bg-white text-blue-700 shadow'
-                    : 'text-blue-700 hover:bg-white/20'
-                }`}
-              >
-                {tab.name}
-              </button>
-            ))}
-          </div>
-
-          {/* Tab Content */}
-          <div className='mt-6'>
-            <div className='rounded-lg bg-gray-50 p-6'>
-              <p className='text-gray-700'>{tabs[activeTab].content}</p>
-            </div>
-          </div>
+          <PricingDemo />
         </div>
+
+
       </div>
     </div>
   )
@@ -837,6 +793,238 @@ function EnhancedAPIDemo() {
               <li>• On/off ramp quotes</li>
               <li>• Fiat limit checks</li>
             </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Real-time Pricing Demo Component
+function PricingDemo() {
+  const [chainId, setChainId] = useState('1')
+
+  // Pricing Demo Query
+  const pricingDemoQuery = useQuery({
+    queryKey: ['pricing-demo', chainId],
+    queryFn: () => pricingService.getPricingDemo(chainId),
+    enabled: false, // Only run when manually triggered
+  })
+
+  // Individual token price queries for live demonstration
+  const usdcPriceQuery = useQuery({
+    queryKey: ['usdc-price', chainId],
+    queryFn: () => pricingService.getTokenBySymbol(chainId, 'USDC'),
+    enabled: false,
+  })
+
+  const ethPriceQuery = useQuery({
+    queryKey: ['eth-price', chainId],
+    queryFn: () => pricingService.getTokenBySymbol(chainId, 'ETH'),
+    enabled: false,
+  })
+
+  const gasQuery = useQuery({
+    queryKey: ['gas-prices', chainId],
+    queryFn: () => pricingService.getGasPrice(chainId),
+    enabled: false,
+  })
+
+  const swapRateQuery = useQuery({
+    queryKey: ['swap-rate-demo', chainId],
+    queryFn: () => pricingService.getSwapRate(chainId, 'USDC', chainId, 'ETH', '1000'),
+    enabled: false,
+  })
+
+  return (
+    <div className='space-y-6'>
+      {/* Configuration */}
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg'>
+        <div>
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
+            Chain ID
+          </label>
+          <select
+            value={chainId}
+            onChange={(e) => setChainId(e.target.value)}
+            className='w-full px-3 py-2 border border-gray-300 rounded-md text-sm'
+          >
+            <option value='1'>Ethereum (1)</option>
+            <option value='137'>Polygon (137)</option>
+            <option value='8453'>Base (8453)</option>
+          </select>
+        </div>
+        <div className='flex items-end'>
+          <div className='text-sm text-gray-600'>
+            <p><strong>Functions demonstrated:</strong></p>
+            <p>• getAssetPriceInfo() - Real token prices</p>
+            <p>• getUserOpGasPrice() - Live gas estimation</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className='flex flex-wrap gap-2'>
+        <button
+          onClick={() => pricingDemoQuery.refetch()}
+          disabled={pricingDemoQuery.isFetching}
+          className='px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 text-sm'
+        >
+          {pricingDemoQuery.isFetching ? 'Running...' : 'Run Full Demo'}
+        </button>
+        <button
+          onClick={() => usdcPriceQuery.refetch()}
+          disabled={usdcPriceQuery.isFetching}
+          className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 text-sm'
+        >
+          {usdcPriceQuery.isFetching ? 'Loading...' : 'Get USDC Price'}
+        </button>
+        <button
+          onClick={() => ethPriceQuery.refetch()}
+          disabled={ethPriceQuery.isFetching}
+          className='px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 text-sm'
+        >
+          {ethPriceQuery.isFetching ? 'Loading...' : 'Get ETH Price'}
+        </button>
+        <button
+          onClick={() => gasQuery.refetch()}
+          disabled={gasQuery.isFetching}
+          className='px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 disabled:opacity-50 text-sm'
+        >
+          {gasQuery.isFetching ? 'Loading...' : 'Get Gas Prices'}
+        </button>
+        <button
+          onClick={() => swapRateQuery.refetch()}
+          disabled={swapRateQuery.isFetching}
+          className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 text-sm'
+        >
+          {swapRateQuery.isFetching ? 'Loading...' : 'Calculate Swap Rate'}
+        </button>
+      </div>
+
+      {/* Results Display */}
+      <div className='space-y-4'>
+        {/* Full Demo Results */}
+        {pricingDemoQuery.data && (
+          <div className='p-4 bg-green-50 rounded-lg'>
+            <h4 className='font-medium text-green-800 mb-3'>🚀 Complete Pricing Demo Results</h4>
+            <pre className='text-xs bg-white p-3 rounded border overflow-auto max-h-96'>
+              {JSON.stringify(pricingDemoQuery.data, null, 2)}
+            </pre>
+          </div>
+        )}
+
+        {/* Individual Price Results */}
+        {usdcPriceQuery.data && (
+          <div className='p-4 bg-blue-50 rounded-lg'>
+            <h4 className='font-medium text-blue-800 mb-3'>💰 USDC Price Information</h4>
+            {usdcPriceQuery.data.success ? (
+              <div className='grid grid-cols-2 gap-4 text-sm'>
+                <div>
+                  <p><strong>Price:</strong> ${usdcPriceQuery.data.data.priceUsd.toFixed(4)}</p>
+                  <p><strong>Symbol:</strong> {usdcPriceQuery.data.data.symbol}</p>
+                  <p><strong>Name:</strong> {usdcPriceQuery.data.data.name}</p>
+                </div>
+                <div>
+                  <p><strong>Chain ID:</strong> {usdcPriceQuery.data.data.chainId}</p>
+                  <p><strong>Decimals:</strong> {usdcPriceQuery.data.data.decimals}</p>
+                  <p><strong>Address:</strong> {usdcPriceQuery.data.data.tokenAddress?.substring(0, 10)}...</p>
+                </div>
+              </div>
+            ) : (
+              <p className='text-red-600'>{usdcPriceQuery.data.error}</p>
+            )}
+          </div>
+        )}
+
+        {ethPriceQuery.data && (
+          <div className='p-4 bg-purple-50 rounded-lg'>
+            <h4 className='font-medium text-purple-800 mb-3'>⚡ ETH Price Information</h4>
+            {ethPriceQuery.data.success ? (
+              <div className='grid grid-cols-2 gap-4 text-sm'>
+                <div>
+                  <p><strong>Price:</strong> ${ethPriceQuery.data.data.priceUsd.toFixed(2)}</p>
+                  <p><strong>Symbol:</strong> {ethPriceQuery.data.data.symbol}</p>
+                  <p><strong>Name:</strong> {ethPriceQuery.data.data.name}</p>
+                </div>
+                <div>
+                  <p><strong>Chain ID:</strong> {ethPriceQuery.data.data.chainId}</p>
+                  <p><strong>Decimals:</strong> {ethPriceQuery.data.data.decimals}</p>
+                  <p><strong>Address:</strong> {ethPriceQuery.data.data.tokenAddress?.substring(0, 10)}...</p>
+                </div>
+              </div>
+            ) : (
+              <p className='text-red-600'>{ethPriceQuery.data.error}</p>
+            )}
+          </div>
+        )}
+
+        {gasQuery.data && (
+          <div className='p-4 bg-orange-50 rounded-lg'>
+            <h4 className='font-medium text-orange-800 mb-3'>⛽ Gas Price Information</h4>
+            {gasQuery.data.success ? (
+              <div className='grid grid-cols-2 gap-4 text-sm'>
+                <div>
+                  <p><strong>Gas Price:</strong> {gasQuery.data.data.gasPriceGwei.toFixed(2)} Gwei</p>
+                  <p><strong>Simple Transfer:</strong> ${(gasQuery.data.data.estimatedCosts.simpleTransfer.costEth * 3500).toFixed(3)}</p>
+                  <p><strong>Token Swap:</strong> ${(gasQuery.data.data.estimatedCosts.tokenSwap.costEth * 3500).toFixed(3)}</p>
+                </div>
+                <div>
+                  <p><strong>Chain ID:</strong> {gasQuery.data.data.chainId}</p>
+                  <p><strong>Simple Transfer:</strong> {gasQuery.data.data.estimatedCosts.simpleTransfer.costEth.toFixed(6)} ETH</p>
+                  <p><strong>Token Swap:</strong> {gasQuery.data.data.estimatedCosts.tokenSwap.costEth.toFixed(6)} ETH</p>
+                </div>
+              </div>
+            ) : (
+              <p className='text-red-600'>{gasQuery.data.error}</p>
+            )}
+          </div>
+        )}
+
+        {swapRateQuery.data && (
+          <div className='p-4 bg-red-50 rounded-lg'>
+            <h4 className='font-medium text-red-800 mb-3'>🔄 Swap Rate Calculation</h4>
+            {swapRateQuery.data.success ? (
+              <div className='grid grid-cols-2 gap-4 text-sm'>
+                <div>
+                  <p><strong>Input:</strong> 1000 USDC</p>
+                  <p><strong>Output:</strong> {swapRateQuery.data.data.outputAmount.toFixed(6)} ETH</p>
+                  <p><strong>Exchange Rate:</strong> 1 USDC = {swapRateQuery.data.data.exchangeRate.toFixed(6)} ETH</p>
+                </div>
+                <div>
+                  <p><strong>USDC Price:</strong> ${swapRateQuery.data.data.fromPrice.toFixed(4)}</p>
+                  <p><strong>ETH Price:</strong> ${swapRateQuery.data.data.toPrice.toFixed(2)}</p>
+                  <p><strong>Route:</strong> {swapRateQuery.data.data.route}</p>
+                </div>
+              </div>
+            ) : (
+              <p className='text-red-600'>{swapRateQuery.data.error}</p>
+            )}
+          </div>
+        )}
+
+        {/* Information Panel */}
+        <div className='p-4 bg-blue-50 rounded-lg'>
+          <h4 className='font-medium text-blue-800 mb-3'>📘 Integration Benefits</h4>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
+            <div>
+              <h5 className='font-medium text-gray-800 mb-2'>Real-time Data</h5>
+              <ul className='text-gray-600 space-y-1'>
+                <li>• Live token prices from market data</li>
+                <li>• Current gas prices for accurate costs</li>
+                <li>• Real exchange rate calculations</li>
+                <li>• Automatic price updates</li>
+              </ul>
+            </div>
+            <div>
+              <h5 className='font-medium text-gray-800 mb-2'>Enhanced UX</h5>
+              <ul className='text-gray-600 space-y-1'>
+                <li>• Accurate transaction cost estimates</li>
+                <li>• Real market price display</li>
+                <li>• Live vs estimated indicators</li>
+                <li>• Comprehensive transaction info</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
