@@ -13,7 +13,7 @@ export function createDerivedAtom<T, U extends readonly unknown[]>(
   compute: (...values: U) => T
 ): Atom<T> {
   return atom((get) => {
-    const values = dependencies.map(dep => get(dep)) as unknown as U
+    const values = dependencies.map((dep) => get(dep)) as unknown as U
     return compute(...values)
   })
 }
@@ -42,12 +42,9 @@ export function createResetAtom<T>(
   targetAtom: WritableAtom<T, [T], void>,
   initialValue: T
 ): WritableAtom<null, [], void> {
-  return atom(
-    null,
-    (_get, set) => {
-      set(targetAtom, initialValue)
-    }
-  )
+  return atom(null, (_get, set) => {
+    set(targetAtom, initialValue)
+  })
 }
 
 // Utility for creating localStorage keys with consistent prefixing

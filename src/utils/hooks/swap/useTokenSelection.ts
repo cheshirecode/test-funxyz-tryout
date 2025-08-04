@@ -26,46 +26,51 @@ export function useTokenSelection({
   sourceToken,
   targetToken,
   setSourceToken,
-  setTargetToken
+  setTargetToken,
 }: UseTokenSelectionProps): UseTokenSelectionReturn {
-
   const availableTokens = getAvailableTokens()
 
   // Handle quick select token logic
-  const handleQuickSelect = useCallback((token: string) => {
-    const isSource = sourceToken === token
-    const isTarget = targetToken === token
+  const handleQuickSelect = useCallback(
+    (token: string) => {
+      const isSource = sourceToken === token
+      const isTarget = targetToken === token
 
-    if (isSource) {
-      // If clicking source token, swap the positions
-      setSourceToken(targetToken)
-      setTargetToken(token)
-    } else if (isTarget) {
-      // If clicking target token, swap the positions
-      setTargetToken(sourceToken)
-      setSourceToken(token)
-    } else {
-      // If clicking unselected token, make it the source
-      setSourceToken(token)
-    }
-  }, [sourceToken, targetToken, setSourceToken, setTargetToken])
+      if (isSource) {
+        // If clicking source token, swap the positions
+        setSourceToken(targetToken)
+        setTargetToken(token)
+      } else if (isTarget) {
+        // If clicking target token, swap the positions
+        setTargetToken(sourceToken)
+        setSourceToken(token)
+      } else {
+        // If clicking unselected token, make it the source
+        setSourceToken(token)
+      }
+    },
+    [sourceToken, targetToken, setSourceToken, setTargetToken]
+  )
 
   // Get token selection state for UI rendering
-  const getTokenSelectionState = useCallback((token: string) => {
-    const isSource = sourceToken === token
-    const isTarget = targetToken === token
-    const isSelected = isSource || isTarget
+  const getTokenSelectionState = useCallback(
+    (token: string) => {
+      const isSource = sourceToken === token
+      const isTarget = targetToken === token
+      const isSelected = isSource || isTarget
 
-    return {
-      isSource,
-      isTarget,
-      isSelected
-    }
-  }, [sourceToken, targetToken])
+      return {
+        isSource,
+        isTarget,
+        isSelected,
+      }
+    },
+    [sourceToken, targetToken]
+  )
 
   return {
     availableTokens,
     handleQuickSelect,
-    getTokenSelectionState
+    getTokenSelectionState,
   }
 }

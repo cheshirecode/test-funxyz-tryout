@@ -1,8 +1,9 @@
 // API Configuration
 export const apiConfig = {
-  apiKey: process.env.NODE_ENV === 'test'
-    ? 'test_funkit_api_key_fake_for_testing_only'
-    : (import.meta.env.VITE_FUNKIT_API_KEY || 'demo_funkit_api_key_replace_with_real_key'),
+  apiKey:
+    process.env.NODE_ENV === 'test'
+      ? 'test_funkit_api_key_fake_for_testing_only'
+      : import.meta.env.VITE_FUNKIT_API_KEY || 'demo_funkit_api_key_replace_with_real_key',
   baseUrl: import.meta.env.VITE_FUNKIT_API_BASE_URL || 'https://api.fun.xyz/v1',
   timeout: 10000,
 }

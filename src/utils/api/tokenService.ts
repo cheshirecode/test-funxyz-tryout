@@ -11,7 +11,7 @@ const defaultTokens: Record<string, TokenData> = {
     balance: 1000,
     decimals: 2,
     chainId: '1',
-    contractAddress: '0xA0b86a33E6441b8C4C8C0C8C0C8C0C8C0C8C0C8C'
+    contractAddress: '0xA0b86a33E6441b8C4C8C0C8C0C8C0C8C0C8C0C8C',
   },
   USDT: {
     symbol: 'USDT',
@@ -21,7 +21,7 @@ const defaultTokens: Record<string, TokenData> = {
     balance: 500,
     decimals: 2,
     chainId: '1',
-    contractAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+    contractAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
   },
   ETH: {
     symbol: 'ETH',
@@ -31,7 +31,7 @@ const defaultTokens: Record<string, TokenData> = {
     balance: 0.5,
     decimals: 6,
     chainId: '1',
-    contractAddress: '0x0000000000000000000000000000000000000000'
+    contractAddress: '0x0000000000000000000000000000000000000000',
   },
   WBTC: {
     symbol: 'WBTC',
@@ -41,8 +41,8 @@ const defaultTokens: Record<string, TokenData> = {
     balance: 0.01,
     decimals: 8,
     chainId: '1',
-    contractAddress: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599'
-  }
+    contractAddress: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
+  },
 }
 
 // Token service for Funkit API integration
@@ -64,27 +64,28 @@ export const tokenService = {
 
         // Map common tokens to our default structure
         const tokenMapping: Record<string, string> = {
-          'USDC': 'USDC',
-          'USDT': 'USDT',
-          'ETH': 'ETH',
-          'WETH': 'ETH',
-          'WBTC': 'WBTC',
-          'BTC': 'WBTC'
+          USDC: 'USDC',
+          USDT: 'USDT',
+          ETH: 'ETH',
+          WETH: 'ETH',
+          WBTC: 'WBTC',
+          BTC: 'WBTC',
         }
 
         // Process each asset from Funkit API
         if (Array.isArray(assets)) {
           assets.forEach((asset: any) => {
-          const symbol = asset.symbol || asset.name
-          const mappedSymbol = tokenMapping[symbol] || symbol
+            const symbol = asset.symbol || asset.name
+            const mappedSymbol = tokenMapping[symbol] || symbol
 
-                      if (mappedSymbol && defaultTokens[mappedSymbol]) {
+            if (mappedSymbol && defaultTokens[mappedSymbol]) {
               tokens[mappedSymbol] = {
                 ...defaultTokens[mappedSymbol],
                 usdPrice: asset.price || defaultTokens[mappedSymbol].usdPrice,
                 balance: asset.balance || defaultTokens[mappedSymbol].balance,
                 chainId: asset.chainId || '1',
-                contractAddress: asset.contractAddress || defaultTokens[mappedSymbol].contractAddress
+                contractAddress:
+                  asset.contractAddress || defaultTokens[mappedSymbol].contractAddress,
               }
             }
           })
@@ -130,7 +131,10 @@ export const tokenService = {
     try {
       console.log('🔍 Fetching user balances from Funkit API...')
 
-      const userWalletsResult = await apiClient.getFunkitUserWallets(authId, walletAddr as `0x${string}`)
+      const userWalletsResult = await apiClient.getFunkitUserWallets(
+        authId,
+        walletAddr as `0x${string}`
+      )
 
       if (userWalletsResult.success && userWalletsResult.data?.walletIdentities) {
         const balances: Record<string, number> = {}
@@ -152,7 +156,7 @@ export const tokenService = {
       } else {
         console.log('⚠️ Could not fetch user balances, using default balances')
         const defaultBalances: Record<string, number> = {}
-        Object.keys(defaultTokens).forEach(symbol => {
+        Object.keys(defaultTokens).forEach((symbol) => {
           defaultBalances[symbol] = defaultTokens[symbol].balance
         })
         return defaultBalances
@@ -160,7 +164,7 @@ export const tokenService = {
     } catch (error) {
       console.error('❌ Error fetching user balances:', error)
       const defaultBalances: Record<string, number> = {}
-      Object.keys(defaultTokens).forEach(symbol => {
+      Object.keys(defaultTokens).forEach((symbol) => {
         defaultBalances[symbol] = defaultTokens[symbol].balance
       })
       return defaultBalances
@@ -173,7 +177,7 @@ export const tokenService = {
       const balances = await this.getUserBalances()
 
       const updatedTokens = { ...tokens }
-      Object.keys(updatedTokens).forEach(symbol => {
+      Object.keys(updatedTokens).forEach((symbol) => {
         if (balances[symbol] !== undefined) {
           updatedTokens[symbol].balance = balances[symbol]
         }
@@ -184,7 +188,7 @@ export const tokenService = {
       console.error('❌ Error updating token balances:', error)
       return tokens
     }
-  }
+  },
 }
 
 // Export default tokens for immediate use

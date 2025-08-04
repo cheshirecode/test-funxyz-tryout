@@ -6,7 +6,7 @@ import {
   swapUsdAmountAtom,
   swapStateAtom,
   setSwapStateAtom,
-  swapTokenPositionsAtom
+  swapTokenPositionsAtom,
 } from '@state/atoms/swapAtoms'
 
 export interface UseSwapStateReturn {
@@ -62,6 +62,6 @@ export function useSwapState(): UseSwapStateReturn {
     setSwapState: setSwapStateAction,
 
     // Actions
-    swapTokenPositions: swapPositions
+    swapTokenPositions: swapPositions,
   }
 }

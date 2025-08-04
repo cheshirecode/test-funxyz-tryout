@@ -18,7 +18,7 @@ vi.mock('@utils/tokenData', async () => {
           usdPrice: 1.0,
           balance: 1000,
           decimals: 2,
-          icon: 'https://example.com/usdc.png'
+          icon: 'https://example.com/usdc.png',
         },
         ETH: {
           symbol: 'ETH',
@@ -26,7 +26,7 @@ vi.mock('@utils/tokenData', async () => {
           usdPrice: 2000,
           balance: 5,
           decimals: 6,
-          icon: 'https://example.com/eth.png'
+          icon: 'https://example.com/eth.png',
         },
         WBTC: {
           symbol: 'WBTC',
@@ -34,7 +34,7 @@ vi.mock('@utils/tokenData', async () => {
           usdPrice: 40000,
           balance: 0.1,
           decimals: 8,
-          icon: 'https://example.com/wbtc.png'
+          icon: 'https://example.com/wbtc.png',
         },
         USDT: {
           symbol: 'USDT',
@@ -42,10 +42,10 @@ vi.mock('@utils/tokenData', async () => {
           usdPrice: 1.0,
           balance: 500,
           decimals: 2,
-          icon: 'https://example.com/usdt.png'
-        }
-      })
-    }
+          icon: 'https://example.com/usdt.png',
+        },
+      }),
+    },
   }
 })
 
@@ -73,9 +73,7 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <JotaiProvider>
-        {children}
-      </JotaiProvider>
+      <JotaiProvider>{children}</JotaiProvider>
     </QueryClientProvider>
   )
 }
@@ -117,7 +115,7 @@ describe('TokenSwap Component Integration', () => {
 
     // Find and click WBTC button to select it as source (in the top selector grid)
     const wbtcButtons = screen.getAllByText('WBTC')
-    const wbtcButton = wbtcButtons.find(button =>
+    const wbtcButton = wbtcButtons.find((button) =>
       button.closest('button')?.className.includes('relative p-3')
     )
     if (wbtcButton) {
@@ -125,12 +123,15 @@ describe('TokenSwap Component Integration', () => {
     }
 
     // Verify localStorage was called to persist the change
-    await waitFor(() => {
-      expect(localStorageMock.setItem).toHaveBeenCalledWith(
-        'swap-source-token',
-        JSON.stringify('WBTC')
-      )
-    }, { timeout: 1000 })
+    await waitFor(
+      () => {
+        expect(localStorageMock.setItem).toHaveBeenCalledWith(
+          'swap-source-token',
+          JSON.stringify('WBTC')
+        )
+      },
+      { timeout: 1000 }
+    )
   })
 
   it('should persist USD amount changes to localStorage', async () => {
@@ -171,9 +172,8 @@ describe('TokenSwap Component Integration', () => {
 
     // Find the swap positions button (arrow down icon) - it's the one with border-2 class
     const buttons = screen.getAllByRole('button')
-    const swapPositionButton = buttons.find(button =>
-      button.className.includes('border-2') &&
-      button.querySelector('svg')
+    const swapPositionButton = buttons.find(
+      (button) => button.className.includes('border-2') && button.querySelector('svg')
     )
 
     if (swapPositionButton) {
@@ -181,16 +181,19 @@ describe('TokenSwap Component Integration', () => {
     }
 
     // Verify localStorage was called to persist the swapped positions
-    await waitFor(() => {
-      expect(localStorageMock.setItem).toHaveBeenCalledWith(
-        'swap-source-token',
-        JSON.stringify('ETH')
-      )
-      expect(localStorageMock.setItem).toHaveBeenCalledWith(
-        'swap-target-token',
-        JSON.stringify('USDC')
-      )
-    }, { timeout: 1000 })
+    await waitFor(
+      () => {
+        expect(localStorageMock.setItem).toHaveBeenCalledWith(
+          'swap-source-token',
+          JSON.stringify('ETH')
+        )
+        expect(localStorageMock.setItem).toHaveBeenCalledWith(
+          'swap-target-token',
+          JSON.stringify('USDC')
+        )
+      },
+      { timeout: 1000 }
+    )
   })
 
   it('should load persisted values from localStorage on mount', async () => {
@@ -238,9 +241,12 @@ describe('TokenSwap Component Integration', () => {
     })
 
     // Should eventually show success state
-    await waitFor(() => {
-      expect(screen.getByText('Swap Successful')).toBeInTheDocument()
-    }, { timeout: 2000 })
+    await waitFor(
+      () => {
+        expect(screen.getByText('Swap Successful')).toBeInTheDocument()
+      },
+      { timeout: 2000 }
+    )
   })
 
   it('should handle insufficient balance correctly', async () => {

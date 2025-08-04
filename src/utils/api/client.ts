@@ -8,7 +8,7 @@ const {
   getUserWalletIdentities,
   getAllowedAssets,
   API_BASE_URL,
-  DEV_API_KEY
+  DEV_API_KEY,
 } = FunkitApi
 
 // Validate API configuration on module load
@@ -19,7 +19,7 @@ console.log('Using @funkit/api-base with configuration:', {
   apiKey: '[REDACTED]',
   baseUrl: apiConfig.baseUrl,
   funkitApiBaseUrl: API_BASE_URL,
-  devApiKey: '[REDACTED]'
+  devApiKey: '[REDACTED]',
 })
 
 // Real @funkit/api-base integration initialized
@@ -27,7 +27,7 @@ console.log('✅ @funkit/api-base functions imported and ready for use')
 
 // API service functions using real @funkit/api-base
 export const apiClient = {
-    // Get user unique ID using funkit API - requires real authId
+  // Get user unique ID using funkit API - requires real authId
   async getFunkitUserInfo(authId?: string) {
     const realAuthId = authId || 'demo-auth-id'
 
@@ -35,7 +35,7 @@ export const apiClient = {
       console.log('🔍 Calling getUserUniqueId() from @funkit/api-base')
       const userUniqueId = await getUserUniqueId({
         apiKey: apiConfig.apiKey,
-        authId: realAuthId
+        authId: realAuthId,
       })
 
       return {
@@ -44,7 +44,7 @@ export const apiClient = {
           userUniqueId,
           message: 'Successfully retrieved user unique ID from funkit API',
           apiFunction: 'getUserUniqueId()',
-          authId: realAuthId
+          authId: realAuthId,
         },
         timestamp: new Date().toISOString(),
       }
@@ -56,19 +56,21 @@ export const apiClient = {
         fallbackInfo: {
           message: 'Real @funkit/api-base getUserUniqueId() integration',
           apiFunction: 'getUserUniqueId()',
-          description: 'Requires a real authId from Funkit platform. Demo authId will fail with "User not found".',
+          description:
+            'Requires a real authId from Funkit platform. Demo authId will fail with "User not found".',
           usedAuthId: realAuthId,
-          note: 'To test successfully, provide a real authId from your Funkit platform account'
+          note: 'To test successfully, provide a real authId from your Funkit platform account',
         },
         timestamp: new Date().toISOString(),
       }
     }
   },
 
-        // Get user wallet identities using funkit API - requires real user data
+  // Get user wallet identities using funkit API - requires real user data
   async getFunkitUserWallets(authId?: string, walletAddr?: `0x${string}`) {
     const realAuthId = authId || 'demo-auth-id'
-    const realWalletAddr = walletAddr || '0x0000000000000000000000000000000000000000' as `0x${string}`
+    const realWalletAddr =
+      walletAddr || ('0x0000000000000000000000000000000000000000' as `0x${string}`)
 
     try {
       console.log('🔍 Calling getUserWalletIdentities() from @funkit/api-base')
@@ -76,7 +78,7 @@ export const apiClient = {
         apiKey: apiConfig.apiKey,
         authId: realAuthId,
         chainId: '1', // Ethereum mainnet
-        walletAddr: realWalletAddr
+        walletAddr: realWalletAddr,
       })
 
       return {
@@ -87,7 +89,7 @@ export const apiClient = {
           apiFunction: 'getUserWalletIdentities()',
           authId: realAuthId,
           walletAddr: realWalletAddr,
-          chainId: '1'
+          chainId: '1',
         },
         timestamp: new Date().toISOString(),
       }
@@ -99,19 +101,20 @@ export const apiClient = {
         fallbackInfo: {
           message: 'Real @funkit/api-base getUserWalletIdentities() integration',
           apiFunction: 'getUserWalletIdentities()',
-          description: 'Requires real authId and walletAddr from Funkit platform. Demo values will fail with "User not found".',
+          description:
+            'Requires real authId and walletAddr from Funkit platform. Demo values will fail with "User not found".',
           usedAuthId: realAuthId,
           usedWalletAddr: realWalletAddr,
           chainId: '1',
           note: 'To test successfully, provide real authId and walletAddr from your Funkit platform account',
-          docs: 'https://docs.fun.xyz'
+          docs: 'https://docs.fun.xyz',
         },
         timestamp: new Date().toISOString(),
       }
     }
   },
 
-    // Get allowed assets using funkit API
+  // Get allowed assets using funkit API
   async getFunkitAllowedAssets() {
     try {
       console.log('🔍 Calling getAllowedAssets() from @funkit/api-base')
@@ -122,7 +125,7 @@ export const apiClient = {
         data: {
           allowedAssets,
           message: 'Successfully retrieved allowed assets from funkit API',
-          apiFunction: 'getAllowedAssets()'
+          apiFunction: 'getAllowedAssets()',
         },
         timestamp: new Date().toISOString(),
       }
@@ -134,21 +137,21 @@ export const apiClient = {
         fallbackInfo: {
           message: 'Real @funkit/api-base getAllowedAssets() integration',
           apiFunction: 'getAllowedAssets()',
-          description: 'Attempts to get allowed assets from funkit platform'
+          description: 'Attempts to get allowed assets from funkit platform',
         },
         timestamp: new Date().toISOString(),
       }
     }
   },
 
-    // Get user groups using funkit API
+  // Get user groups using funkit API
   async getFunkitUserGroups() {
     try {
       console.log('🔍 Calling getGroups() from @funkit/api-base')
       const groups = await getGroups({
         apiKey: apiConfig.apiKey,
         groupIds: ['0x0000000000000000000000000000000000000001'], // Demo group IDs (hex format)
-        chainId: '1' // Ethereum mainnet for demo
+        chainId: '1', // Ethereum mainnet for demo
       })
 
       return {
@@ -156,7 +159,7 @@ export const apiClient = {
         data: {
           groups,
           message: 'Successfully retrieved user groups from funkit API',
-          apiFunction: 'getGroups()'
+          apiFunction: 'getGroups()',
         },
         timestamp: new Date().toISOString(),
       }
@@ -168,7 +171,7 @@ export const apiClient = {
         fallbackInfo: {
           message: 'Real @funkit/api-base getGroups() integration',
           apiFunction: 'getGroups()',
-          description: 'Attempts to get user groups from funkit platform'
+          description: 'Attempts to get user groups from funkit platform',
         },
         timestamp: new Date().toISOString(),
       }
@@ -186,34 +189,34 @@ export const apiClient = {
           apiKey: apiConfig.apiKey.substring(0, 8) + '...',
           baseUrl: apiConfig.baseUrl,
           funkitApiBaseUrl: API_BASE_URL,
-          devApiKey: DEV_API_KEY?.substring(0, 8) + '...' || 'not available'
+          devApiKey: DEV_API_KEY?.substring(0, 8) + '...' || 'not available',
         },
         apiCalls: [] as Array<{
-          function: string;
-          status: 'success' | 'error';
-          result?: any;
-          error?: string;
-        }>
+          function: string
+          status: 'success' | 'error'
+          result?: any
+          error?: string
+        }>,
       }
 
-                // Try getUserUniqueId
-          try {
-            const userUniqueId = await getUserUniqueId({
-              apiKey: apiConfig.apiKey,
-              authId: 'demo-auth-id'
-            })
-            results.apiCalls.push({
-              function: 'getUserUniqueId()',
-              status: 'success',
-              result: userUniqueId
-            })
-          } catch (error) {
-            results.apiCalls.push({
-              function: 'getUserUniqueId()',
-              status: 'error',
-              error: error instanceof Error ? error.message : 'Unknown error'
-            })
-          }
+      // Try getUserUniqueId
+      try {
+        const userUniqueId = await getUserUniqueId({
+          apiKey: apiConfig.apiKey,
+          authId: 'demo-auth-id',
+        })
+        results.apiCalls.push({
+          function: 'getUserUniqueId()',
+          status: 'success',
+          result: userUniqueId,
+        })
+      } catch (error) {
+        results.apiCalls.push({
+          function: 'getUserUniqueId()',
+          status: 'error',
+          error: error instanceof Error ? error.message : 'Unknown error',
+        })
+      }
 
       return {
         success: true,
@@ -221,7 +224,7 @@ export const apiClient = {
           ...results,
           message: 'Comprehensive @funkit/api-base integration demo',
           totalApiCalls: results.apiCalls.length,
-          successfulCalls: results.apiCalls.filter(call => call.status === 'success').length
+          successfulCalls: results.apiCalls.filter((call) => call.status === 'success').length,
         },
         timestamp: new Date().toISOString(),
       }
@@ -239,18 +242,18 @@ export const apiClient = {
             'getAllowedAssets()',
             'getAssetPriceInfo()',
             'getChainFromId()',
-            'createUser()'
+            'createUser()',
           ],
           configuration: {
             apiKey: apiConfig.apiKey.substring(0, 8) + '...',
             baseUrl: apiConfig.baseUrl,
-            funkitApiBaseUrl: API_BASE_URL
-          }
+            funkitApiBaseUrl: API_BASE_URL,
+          },
         },
         timestamp: new Date().toISOString(),
       }
     }
-  }
+  },
 }
 
 // Export types for better TypeScript support

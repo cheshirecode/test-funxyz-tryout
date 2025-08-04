@@ -12,8 +12,8 @@ Object.defineProperty(window, 'import.meta', {
       MODE: 'test',
       BASE_URL: '/',
       SSR: false,
-    }
-  }
+    },
+  },
 })
 
 // Mock console methods to avoid noise in tests

@@ -17,13 +17,13 @@ export function useTokenData(): UseTokenDataReturn {
     data: tokenData,
     isLoading,
     error,
-    refetch
+    refetch,
   } = useQuery({
     queryKey: ['tokens'],
     queryFn: () => tokenService.getTokens(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchInterval: 30 * 1000, // Refetch every 30 seconds
-    initialData: defaultTokenData
+    initialData: defaultTokenData,
   })
 
   // Ensure tokenData is always available with fallback
@@ -33,6 +33,6 @@ export function useTokenData(): UseTokenDataReturn {
     tokenData: safeTokenData,
     isLoading,
     error: error as Error | null,
-    refetch
+    refetch,
   }
 }

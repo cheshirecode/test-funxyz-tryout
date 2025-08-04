@@ -3,7 +3,6 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createStore, Provider as JotaiProvider } from 'jotai'
-import { swapStateAtom } from '../utils/state/atoms/swapAtoms'
 import { App } from '../App'
 
 // Create a test wrapper with QueryClient and fresh Jotai store
@@ -22,9 +21,7 @@ const createTestWrapper = () => {
 
   return ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
-      <JotaiProvider store={jotaiStore}>
-        {children}
-      </JotaiProvider>
+      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
     </QueryClientProvider>
   )
 }
@@ -81,9 +78,9 @@ describe('TokenSwap App', () => {
 
       // Check for the arrow swap button (the one with ArrowDownIcon)
       const arrowButtons = screen.getAllByRole('button')
-      const swapArrowButton = arrowButtons.find((button) =>
-        button.querySelector('svg[class*="arrow-down"]') ||
-        button.className.includes('border-2')
+      const swapArrowButton = arrowButtons.find(
+        (button) =>
+          button.querySelector('svg[class*="arrow-down"]') || button.className.includes('border-2')
       )
       expect(swapArrowButton).toBeInTheDocument()
     })
@@ -154,8 +151,8 @@ describe('TokenSwap App', () => {
 
       // Check that token selector buttons exist
       const tokenButtons = screen.getAllByRole('button')
-      const hasTokenSelectors = tokenButtons.some((button) =>
-        button.textContent?.includes('USDC') || button.textContent?.includes('ETH')
+      const hasTokenSelectors = tokenButtons.some(
+        (button) => button.textContent?.includes('USDC') || button.textContent?.includes('ETH')
       )
       expect(hasTokenSelectors).toBe(true)
     })
@@ -200,9 +197,12 @@ describe('TokenSwap App', () => {
       await user.click(swapButton)
 
       // Wait for swap to complete and show success
-      await waitFor(() => {
-        expect(screen.getByText(/swap successful/i)).toBeInTheDocument()
-      }, { timeout: 3000 })
+      await waitFor(
+        () => {
+          expect(screen.getByText(/swap successful/i)).toBeInTheDocument()
+        },
+        { timeout: 3000 }
+      )
     })
   })
 
@@ -220,9 +220,10 @@ describe('TokenSwap App', () => {
       // Token selector buttons should have min-h-[44px]
       const tokenButtons = screen.getAllByRole('button')
       tokenButtons.forEach((button) => {
-        const hasMinHeight = button.className.includes('min-h-[44px]') ||
-                           button.className.includes('py-3') ||
-                           button.className.includes('h-18')
+        const hasMinHeight =
+          button.className.includes('min-h-[44px]') ||
+          button.className.includes('py-3') ||
+          button.className.includes('h-18')
         expect(hasMinHeight).toBe(true)
       })
     })
@@ -241,7 +242,9 @@ describe('TokenSwap App', () => {
       render(<App />, { wrapper: createTestWrapper() })
 
       // Check for primary, success, warning color usage
-      const coloredElements = document.querySelectorAll('[class*="primary"], [class*="success"], [class*="warning"]')
+      const coloredElements = document.querySelectorAll(
+        '[class*="primary"], [class*="success"], [class*="warning"]'
+      )
       expect(coloredElements.length).toBeGreaterThan(0)
     })
 
@@ -249,7 +252,9 @@ describe('TokenSwap App', () => {
       render(<App />, { wrapper: createTestWrapper() })
 
       // Check for consistent spacing classes
-      const spacedElements = document.querySelectorAll('[class*="p-"], [class*="m-"], [class*="space-"]')
+      const spacedElements = document.querySelectorAll(
+        '[class*="p-"], [class*="m-"], [class*="space-"]'
+      )
       expect(spacedElements.length).toBeGreaterThan(0)
     })
   })

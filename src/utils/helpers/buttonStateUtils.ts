@@ -19,7 +19,7 @@ export function getSwapButtonState(
     return {
       className: 'bg-primary-500 text-white cursor-not-allowed',
       disabled: true,
-      text: 'Swapping...'
+      text: 'Swapping...',
     }
   }
 
@@ -28,7 +28,7 @@ export function getSwapButtonState(
     return {
       className: 'bg-success-500 text-white',
       disabled: false,
-      text: 'Swap Successful'
+      text: 'Swap Successful',
     }
   }
 
@@ -37,7 +37,7 @@ export function getSwapButtonState(
     return {
       className: 'bg-gray-300 text-gray-500 cursor-not-allowed',
       disabled: true,
-      text: `Swap ${sourceToken} to ${targetToken}`
+      text: `Swap ${sourceToken} to ${targetToken}`,
     }
   }
 
@@ -46,7 +46,7 @@ export function getSwapButtonState(
     return {
       className: 'bg-error-500 text-white cursor-not-allowed',
       disabled: true,
-      text: `Swap ${sourceToken} to ${targetToken}`
+      text: `Swap ${sourceToken} to ${targetToken}`,
     }
   }
 
@@ -54,7 +54,7 @@ export function getSwapButtonState(
   return {
     className: 'bg-primary-600 hover:bg-primary-700 text-white',
     disabled: false,
-    text: `Swap ${sourceToken} to ${targetToken}`
+    text: `Swap ${sourceToken} to ${targetToken}`,
   }
 }
 

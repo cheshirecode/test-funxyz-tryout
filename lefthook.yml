@@ -1,0 +1,21 @@
+# Lefthook configuration for git hooks
+# Runs linting and formatting on pre-commit
+
+pre-commit:
+  parallel: true
+  commands:
+    eslint:
+      glob: '*.{js,jsx,ts,tsx}'
+      run: npx eslint {staged_files} --fix
+      stage_fixed: true
+      fail_text: 'ESLint errors found. Please fix them before committing.'
+
+    prettier:
+      glob: '*.{js,jsx,ts,tsx,json,css,md}'
+      run: npx prettier --write {staged_files}
+      stage_fixed: true
+      fail_text: 'Prettier formatting issues found. Please fix them before committing.'
+
+    type-check:
+      run: npx tsc --noEmit
+      fail_text: 'TypeScript type errors found. Please fix them before committing.'

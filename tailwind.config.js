@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -27,15 +24,15 @@ export default {
           50: '#fef2f2',
           500: '#ef4444',
           600: '#dc2626',
-        }
+        },
       },
       spacing: {
-        '18': '4.5rem', // 72px for 44px+ touch targets
+        18: '4.5rem', // 72px for 44px+ touch targets
       },
       fontSize: {
         'token-amount': ['1.5rem', { lineHeight: '2rem' }], // 24px
         'token-amount-lg': ['1.75rem', { lineHeight: '2.25rem' }], // 28px
-      }
+      },
     },
   },
   plugins: [],

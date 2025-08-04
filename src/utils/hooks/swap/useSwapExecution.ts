@@ -26,17 +26,10 @@ export function useSwapExecution({
   sourceToken,
   tokenData,
   swapping,
-  setSwapState
+  setSwapState,
 }: UseSwapExecutionProps): UseSwapExecutionReturn {
-
   // Check if swap can be executed
-  const canExecuteSwap = isSwapValid(
-    usdAmount,
-    sourceTokenAmount,
-    sourceToken,
-    tokenData,
-    swapping
-  )
+  const canExecuteSwap = isSwapValid(usdAmount, sourceTokenAmount, sourceToken, tokenData, swapping)
 
   // Execute the swap with simulated API call
   const executeSwap = useCallback(() => {
@@ -57,6 +50,6 @@ export function useSwapExecution({
 
   return {
     executeSwap,
-    canExecuteSwap
+    canExecuteSwap,
   }
 }

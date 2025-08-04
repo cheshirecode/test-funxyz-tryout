@@ -43,14 +43,11 @@ export const setSwapStateAtom = atom(
 )
 
 // Atom for swapping source and target tokens
-export const swapTokenPositionsAtom = atom(
-  null,
-  (get, set) => {
-    const sourceToken = get(swapSourceTokenAtom)
-    const targetToken = get(swapTargetTokenAtom)
-    set(swapSourceTokenAtom, targetToken)
-    set(swapTargetTokenAtom, sourceToken)
-  }
-)
+export const swapTokenPositionsAtom = atom(null, (get, set) => {
+  const sourceToken = get(swapSourceTokenAtom)
+  const targetToken = get(swapTargetTokenAtom)
+  set(swapSourceTokenAtom, targetToken)
+  set(swapTargetTokenAtom, sourceToken)
+})
 
 // Types can be imported from @types when needed

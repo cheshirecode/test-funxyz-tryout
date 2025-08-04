@@ -23,7 +23,7 @@ export function useSwapCalculations({
   usdAmount,
   sourceToken,
   targetToken,
-  tokenData
+  tokenData,
 }: UseSwapCalculationsProps): UseSwapCalculationsReturn {
   const [sourceTokenAmount, setSourceTokenAmount] = useState<string>('0')
   const [targetTokenAmount, setTargetTokenAmount] = useState<string>('0')
@@ -46,14 +46,11 @@ export function useSwapCalculations({
   }, [sourceToken, targetToken, usdAmount, tokenData])
 
   // Calculate exchange rate
-  const exchangeRate = calculateExchangeRate(
-    tokenData[sourceToken],
-    tokenData[targetToken]
-  )
+  const exchangeRate = calculateExchangeRate(tokenData[sourceToken], tokenData[targetToken])
 
   return {
     sourceTokenAmount,
     targetTokenAmount,
-    exchangeRate
+    exchangeRate,
   }
 }

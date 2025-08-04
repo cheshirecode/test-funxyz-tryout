@@ -9,7 +9,7 @@ vi.mock('@funkit/api-base', () => ({
   getUserWalletIdentities: vi.fn(),
   getAllowedAssets: vi.fn(),
   API_BASE_URL: 'https://api.fun.xyz/v1',
-  DEV_API_KEY: 'dev_key_123'
+  DEV_API_KEY: 'dev_key_123',
 }))
 
 // Import the mocked functions
@@ -37,7 +37,7 @@ describe('API Client', () => {
       expect(result.data?.authId).toBe('valid-auth-id')
       expect(mockedGetUserUniqueId).toHaveBeenCalledWith({
         apiKey: apiConfig.apiKey,
-        authId: 'valid-auth-id'
+        authId: 'valid-auth-id',
       })
     })
 
@@ -60,7 +60,7 @@ describe('API Client', () => {
 
       expect(mockedGetUserUniqueId).toHaveBeenCalledWith({
         apiKey: apiConfig.apiKey,
-        authId: 'demo-auth-id'
+        authId: 'demo-auth-id',
       })
     })
   })
@@ -69,7 +69,7 @@ describe('API Client', () => {
     it('should successfully get user wallets', async () => {
       const mockWalletIdentities = [
         '0x1234567890abcdef1234567890abcdef12345678',
-        '0xabcdef1234567890abcdef1234567890abcdef12'
+        '0xabcdef1234567890abcdef1234567890abcdef12',
       ] as any
       mockedGetUserWalletIdentities.mockResolvedValue(mockWalletIdentities)
 
@@ -84,7 +84,7 @@ describe('API Client', () => {
         apiKey: apiConfig.apiKey,
         authId: 'valid-auth-id',
         chainId: '1',
-        walletAddr: '0x1234567890abcdef1234567890abcdef12345678'
+        walletAddr: '0x1234567890abcdef1234567890abcdef12345678',
       })
     })
 
@@ -103,8 +103,8 @@ describe('API Client', () => {
   describe('getFunkitAllowedAssets', () => {
     it('should successfully get allowed assets', async () => {
       const mockAllowedAssets = {
-        'ETH': { symbol: 'ETH', name: 'Ethereum' },
-        'USDC': { symbol: 'USDC', name: 'USD Coin' }
+        ETH: { symbol: 'ETH', name: 'Ethereum' },
+        USDC: { symbol: 'USDC', name: 'USD Coin' },
       } as any
       mockedGetAllowedAssets.mockResolvedValue(mockAllowedAssets)
 
@@ -113,7 +113,7 @@ describe('API Client', () => {
       expect(result.success).toBe(true)
       expect(result.data?.allowedAssets).toBe(mockAllowedAssets)
       expect(mockedGetAllowedAssets).toHaveBeenCalledWith({
-        apiKey: apiConfig.apiKey
+        apiKey: apiConfig.apiKey,
       })
     })
 
@@ -138,7 +138,7 @@ describe('API Client', () => {
           chainId: '1',
           threshold: 1,
           walletAddr: '0x1234567890abcdef1234567890abcdef12345678',
-          memberIds: ['member1']
+          memberIds: ['member1'],
         },
         {
           groupId: 'group2',
@@ -146,8 +146,8 @@ describe('API Client', () => {
           chainId: '1',
           threshold: 2,
           walletAddr: '0xabcdef1234567890abcdef1234567890abcdef12',
-          memberIds: ['member2', 'member3']
-        }
+          memberIds: ['member2', 'member3'],
+        },
       ] as any
       mockedGetGroups.mockResolvedValue(mockGroups)
 
@@ -158,7 +158,7 @@ describe('API Client', () => {
       expect(mockedGetGroups).toHaveBeenCalledWith({
         apiKey: apiConfig.apiKey,
         groupIds: ['0x0000000000000000000000000000000000000001'],
-        chainId: '1'
+        chainId: '1',
       })
     })
 

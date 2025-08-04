@@ -22,10 +22,7 @@ export function handleTokenIconError(
 /**
  * Calculate token amount from USD value
  */
-export function calculateTokenAmount(
-  usdAmount: string,
-  tokenData: TokenData | undefined
-): string {
+export function calculateTokenAmount(usdAmount: string, tokenData: TokenData | undefined): string {
   if (!usdAmount || isNaN(parseFloat(usdAmount)) || !tokenData) {
     return '0'
   }
