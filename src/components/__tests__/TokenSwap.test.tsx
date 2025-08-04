@@ -4,11 +4,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Provider as JotaiProvider } from 'jotai'
 import { TokenSwap } from '../TokenSwap'
-import { tokenService } from '../../utils/tokenData'
 
 // Mock the token service to avoid real API calls
-vi.mock('../../utils/tokenData', async () => {
-  const actual = await vi.importActual('../../utils/tokenData')
+vi.mock('@utils/tokenData', async () => {
+  const actual = await vi.importActual('@utils/tokenData')
   return {
     ...actual,
     tokenService: {
@@ -118,7 +117,7 @@ describe('TokenSwap Component Integration', () => {
 
     // Find and click WBTC button to select it as source (in the top selector grid)
     const wbtcButtons = screen.getAllByText('WBTC')
-    const wbtcButton = wbtcButtons.find(button => 
+    const wbtcButton = wbtcButtons.find(button =>
       button.closest('button')?.className.includes('relative p-3')
     )
     if (wbtcButton) {
@@ -172,11 +171,11 @@ describe('TokenSwap Component Integration', () => {
 
     // Find the swap positions button (arrow down icon) - it's the one with border-2 class
     const buttons = screen.getAllByRole('button')
-    const swapPositionButton = buttons.find(button => 
-      button.className.includes('border-2') && 
+    const swapPositionButton = buttons.find(button =>
+      button.className.includes('border-2') &&
       button.querySelector('svg')
     )
-    
+
     if (swapPositionButton) {
       fireEvent.click(swapPositionButton)
     }
@@ -291,10 +290,10 @@ describe('TokenSwap Component Integration', () => {
 
     // Should still be able to interact with the component
     const usdInput = screen.getByDisplayValue('100')
-    
+
     // Change should not crash the component (errors may be thrown internally but caught)
     fireEvent.change(usdInput, { target: { value: '200' } })
-    
+
     // Component should continue to function
     expect(screen.getByText('Token Price Explorer')).toBeInTheDocument()
   })

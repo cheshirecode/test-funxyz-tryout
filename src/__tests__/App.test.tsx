@@ -2,9 +2,11 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { createStore, Provider as JotaiProvider } from 'jotai'
+import { swapStateAtom } from '../utils/state/atoms/swapAtoms'
 import { App } from '../App'
 
-// Create a test wrapper with QueryClient
+// Create a test wrapper with QueryClient and fresh Jotai store
 const createTestWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -15,9 +17,14 @@ const createTestWrapper = () => {
     },
   })
 
+  // Create fresh Jotai store for each test to ensure clean state
+  const jotaiStore = createStore()
+
   return ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
-      {children}
+      <JotaiProvider store={jotaiStore}>
+        {children}
+      </JotaiProvider>
     </QueryClientProvider>
   )
 }
@@ -25,6 +32,14 @@ const createTestWrapper = () => {
 describe('TokenSwap App', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    // Clear localStorage to ensure consistent test state
+    localStorage.clear()
+    // Set default values to match atom initial state
+    localStorage.setItem('swap-source-token', '"ETH"')
+    localStorage.setItem('swap-target-token', '"USDC"')
+    localStorage.setItem('swap-usd-amount', '"100"')
+    // Ensure no residual DOM state from previous tests
+    document.body.innerHTML = ''
   })
 
   describe('App Component Structure', () => {

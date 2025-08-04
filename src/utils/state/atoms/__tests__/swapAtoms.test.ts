@@ -1,6 +1,6 @@
 // Tests for swap atoms with localStorage persistence
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { atom } from 'jotai'
+// atom is imported when needed
 import { createStore } from 'jotai'
 import {
   swapSourceTokenAtom,
@@ -156,7 +156,7 @@ describe('Swap Atoms', () => {
       store.set(swapTargetTokenAtom, 'ETH')
 
       // Execute swap
-      store.set(swapTokenPositionsAtom, undefined)
+      store.set(swapTokenPositionsAtom)
 
       // Verify tokens are swapped
       expect(store.get(swapSourceTokenAtom)).toBe('ETH')
@@ -171,7 +171,7 @@ describe('Swap Atoms', () => {
       vi.clearAllMocks()
 
       // Execute swap
-      store.set(swapTokenPositionsAtom, undefined)
+      store.set(swapTokenPositionsAtom)
 
       // Verify localStorage is updated with swapped values
       expect(localStorageMock.setItem).toHaveBeenCalledWith(

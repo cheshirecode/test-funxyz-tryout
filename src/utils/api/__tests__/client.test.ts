@@ -68,9 +68,9 @@ describe('API Client', () => {
   describe('getFunkitUserWallets', () => {
     it('should successfully get user wallets', async () => {
       const mockWalletIdentities = [
-        { id: 'wallet1', assets: [] },
-        { id: 'wallet2', assets: [] }
-      ]
+        '0x1234567890abcdef1234567890abcdef12345678',
+        '0xabcdef1234567890abcdef1234567890abcdef12'
+      ] as any
       mockedGetUserWalletIdentities.mockResolvedValue(mockWalletIdentities)
 
       const result = await apiClient.getFunkitUserWallets(
@@ -102,10 +102,10 @@ describe('API Client', () => {
 
   describe('getFunkitAllowedAssets', () => {
     it('should successfully get allowed assets', async () => {
-      const mockAllowedAssets = [
-        { symbol: 'ETH', name: 'Ethereum' },
-        { symbol: 'USDC', name: 'USD Coin' }
-      ]
+      const mockAllowedAssets = {
+        'ETH': { symbol: 'ETH', name: 'Ethereum' },
+        'USDC': { symbol: 'USDC', name: 'USD Coin' }
+      } as any
       mockedGetAllowedAssets.mockResolvedValue(mockAllowedAssets)
 
       const result = await apiClient.getFunkitAllowedAssets()
@@ -132,9 +132,23 @@ describe('API Client', () => {
   describe('getFunkitUserGroups', () => {
     it('should successfully get user groups', async () => {
       const mockGroups = [
-        { id: 'group1', name: 'Group One' },
-        { id: 'group2', name: 'Group Two' }
-      ]
+        {
+          groupId: 'group1',
+          name: 'Group One',
+          chainId: '1',
+          threshold: 1,
+          walletAddr: '0x1234567890abcdef1234567890abcdef12345678',
+          memberIds: ['member1']
+        },
+        {
+          groupId: 'group2',
+          name: 'Group Two',
+          chainId: '1',
+          threshold: 2,
+          walletAddr: '0xabcdef1234567890abcdef1234567890abcdef12',
+          memberIds: ['member2', 'member3']
+        }
+      ] as any
       mockedGetGroups.mockResolvedValue(mockGroups)
 
       const result = await apiClient.getFunkitUserGroups()
