@@ -16,10 +16,10 @@ validateApiConfig()
 
 // Initialize funkit API with configuration
 console.log('Using @funkit/api-base with configuration:', {
-  apiKey: apiConfig.apiKey.substring(0, 8) + '...',
+  apiKey: '[REDACTED]',
   baseUrl: apiConfig.baseUrl,
   funkitApiBaseUrl: API_BASE_URL,
-  devApiKey: DEV_API_KEY?.substring(0, 8) + '...' || 'not available'
+  devApiKey: '[REDACTED]'
 })
 
 // Real @funkit/api-base integration initialized

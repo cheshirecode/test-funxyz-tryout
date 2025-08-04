@@ -5,7 +5,7 @@ import { vi, beforeEach, afterEach } from 'vitest'
 Object.defineProperty(window, 'import.meta', {
   value: {
     env: {
-      VITE_FUNKIT_API_KEY: 'Z9SZaOwpmE40KX61mUKWm5hrpGh7WHVkaTvQJBxvdvuKZgfZLfEkLG0z2C5dBKrI',
+      VITE_FUNKIT_API_KEY: 'test_funkit_api_key_fake_for_testing_only',
       VITE_FUNKIT_API_BASE_URL: 'https://api.fun.xyz/v1',
       DEV: true,
       PROD: false,

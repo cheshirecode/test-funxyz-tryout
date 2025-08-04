@@ -6,7 +6,7 @@ describe('API Service', () => {
 
   describe('apiConfig', () => {
     it('should have correct test configuration', () => {
-      expect(apiConfig.apiKey).toBe('Z9SZaOwpmE40KX61mUKWm5hrpGh7WHVkaTvQJBxvdvuKZgfZLfEkLG0z2C5dBKrI')
+      expect(apiConfig.apiKey).toBe('test_funkit_api_key_fake_for_testing_only')
       expect(apiConfig.baseUrl).toBe('https://api.fun.xyz/v1')
       expect(apiConfig.timeout).toBe(10000)
     })
@@ -132,8 +132,8 @@ describe('API Service', () => {
       const config = result.success ? result.data?.configuration : result.fallbackInfo?.configuration
 
       expect(config).toBeDefined()
-      expect(config?.apiKey).toMatch(/^test_api\.\.\./)
-      expect(config?.baseUrl).toBe('https://api.test.example.com')
+      expect(config?.apiKey).toMatch(/^test_fun\.\.\./)
+      expect(config?.baseUrl).toBe('https://api.fun.xyz/v1')
       expect(config?.funkitApiBaseUrl).toBe('https://api.fun.xyz/v1')
     })
   })

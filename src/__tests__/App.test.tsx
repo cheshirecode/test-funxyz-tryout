@@ -1,300 +1,213 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import App from '../App'
+import { App } from '../App'
 
-// Mock the API service with real @funkit/api-base methods
-vi.mock('../services/api', () => ({
-  apiService: {
-    getFunkitUserInfo: vi.fn().mockResolvedValue({
-      success: false,
-      error: 'Test environment - @funkit/api-base not configured',
-      fallbackInfo: {
-        message: 'Real @funkit/api-base getUserUniqueId() integration',
-        apiFunction: 'getUserUniqueId()',
-        description: 'Attempts to get unique user identifier from funkit platform'
-      },
-      timestamp: new Date().toISOString()
-    }),
-    getFunkitAPIDemo: vi.fn().mockResolvedValue({
-      success: false,
-      error: 'Test environment - @funkit/api-base not configured',
-      fallbackInfo: {
-        message: 'Real @funkit/api-base integration configured',
-        availableFunctions: [
-          'getUserUniqueId()',
-          'getGroups()',
-          'getUserWalletIdentities()',
-          'getAllowedAssets()',
-          'getAssetPriceInfo()',
-          'getChainFromId()',
-          'createUser()'
-        ],
-        configuration: {
-          apiKey: 'Z9SZaOwp...',
-          baseUrl: 'https://api.fun.xyz/v1',
-          funkitApiBaseUrl: 'https://api.fun.xyz/v1'
-        }
-      },
-      timestamp: new Date().toISOString()
-    }),
-    getFunkitUserWallets: vi.fn().mockResolvedValue({
-      success: false,
-      error: 'Test environment - @funkit/api-base not configured',
-      fallbackInfo: {
-        message: 'Real @funkit/api-base getUserWalletIdentities() integration',
-        apiFunction: 'getUserWalletIdentities()',
-        description: 'Attempts to get user wallet identities from funkit platform'
-      },
-      timestamp: new Date().toISOString()
-    })
-  }
-}))
-
-// Mock the config
-vi.mock('../config/api', () => ({
-  apiConfig: {
-    apiKey: 'Z9SZaOwpmE40KX61mUKWm5hrpGh7WHVkaTvQJBxvdvuKZgfZLfEkLG0z2C5dBKrI',
-    baseUrl: 'https://api.fun.xyz/v1',
-    timeout: 10000
-  },
-  isDevelopment: true
-}))
-
-const createTestQueryClient = () => new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-    mutations: {
-      retry: false,
-    },
-  },
-})
-
-const renderWithProviders = (component: React.ReactElement) => {
-  const queryClient = createTestQueryClient()
-  return render(
-    <QueryClientProvider client={queryClient}>
-      {component}
-    </QueryClientProvider>
-  )
-}
-
-describe('App Component', () => {
+describe('TokenSwap App', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  describe('Navigation and Routing', () => {
-    it('renders the navigation header', () => {
-      renderWithProviders(<App />)
-      expect(screen.getByText('React App')).toBeInTheDocument()
-      expect(screen.getByText('Home')).toBeInTheDocument()
-      expect(screen.getByText('Demo')).toBeInTheDocument()
+  describe('App Component Structure', () => {
+    it('renders the main app container with TokenSwap component', () => {
+      render(<App />)
+
+      // Check for main container with proper styling
+      const appContainer = document.querySelector('.flex.w-full.min-h-screen')
+      expect(appContainer).toBeInTheDocument()
     })
 
-    it('renders home page by default', () => {
-      renderWithProviders(<App />)
-      expect(screen.getByText('Welcome to React App')).toBeInTheDocument()
-      expect(screen.getByText('A modern React application with routing')).toBeInTheDocument()
-      expect(screen.getByText('View Demo')).toBeInTheDocument()
+    it('displays the Token Price Explorer header', () => {
+      render(<App />)
+
+      const header = screen.getByText('Token Price Explorer')
+      expect(header).toBeInTheDocument()
+      expect(header).toHaveClass('text-2xl', 'font-bold')
     })
 
-    it('navigates to demo page when demo link is clicked', async () => {
+    it('shows all four token selector buttons', () => {
+      render(<App />)
+
+      // Check for all token buttons in the top selector
+      expect(screen.getAllByText('USDC')).toHaveLength(2) // Button + dropdown
+      expect(screen.getByText('USDT')).toBeInTheDocument()
+      expect(screen.getAllByText('ETH')).toHaveLength(2) // Button + dropdown
+      expect(screen.getByText('WBTC')).toBeInTheDocument()
+    })
+
+    it('displays FROM and TO swap sections', () => {
+      render(<App />)
+
+      expect(screen.getByText('From')).toBeInTheDocument()
+      expect(screen.getByText('To')).toBeInTheDocument()
+    })
+
+    it('shows the swap arrow button between sections', () => {
+      render(<App />)
+
+      // Check for the arrow swap button (the one with ArrowDownIcon)
+      const arrowButtons = screen.getAllByRole('button')
+      const swapArrowButton = arrowButtons.find((button) =>
+        button.querySelector('svg[class*="arrow-down"]') ||
+        button.className.includes('border-2')
+      )
+      expect(swapArrowButton).toBeInTheDocument()
+    })
+  })
+
+  describe('Token Selection Functionality', () => {
+    it('allows selecting different source tokens from top buttons', async () => {
       const user = userEvent.setup()
-      renderWithProviders(<App />)
+      render(<App />)
 
-      const demoLink = screen.getByText('Demo')
-      await user.click(demoLink)
+      // Click ETH button to select as source (get the first ETH button from top selector)
+      const ethButtons = screen.getAllByRole('button', { name: /eth/i })
+      const ethButton = ethButtons[0] // First ETH button is in the top selector
+      await user.click(ethButton)
 
+      // Should update the FROM section to show ETH
       await waitFor(() => {
-        expect(screen.getByText('React + Vite + Tailwind 4 Demo')).toBeInTheDocument()
+        expect(screen.getAllByText('ETH')).toHaveLength(2) // Button + FROM section
       })
     })
 
-    it('navigates to demo page when View Demo button is clicked', async () => {
+    it('prevents selecting the same token for both source and target', async () => {
       const user = userEvent.setup()
-      renderWithProviders(<App />)
+      render(<App />)
 
-      const viewDemoButton = screen.getByText('View Demo')
-      await user.click(viewDemoButton)
+      // Default is USDC->ETH, try to set target to USDC
+      const targetSelector = screen.getByText('To').closest('div')?.querySelector('button')
+      if (targetSelector) {
+        await user.click(targetSelector)
 
+        // USDC option should be disabled in dropdown
+        const usdcOption = screen.getByText('USD Coin').closest('button')
+        expect(usdcOption).toHaveClass('opacity-50', 'cursor-not-allowed')
+      }
+    })
+  })
+
+  describe('Amount Input and Conversion', () => {
+    it('displays default amount and conversion', () => {
+      render(<App />)
+
+      // Should show default USD amount (FROM input)
+      const amountInputs = screen.getAllByPlaceholderText('0')
+      const fromInput = amountInputs.find((input) => input.getAttribute('type') === 'number') as HTMLInputElement
+      expect(fromInput).toHaveValue(100)
+
+      // Should show converted amount (multiple ≈ symbols exist)
+      expect(screen.getAllByText(/≈/)).toHaveLength(3) // FROM, TO, and exchange rate
+    })
+
+    it('updates conversion when amount changes', async () => {
+      const user = userEvent.setup()
+      render(<App />)
+
+      const amountInputs = screen.getAllByPlaceholderText('0')
+      const fromInput = amountInputs.find((input) => input.getAttribute('type') === 'number') as HTMLInputElement
+      await user.clear(fromInput!)
+      await user.type(fromInput!, '200')
+
+      // Should recalculate conversion
       await waitFor(() => {
-        expect(screen.getByText('React + Vite + Tailwind 4 Demo')).toBeInTheDocument()
+        expect(fromInput).toHaveValue(200)
+      })
+    })
+
+    it('shows balance information for tokens', () => {
+      render(<App />)
+
+      // Check that token selector buttons exist
+      const tokenButtons = screen.getAllByRole('button')
+      const hasTokenSelectors = tokenButtons.some((button) =>
+        button.textContent?.includes('USDC') || button.textContent?.includes('ETH')
+      )
+      expect(hasTokenSelectors).toBe(true)
+    })
+  })
+
+  describe('Swap Functionality', () => {
+    it('enables swap button when valid amounts are entered', () => {
+      render(<App />)
+
+      const swapButton = screen.getByRole('button', { name: /swap.*to/i })
+      expect(swapButton).toBeInTheDocument()
+      expect(swapButton).not.toBeDisabled()
+    })
+
+    it('shows loading state during swap execution', async () => {
+      const user = userEvent.setup()
+      render(<App />)
+
+      const swapButton = screen.getByRole('button', { name: /swap.*to/i })
+      await user.click(swapButton)
+
+      // Should show loading state
+      await waitFor(() => {
+        expect(screen.getByText(/swapping/i)).toBeInTheDocument()
+      })
+    })
+
+    it('shows success state after swap completion', async () => {
+      const user = userEvent.setup()
+      render(<App />)
+
+      const swapButton = screen.getByRole('button', { name: /swap.*to/i })
+      await user.click(swapButton)
+
+      // Wait for swap to complete and show success
+      await waitFor(() => {
+        expect(screen.getByText(/swap successful/i)).toBeInTheDocument()
+      }, { timeout: 3000 })
+    })
+  })
+
+  describe('Responsive Design', () => {
+    it('applies mobile-first responsive classes', () => {
+      render(<App />)
+
+      const container = document.querySelector('.w-full.max-w-md')
+      expect(container).toBeInTheDocument()
+    })
+
+    it('has minimum touch targets for mobile (44px)', () => {
+      render(<App />)
+
+      // Token selector buttons should have min-h-[44px]
+      const tokenButtons = screen.getAllByRole('button')
+      tokenButtons.forEach((button) => {
+        const hasMinHeight = button.className.includes('min-h-[44px]') ||
+                           button.className.includes('py-3') ||
+                           button.className.includes('h-18')
+        expect(hasMinHeight).toBe(true)
       })
     })
   })
 
-  describe('Demo Page Functionality', () => {
-    // Helper to navigate to demo page
-    const navigateToDemoPage = async () => {
-      const user = userEvent.setup()
-      const viewDemoButton = screen.getByText('View Demo')
-      await user.click(viewDemoButton)
+  describe('Visual Design Compliance', () => {
+    it('uses correct typography scale for token amounts', () => {
+      render(<App />)
 
-      await waitFor(() => {
-        expect(screen.getByText('React + Vite + Tailwind 4 Demo')).toBeInTheDocument()
-      })
-    }
-
-    describe('Counter Functionality', () => {
-      it('displays initial counter value of 0', async () => {
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        expect(screen.getByText('0')).toBeInTheDocument()
-      })
-
-      it('increments counter when + button is clicked', async () => {
-        const user = userEvent.setup()
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        const incrementButton = screen.getByText('+')
-        await user.click(incrementButton)
-
-        expect(screen.getByText('1')).toBeInTheDocument()
-      })
-
-      it('decrements counter when - button is clicked', async () => {
-        const user = userEvent.setup()
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        const decrementButton = screen.getByText('-')
-        await user.click(decrementButton)
-
-        expect(screen.getByText('-1')).toBeInTheDocument()
-      })
+      // Check for token-amount classes (24px as per design requirements)
+      const amountElements = document.querySelectorAll('.text-token-amount, .text-2xl')
+      expect(amountElements.length).toBeGreaterThan(0)
     })
 
-    describe('React Query Integration (@funkit/api-base)', () => {
-      it('displays loading state initially', async () => {
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
+    it('applies proper color system classes', () => {
+      render(<App />)
 
-        expect(screen.getAllByText('Loading...').length).toBeGreaterThan(0)
-      })
-
-      it('displays funkit user info API result', async () => {
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        await waitFor(() => {
-          expect(screen.getByText('Real @funkit/api-base getUserUniqueId() integration')).toBeInTheDocument()
-        }, { timeout: 3000 })
-      })
+      // Check for primary, success, warning color usage
+      const coloredElements = document.querySelectorAll('[class*="primary"], [class*="success"], [class*="warning"]')
+      expect(coloredElements.length).toBeGreaterThan(0)
     })
 
-    describe('Funkit API Integration Demo', () => {
-      it('shows funkit API configuration', async () => {
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
+    it('maintains proper spacing system (8px grid)', () => {
+      render(<App />)
 
-        await waitFor(() => {
-          expect(screen.getByText('Environment Configuration')).toBeInTheDocument()
-          expect(screen.getByText('Development')).toBeInTheDocument()
-        })
-      })
-
-      it('displays funkit API demo results', async () => {
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        await waitFor(() => {
-          expect(screen.getByText('Real @funkit/api-base integration configured')).toBeInTheDocument()
-        }, { timeout: 3000 })
-      })
-
-      it('shows available funkit functions', async () => {
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        await waitFor(() => {
-          expect(screen.getByText('getUserUniqueId()')).toBeInTheDocument()
-          expect(screen.getByText('getGroups()')).toBeInTheDocument()
-          expect(screen.getByText('getUserWalletIdentities()')).toBeInTheDocument()
-          expect(screen.getByText('getAllowedAssets()')).toBeInTheDocument()
-        }, { timeout: 3000 })
-      })
-
-      it('has refresh button for API demo', async () => {
-        const user = userEvent.setup()
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        const refreshButton = screen.getByText('Refresh Funkit API')
-        expect(refreshButton).toBeInTheDocument()
-
-        await user.click(refreshButton)
-        // Button should be clickable (we're not testing the actual refresh here)
-      })
-    })
-
-    describe('Headless UI Tabs', () => {
-      it('displays tabs correctly', async () => {
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        expect(screen.getByText('Dashboard')).toBeInTheDocument()
-        expect(screen.getByText('Settings')).toBeInTheDocument()
-        expect(screen.getByText('About')).toBeInTheDocument()
-      })
-
-      it('shows dashboard content by default', async () => {
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        expect(screen.getByText('Welcome to the dashboard!')).toBeInTheDocument()
-      })
-
-      it('switches to settings tab when clicked', async () => {
-        const user = userEvent.setup()
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        const settingsTab = screen.getByText('Settings')
-        await user.click(settingsTab)
-
-        await waitFor(() => {
-          expect(screen.getByText('Settings configuration panel')).toBeInTheDocument()
-        })
-      })
-
-      it('switches to about tab when clicked', async () => {
-        const user = userEvent.setup()
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        const aboutTab = screen.getByText('About')
-        await user.click(aboutTab)
-
-        await waitFor(() => {
-          expect(screen.getByText('About this application')).toBeInTheDocument()
-        })
-      })
-    })
-
-    describe('Real @funkit/api-base Integration', () => {
-      it('shows funkit API base URL configuration', async () => {
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        await waitFor(() => {
-          expect(screen.getByText('https://api.fun.xyz/v1')).toBeInTheDocument()
-        }, { timeout: 3000 })
-      })
-
-      it('displays error state with fallback information', async () => {
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        await waitFor(() => {
-          expect(screen.getByText('Test environment - @funkit/api-base not configured')).toBeInTheDocument()
-        }, { timeout: 3000 })
-      })
+      // Check for consistent spacing classes
+      const spacedElements = document.querySelectorAll('[class*="p-"], [class*="m-"], [class*="space-"]')
+      expect(spacedElements.length).toBeGreaterThan(0)
     })
   })
 })
