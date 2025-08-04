@@ -5,9 +5,9 @@ import { apiConfig } from '../../config/api'
 describe('API Service', () => {
 
   describe('apiConfig', () => {
-    it('should have correct default configuration', () => {
-      expect(apiConfig.apiKey).toBe('demo_api_key_12345')
-      expect(apiConfig.baseUrl).toBe('https://api.funkit.example.com')
+    it('should have correct test configuration', () => {
+      expect(apiConfig.apiKey).toBe('test_api_key_12345')
+      expect(apiConfig.baseUrl).toBe('https://api.test.example.com')
       expect(apiConfig.timeout).toBe(10000)
     })
   })
@@ -20,7 +20,7 @@ describe('API Service', () => {
       expect(result.data).toBeDefined()
       if (result.data) {
         expect(result.data.message).toBe('Mock data from @funkit/api-base integration')
-        expect(result.data.apiKey).toBe('demo_api...')
+        expect(result.data.apiKey).toBe('test_api...')
         expect(result.data.baseUrl).toBe(apiConfig.baseUrl)
         expect(result.data.features).toBeInstanceOf(Array)
         expect(result.data.features).toHaveLength(5)

@@ -4,16 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiService } from '../services/api'
 import { apiConfig, isDevelopment } from '../config/api'
 
-// Simple mock data fetch function
-const fetchData = async () => {
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000))
-  return {
-    message: 'Hello from React Query!',
-    timestamp: new Date().toISOString(),
-    status: 'success'
-  }
-}
+
 
 function Demo() {
   const [count, setCount] = useState(0)
@@ -21,10 +12,10 @@ function Demo() {
   const [postContent, setPostContent] = useState('')
   const queryClient = useQueryClient()
 
-  // Example React Query usage
+  // Example React Query usage with real API service
   const { data, isLoading, error } = useQuery({
-    queryKey: ['example-data'],
-    queryFn: fetchData,
+    queryKey: ['api-status'],
+    queryFn: () => apiService.getStatus(),
   })
 
   // API integration examples using @funkit/api-base
@@ -100,7 +91,7 @@ function Demo() {
 
         {/* React Query Demo */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">React Query Demo</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">React Query Demo (API Status)</h2>
           {isLoading && (
             <div className="flex items-center justify-center p-4">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -112,11 +103,22 @@ function Demo() {
               <p className="text-red-700">Error fetching data</p>
             </div>
           )}
-          {data && (
+          {data?.success && data.data && (
             <div className="p-4 bg-green-50 border border-green-200 rounded-md">
-              <p className="text-green-700 font-medium">{data.message}</p>
+              <p className="text-green-700 font-medium">{data.data.message}</p>
               <p className="text-green-600 text-sm mt-1">
+                Status: {data.success ? 'Success' : 'Failed'}
+              </p>
+              <p className="text-green-600 text-sm">
                 Fetched at: {new Date(data.timestamp).toLocaleTimeString()}
+              </p>
+            </div>
+          )}
+          {data && !data.success && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-red-700">API Error: {data.error}</p>
+              <p className="text-red-600 text-sm mt-1">
+                Timestamp: {new Date(data.timestamp).toLocaleTimeString()}
               </p>
             </div>
           )}
