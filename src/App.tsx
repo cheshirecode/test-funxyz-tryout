@@ -1,9 +1,14 @@
-import { TokenSwap } from './components/TokenSwap'
+import { Route, Switch } from 'wouter'
+import { Home } from './pages/Home'
+import { Swap } from './pages/Swap'
+import Demo from './pages/Demo'
 
 export function App() {
   return (
-    <div className="flex w-full min-h-screen justify-center items-center bg-gray-100">
-      <TokenSwap />
-    </div>
+    <Switch>
+      <Route path="/" component={Home} />
+      <Route path="/swap" component={Swap} />
+      <Route path="/demo" component={Demo} />
+    </Switch>
   )
 }
