@@ -1,106 +1,68 @@
-import { useEffect, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { useAtom } from 'jotai'
 import { ArrowDownIcon, WalletIcon } from 'lucide-react'
 import { TokenSelector } from './TokenSelector'
 import {
-  tokenService,
-  defaultTokenData,
-  swapSourceTokenAtom,
-  swapTargetTokenAtom,
-  swapUsdAmountAtom,
-  swapStateAtom,
-  setSwapStateAtom,
-  swapTokenPositionsAtom
-} from '../utils/tokenData'
+  useTokenData,
+  useSwapState,
+  useSwapCalculations,
+  useSwapExecution,
+  useTokenSelection
+} from '../utils/hooks'
+import {
+  getSwapButtonState,
+  getBalanceTextStyle,
+  handleTokenIconError,
+  formatTokenBalance
+} from '../utils/helpers'
 
 export const TokenSwap = () => {
-  // Use atoms for persisted state
-  const [sourceToken, setSourceToken] = useAtom(swapSourceTokenAtom)
-  const [targetToken, setTargetToken] = useAtom(swapTargetTokenAtom)
-  const [usdAmount, setUsdAmount] = useAtom(swapUsdAmountAtom)
+  // Custom hooks for all business logic
+  const { tokenData, isLoading: tokensLoading } = useTokenData()
+  const {
+    sourceToken,
+    setSourceToken,
+    targetToken,
+    setTargetToken,
+    usdAmount,
+    setUsdAmount,
+    swapping,
+    swapComplete,
+    setSwapState,
+    swapTokenPositions
+  } = useSwapState()
 
-  // Local state for calculated values (not persisted)
-  const [sourceTokenAmount, setSourceTokenAmount] = useState<string>('0')
-  const [targetTokenAmount, setTargetTokenAmount] = useState<string>('0')
-
-  // Atom state for swap status
-  const [swapState] = useAtom(swapStateAtom)
-  const [, setSwapState] = useAtom(setSwapStateAtom)
-  const { swapping, swapComplete } = swapState
-
-  // Fetch token data from Funkit API using React Query
-  const { data: tokenData, isLoading: tokensLoading } = useQuery({
-    queryKey: ['tokens'],
-    queryFn: () => tokenService.getTokens(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchInterval: 30 * 1000, // Refetch every 30 seconds,
-    initialData: defaultTokenData
+  const { sourceTokenAmount, targetTokenAmount, exchangeRate } = useSwapCalculations({
+    usdAmount,
+    sourceToken,
+    targetToken,
+    tokenData
   })
 
-  // Ensure tokenData is always available
-  const safeTokenData = tokenData || defaultTokenData
+  const { executeSwap, canExecuteSwap } = useSwapExecution({
+    usdAmount,
+    sourceTokenAmount,
+    sourceToken,
+    tokenData,
+    swapping,
+    setSwapState
+  })
 
-  // Available tokens for the top selector buttons (as per wireframe)
-  const availableTokens = ['USDC', 'USDT', 'ETH', 'WBTC']
+  const { availableTokens, handleQuickSelect, getTokenSelectionState } = useTokenSelection({
+    sourceToken,
+    targetToken,
+    setSourceToken,
+    setTargetToken
+  })
 
-  // Calculate token amounts from USD input
-  useEffect(() => {
-    if (!usdAmount || isNaN(parseFloat(usdAmount))) {
-      setSourceTokenAmount('0')
-      setTargetTokenAmount('0')
-      return
-    }
-    const usd = parseFloat(usdAmount)
-
-    // Calculate source token amount
-    const sourceAmount = usd / (safeTokenData[sourceToken]?.usdPrice || 1)
-    setSourceTokenAmount(sourceAmount.toFixed(safeTokenData[sourceToken]?.decimals || 2))
-
-    // Calculate target token amount
-    const targetAmount = usd / (safeTokenData[targetToken]?.usdPrice || 1)
-    setTargetTokenAmount(targetAmount.toFixed(safeTokenData[targetToken]?.decimals || 2))
-  }, [sourceToken, targetToken, usdAmount, safeTokenData])
-
-  // Handle USD amount change
-  const handleUsdAmountChange = (value: string) => {
-    setUsdAmount(value)
-  }
-
-  // Check for insufficient balance
-  const hasInsufficientBalance = () => {
-    if (!sourceTokenAmount || isNaN(parseFloat(sourceTokenAmount))) return false
-    return parseFloat(sourceTokenAmount) > (safeTokenData[sourceToken]?.balance || 0)
-  }
-
-  // Swap source and target tokens using atom
-  const [, swapPositions] = useAtom(swapTokenPositionsAtom)
-  const handleSwapPositions = () => {
-    swapPositions()
-  }
-
-  // Execute the swap
-  const executeSwap = () => {
-    if (!usdAmount || isNaN(parseFloat(usdAmount)) || parseFloat(usdAmount) <= 0 || hasInsufficientBalance()) return
-    setSwapState({ swapping: true })
-    // Simulate API call with timeout
-    setTimeout(() => {
-      setSwapState({ swapping: false, swapComplete: true })
-      // Reset swap complete status after 3 seconds
-      setTimeout(() => {
-        setSwapState({ swapComplete: false })
-      }, 3000)
-    }, 1500)
-  }
-
-  // Get button state colors based on current state
-  const getButtonState = () => {
-    if (swapping) return 'bg-primary-500 text-white cursor-not-allowed'
-    if (swapComplete) return 'bg-success-500 text-white'
-    if (!usdAmount || parseFloat(usdAmount) <= 0) return 'bg-gray-300 text-gray-500 cursor-not-allowed'
-    if (hasInsufficientBalance()) return 'bg-error-500 text-white cursor-not-allowed'
-    return 'bg-primary-600 hover:bg-primary-700 text-white'
-  }
+  // Get button state for UI
+  const buttonState = getSwapButtonState(
+    usdAmount,
+    sourceTokenAmount,
+    sourceToken,
+    targetToken,
+    tokenData,
+    swapping,
+    swapComplete
+  )
 
   return (
     <div className="w-full max-w-md mx-auto p-6 bg-white rounded-2xl shadow-lg">
@@ -133,24 +95,12 @@ export const TokenSwap = () => {
 
         <div className="grid grid-cols-4 gap-2">
           {availableTokens.map((token) => {
-            const isSource = sourceToken === token
-            const isTarget = targetToken === token
-            const isSelected = isSource || isTarget
+            const { isSource, isTarget, isSelected } = getTokenSelectionState(token)
 
             return (
               <button
                 key={token}
-                onClick={() => {
-                  if (isSource) {
-                    setSourceToken(targetToken)
-                    setTargetToken(token)
-                  } else if (isTarget) {
-                    setTargetToken(sourceToken)
-                    setSourceToken(token)
-                  } else {
-                    setSourceToken(token)
-                  }
-                }}
+                onClick={() => handleQuickSelect(token)}
                 className={`relative p-3 rounded-xl min-h-[44px] font-medium text-sm transition-colors flex flex-col items-center justify-center
                   ${isSelected
                     ? 'bg-white border-2 shadow-md'
@@ -158,12 +108,10 @@ export const TokenSwap = () => {
               >
                 {/* Token Icon */}
                 <img
-                  src={safeTokenData[token]?.icon || ''}
+                  src={tokenData[token]?.icon || ''}
                   alt={token}
                   className="w-6 h-6 rounded-full mb-1"
-                  onError={(e) => {
-                    e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Ctext x='12' y='16' text-anchor='middle' font-size='8'%3E${token.charAt(0)}%3C/text%3E%3C/svg%3E`
-                  }}
+                  onError={(e) => handleTokenIconError(e, token, 24)}
                 />
 
                 {/* Token Symbol */}
@@ -199,8 +147,8 @@ export const TokenSwap = () => {
             <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
             <span className="text-sm font-medium text-blue-600">From</span>
           </div>
-          <span className={`text-sm ${hasInsufficientBalance() ? 'text-error-500' : 'text-gray-500'}`}>
-            Balance: {tokensLoading ? 'Loading...' : `${safeTokenData[sourceToken]?.balance || 0} ${sourceToken}`}
+          <span className={`text-sm ${getBalanceTextStyle(sourceTokenAmount, sourceToken, tokenData)}`}>
+            Balance: {formatTokenBalance(tokenData[sourceToken]?.balance || 0, sourceToken, tokensLoading)}
           </span>
         </div>
 
@@ -211,7 +159,7 @@ export const TokenSwap = () => {
             <input
               type="number"
               value={usdAmount}
-              onChange={(e) => handleUsdAmountChange(e.target.value)}
+              onChange={(e) => setUsdAmount(e.target.value)}
               className="w-full bg-transparent text-token-amount outline-none text-gray-900"
               placeholder="0.00"
               step="0.01"
@@ -228,12 +176,12 @@ export const TokenSwap = () => {
             selectedToken={sourceToken}
             onSelectToken={setSourceToken}
             disabledToken={targetToken}
-            tokenData={safeTokenData}
+            tokenData={tokenData}
             isLoading={tokensLoading}
           />
         </div>
 
-        {hasInsufficientBalance() && (
+        {!canExecuteSwap && getBalanceTextStyle(sourceTokenAmount, sourceToken, tokenData) === 'text-error-500' && (
           <div className="mt-2 text-error-500 text-sm">
             Insufficient {sourceToken} balance
           </div>
@@ -243,7 +191,7 @@ export const TokenSwap = () => {
       {/* Swap Direction Button - Large, interactive as per design principles */}
       <div className="flex justify-center -my-3 relative z-10">
         <button
-          onClick={handleSwapPositions}
+          onClick={swapTokenPositions}
           className="p-3 rounded-full bg-white border-2 border-gray-200 hover:border-primary-500 hover:bg-primary-50 min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors"
         >
           <ArrowDownIcon size={20} className="text-gray-600" />
@@ -258,7 +206,7 @@ export const TokenSwap = () => {
               <span className="text-sm font-medium text-green-600">To</span>
             </div>
             <span className="text-sm text-gray-500">
-              Balance: {tokensLoading ? 'Loading...' : `${safeTokenData[targetToken]?.balance || 0} ${targetToken}`}
+              Balance: {formatTokenBalance(tokenData[targetToken]?.balance || 0, targetToken, tokensLoading)}
             </span>
           </div>
           <div className="flex items-center">
@@ -269,7 +217,7 @@ export const TokenSwap = () => {
               selectedToken={targetToken}
               onSelectToken={setTargetToken}
               disabledToken={sourceToken}
-              tokenData={safeTokenData}
+              tokenData={tokenData}
               isLoading={tokensLoading}
             />
           </div>
@@ -285,9 +233,7 @@ export const TokenSwap = () => {
           {tokensLoading ? 'Loading...' : (
             <>
               1 {sourceToken} ≈{' '}
-              {(
-                (safeTokenData[sourceToken]?.usdPrice || 1) / (safeTokenData[targetToken]?.usdPrice || 1)
-              ).toFixed(6)}{' '}
+              {exchangeRate.toFixed(6)}{' '}
               {targetToken}
             </>
           )}
@@ -297,8 +243,8 @@ export const TokenSwap = () => {
       {/* Swap Button - Prominent, elevated design with proper states */}
       <button
         onClick={executeSwap}
-        disabled={swapping || !usdAmount || parseFloat(usdAmount) <= 0 || hasInsufficientBalance()}
-        className={`w-full py-4 px-4 rounded-xl font-medium flex justify-center items-center min-h-[44px] transition-colors ${getButtonState()}`}
+        disabled={buttonState.disabled}
+        className={`w-full py-4 px-4 rounded-xl font-medium flex justify-center items-center min-h-[44px] transition-colors ${buttonState.className}`}
       >
         {swapping ? (
           <div className="flex items-center">
@@ -343,7 +289,7 @@ export const TokenSwap = () => {
             Swap Successful
           </div>
         ) : (
-          `Swap ${sourceToken} to ${targetToken}`
+          buttonState.text
         )}
       </button>
     </div>
