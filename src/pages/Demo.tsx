@@ -12,21 +12,21 @@ function Demo() {
   const [postContent, setPostContent] = useState('')
   const queryClient = useQueryClient()
 
-  // Example React Query usage with real API service
+  // Example React Query usage with real funkit API service
   const { data, isLoading, error } = useQuery({
-    queryKey: ['api-status'],
-    queryFn: () => apiService.getStatus(),
+    queryKey: ['funkit-user-info'],
+    queryFn: () => apiService.getFunkitUserInfo(),
   })
 
-  // API integration examples using real HTTP requests
+  // Funkit API integration examples using real @funkit/api-base
   const {
     data: apiData,
     isLoading: apiLoading,
     error: apiError,
     refetch: refetchApiData
   } = useQuery({
-    queryKey: ['api-health-check'],
-    queryFn: () => apiService.getAPIHealthCheck(),
+    queryKey: ['funkit-api-demo'],
+    queryFn: () => apiService.getFunkitAPIDemo(),
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 
@@ -91,7 +91,7 @@ function Demo() {
 
         {/* React Query Demo */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">React Query Demo (API Status)</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">React Query Demo (@funkit/api-base)</h2>
           {isLoading && (
             <div className="flex items-center justify-center p-4">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -124,9 +124,9 @@ function Demo() {
           )}
         </div>
 
-        {/* API Integration Demo */}
+        {/* Funkit API Integration Demo */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">API Integration Demo (@funkit/api-base)</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Real Funkit API Integration (@funkit/api-base)</h2>
 
           {/* Environment Variables Display */}
           <div className="bg-gray-50 border border-gray-200 rounded-md p-4 mb-6">
@@ -141,13 +141,13 @@ function Demo() {
           {/* API Data Fetch Demo */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium text-gray-800">Real API Health Check</h3>
+              <h3 className="text-lg font-medium text-gray-800">Funkit API Demo</h3>
               <button
                 onClick={() => refetchApiData()}
                 disabled={apiLoading}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 transition-colors"
               >
-                {apiLoading ? 'Loading...' : 'Refresh API'}
+                {apiLoading ? 'Loading...' : 'Refresh Funkit API'}
               </button>
             </div>
 
