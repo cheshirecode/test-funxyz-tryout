@@ -8,8 +8,6 @@ import { apiConfig, isDevelopment } from '../config/api'
 
 function Demo() {
   const [count, setCount] = useState(0)
-  const [postTitle, setPostTitle] = useState('')
-  const [postContent, setPostContent] = useState('')
   const queryClient = useQueryClient()
 
   // Example React Query usage with real funkit API service
@@ -30,22 +28,17 @@ function Demo() {
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 
-  // Mutation example for creating posts
-  const createPostMutation = useMutation({
-    mutationFn: (data: { title: string; content: string }) =>
-      apiService.createPost(data),
+  // Funkit API mutation example for getting user wallets
+  const getUserWalletsMutation = useMutation({
+    mutationFn: () => apiService.getFunkitUserWallets(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] })
-      setPostTitle('')
-      setPostContent('')
+      queryClient.invalidateQueries({ queryKey: ['funkit-user-wallets'] })
     }
   })
 
-  const handleCreatePost = (e: React.FormEvent) => {
+  const handleGetUserWallets = (e: React.FormEvent) => {
     e.preventDefault()
-    if (postTitle.trim() && postContent.trim()) {
-      createPostMutation.mutate({ title: postTitle, content: postContent })
-    }
+    getUserWalletsMutation.mutate()
   }
 
   const tabs = [
@@ -194,56 +187,43 @@ function Demo() {
             )}
           </div>
 
-          {/* API Mutation Demo */}
+          {/* Funkit API Mutation Demo */}
           <div>
-            <h3 className="text-lg font-medium text-gray-800 mb-4">Create Post Demo (Mutation)</h3>
-            <form onSubmit={handleCreatePost} className="space-y-4">
-              <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                  Title
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  value={postTitle}
-                  onChange={(e) => setPostTitle(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter post title..."
-                />
-              </div>
-              <div>
-                <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
-                  Content
-                </label>
-                <textarea
-                  id="content"
-                  value={postContent}
-                  onChange={(e) => setPostContent(e.target.value)}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter post content..."
-                />
-              </div>
+            <h3 className="text-lg font-medium text-gray-800 mb-4">Get User Wallets Demo (Mutation)</h3>
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600">
+                Click the button below to call the real @funkit/api-base getUserWalletIdentities() function:
+              </p>
               <button
-                type="submit"
-                disabled={createPostMutation.isPending || !postTitle.trim() || !postContent.trim()}
+                onClick={handleGetUserWallets}
+                disabled={getUserWalletsMutation.isPending}
                 className="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 disabled:opacity-50 transition-colors"
               >
-                {createPostMutation.isPending ? 'Creating...' : 'Create Post'}
+                {getUserWalletsMutation.isPending ? 'Getting Wallets...' : 'Get User Wallets'}
               </button>
-            </form>
 
-            {createPostMutation.isSuccess && (
-              <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
-                <p className="text-green-700">Post created successfully!</p>
-              </div>
-            )}
+              {getUserWalletsMutation.data && (
+                <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+                  <h4 className="font-medium text-blue-800">Wallet Query Result:</h4>
+                  <pre className="mt-2 text-sm text-blue-700 overflow-auto">
+                    {JSON.stringify(getUserWalletsMutation.data, null, 2)}
+                  </pre>
+                </div>
+              )}
 
-            {createPostMutation.isError && (
-              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
-                <p className="text-red-700">Error creating post: {createPostMutation.error?.message}</p>
-              </div>
-            )}
+              {getUserWalletsMutation.error && (
+                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                  <h4 className="font-medium text-red-800">Mutation Error:</h4>
+                  <p className="mt-2 text-sm text-red-700">
+                    {getUserWalletsMutation.error.message}
+                  </p>
+                </div>
+              )}
+            </div>
+
+
+
+
           </div>
         </div>
 

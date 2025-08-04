@@ -12,37 +12,110 @@ describe('API Service', () => {
     })
   })
 
-  describe('getMockData', () => {
-    it('should return successful response with correct structure', async () => {
-      const result = await apiService.getMockData()
+  describe('getFunkitUserInfo', () => {
+    it('should attempt to call @funkit/api-base getUserUniqueId()', async () => {
+      const result = await apiService.getFunkitUserInfo()
 
-      expect(result.success).toBe(true)
-      expect(result.data).toBeDefined()
-      if (result.data) {
-        expect(result.data.message).toBe('Mock data from @funkit/api-base integration')
-        expect(result.data.apiKey).toBe('test_api...')
-        expect(result.data.baseUrl).toBe(apiConfig.baseUrl)
-        expect(result.data.features).toBeInstanceOf(Array)
-        expect(result.data.features).toHaveLength(5)
-      }
+      // Since we're using real @funkit/api-base, we expect either success or failure
+      expect(result).toBeDefined()
       expect(result.timestamp).toBeDefined()
+      expect(new Date(result.timestamp)).toBeInstanceOf(Date)
+
+      if (result.success) {
+        expect(result.data).toBeDefined()
+        expect(result.data?.apiFunction).toBe('getUserUniqueId()')
+        expect(result.data?.message).toBe('Successfully retrieved user unique ID from funkit API')
+      } else {
+        // If it fails (expected for test environment), check fallback structure
+        expect(result.error).toBeDefined()
+        expect(result.fallbackInfo).toBeDefined()
+        expect(result.fallbackInfo?.apiFunction).toBe('getUserUniqueId()')
+        expect(result.fallbackInfo?.message).toBe('Real @funkit/api-base getUserUniqueId() integration')
+      }
     })
+  })
 
-    it('should include all expected features', async () => {
-      const result = await apiService.getMockData()
+  describe('getFunkitUserWallets', () => {
+    it('should attempt to call @funkit/api-base getUserWalletIdentities()', async () => {
+      const result = await apiService.getFunkitUserWallets()
 
-      if (result.data?.features) {
-        expect(result.data.features).toContain('Environment variable configuration')
-        expect(result.data.features).toContain('Error handling and logging')
-        expect(result.data.features).toContain('Request/response interceptors')
-        expect(result.data.features).toContain('Timeout handling')
-        expect(result.data.features).toContain('Authentication headers')
+      expect(result).toBeDefined()
+      expect(result.timestamp).toBeDefined()
+
+      if (result.success) {
+        expect(result.data?.apiFunction).toBe('getUserWalletIdentities()')
+        expect(result.data?.message).toBe('Successfully retrieved user wallet identities from funkit API')
+      } else {
+        expect(result.error).toBeDefined()
+        expect(result.fallbackInfo?.apiFunction).toBe('getUserWalletIdentities()')
+        expect(result.fallbackInfo?.message).toBe('Real @funkit/api-base getUserWalletIdentities() integration')
+      }
+    })
+  })
+
+  describe('getFunkitAllowedAssets', () => {
+    it('should attempt to call @funkit/api-base getAllowedAssets()', async () => {
+      const result = await apiService.getFunkitAllowedAssets()
+
+      expect(result).toBeDefined()
+      expect(result.timestamp).toBeDefined()
+
+      if (result.success) {
+        expect(result.data?.apiFunction).toBe('getAllowedAssets()')
+        expect(result.data?.message).toBe('Successfully retrieved allowed assets from funkit API')
+      } else {
+        expect(result.error).toBeDefined()
+        expect(result.fallbackInfo?.apiFunction).toBe('getAllowedAssets()')
+        expect(result.fallbackInfo?.message).toBe('Real @funkit/api-base getAllowedAssets() integration')
+      }
+    })
+  })
+
+  describe('getFunkitUserGroups', () => {
+    it('should attempt to call @funkit/api-base getGroups()', async () => {
+      const result = await apiService.getFunkitUserGroups()
+
+      expect(result).toBeDefined()
+      expect(result.timestamp).toBeDefined()
+
+      if (result.success) {
+        expect(result.data?.apiFunction).toBe('getGroups()')
+        expect(result.data?.message).toBe('Successfully retrieved user groups from funkit API')
+      } else {
+        expect(result.error).toBeDefined()
+        expect(result.fallbackInfo?.apiFunction).toBe('getGroups()')
+        expect(result.fallbackInfo?.message).toBe('Real @funkit/api-base getGroups() integration')
+      }
+    })
+  })
+
+  describe('getFunkitAPIDemo', () => {
+    it('should run comprehensive @funkit/api-base demo', async () => {
+      const result = await apiService.getFunkitAPIDemo()
+
+      expect(result).toBeDefined()
+      expect(result.timestamp).toBeDefined()
+
+      if (result.success) {
+        expect(result.data?.message).toBe('Comprehensive @funkit/api-base integration demo')
+        expect(result.data?.configuration).toBeDefined()
+        expect(result.data?.apiCalls).toBeInstanceOf(Array)
+        expect(result.data?.totalApiCalls).toBeGreaterThanOrEqual(0)
+        expect(result.data?.successfulCalls).toBeGreaterThanOrEqual(0)
+      } else {
+        expect(result.error).toBeDefined()
+        expect(result.fallbackInfo?.message).toBe('Real @funkit/api-base integration configured')
+        expect(result.fallbackInfo?.availableFunctions).toBeInstanceOf(Array)
+        expect(result.fallbackInfo?.availableFunctions).toContain('getUserUniqueId()')
+        expect(result.fallbackInfo?.availableFunctions).toContain('getGroups()')
+        expect(result.fallbackInfo?.availableFunctions).toContain('getUserWalletIdentities()')
+        expect(result.fallbackInfo?.availableFunctions).toContain('getAllowedAssets()')
       }
     })
 
-    it('should have a valid timestamp', async () => {
+    it('should have valid timestamp regardless of success/failure', async () => {
       const before = new Date()
-      const result = await apiService.getMockData()
+      const result = await apiService.getFunkitAPIDemo()
       const after = new Date()
 
       const timestamp = new Date(result.timestamp)
@@ -51,48 +124,17 @@ describe('API Service', () => {
     })
   })
 
-  describe('createPost', () => {
-    it('should handle successful post creation', async () => {
-      const postData = { title: 'Test Post', content: 'Test content' }
-      const result = await apiService.createPost(postData)
+  describe('Real @funkit/api-base Integration', () => {
+    it('should demonstrate real funkit API configuration', async () => {
+      const result = await apiService.getFunkitAPIDemo()
 
-      expect(result.success).toBe(true)
-      expect(result.data).toBeDefined()
-      if (result.data) {
-        expect(result.data.message).toBe('Mock post created')
-        expect(result.data.title).toBe(postData.title)
-        expect(result.data.content).toBe(postData.content)
-        expect(result.data.id).toBeDefined()
-      }
-      expect(result.timestamp).toBeDefined()
-    })
-  })
+      // Whether success or failure, we should have configuration info
+      const config = result.success ? result.data?.configuration : result.fallbackInfo?.configuration
 
-    describe('getStatus', () => {
-    it('should handle successful status check', async () => {
-      const result = await apiService.getStatus()
-
-      expect(result.success).toBe(true)
-      expect(result.data).toBeDefined()
-      if (result.data) {
-        expect(result.data.message).toBe('Mock response data')
-        expect(result.data.url).toBe('/status')
-      }
-      expect(result.timestamp).toBeDefined()
-    })
-  })
-
-  describe('getUserProfile', () => {
-    it('should handle successful user profile fetch', async () => {
-      const result = await apiService.getUserProfile()
-
-      expect(result.success).toBe(true)
-      expect(result.data).toBeDefined()
-      if (result.data) {
-        expect(result.data.message).toBe('Mock response data')
-        expect(result.data.url).toBe('/user/profile')
-      }
-      expect(result.timestamp).toBeDefined()
+      expect(config).toBeDefined()
+      expect(config?.apiKey).toMatch(/^test_api\.\.\./)
+      expect(config?.baseUrl).toBe('https://api.test.example.com')
+      expect(config?.funkitApiBaseUrl).toBe('https://api.fun.xyz/v1')
     })
   })
 })

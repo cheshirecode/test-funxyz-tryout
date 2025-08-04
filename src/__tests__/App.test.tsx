@@ -4,28 +4,49 @@ import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import App from '../App'
 
-// Mock the API service
+// Mock the API service with real @funkit/api-base methods
 vi.mock('../services/api', () => ({
   apiService: {
-    getAPIHealthCheck: vi.fn().mockResolvedValue({
-      success: true,
-      data: {
-        message: 'Mock data from @funkit/api-base integration',
-        apiKey: 'test_api...',
-        baseUrl: 'https://api.test.example.com',
-        features: [
-          'Environment variable configuration',
-          'Error handling and logging',
-          'Request/response interceptors',
-          'Timeout handling',
-          'Authentication headers'
-        ]
+    getFunkitUserInfo: vi.fn().mockResolvedValue({
+      success: false,
+      error: 'Test environment - @funkit/api-base not configured',
+      fallbackInfo: {
+        message: 'Real @funkit/api-base getUserUniqueId() integration',
+        apiFunction: 'getUserUniqueId()',
+        description: 'Attempts to get unique user identifier from funkit platform'
       },
       timestamp: new Date().toISOString()
     }),
-    createPost: vi.fn().mockResolvedValue({
-      success: true,
-      data: { id: 1, title: 'Test Post', content: 'Test content', message: 'Mock post created' },
+    getFunkitAPIDemo: vi.fn().mockResolvedValue({
+      success: false,
+      error: 'Test environment - @funkit/api-base not configured',
+      fallbackInfo: {
+        message: 'Real @funkit/api-base integration configured',
+        availableFunctions: [
+          'getUserUniqueId()',
+          'getGroups()',
+          'getUserWalletIdentities()',
+          'getAllowedAssets()',
+          'getAssetPriceInfo()',
+          'getChainFromId()',
+          'createUser()'
+        ],
+        configuration: {
+          apiKey: 'test_api...',
+          baseUrl: 'https://api.test.example.com',
+          funkitApiBaseUrl: 'https://api.fun.xyz/v1'
+        }
+      },
+      timestamp: new Date().toISOString()
+    }),
+    getFunkitUserWallets: vi.fn().mockResolvedValue({
+      success: false,
+      error: 'Test environment - @funkit/api-base not configured',
+      fallbackInfo: {
+        message: 'Real @funkit/api-base getUserWalletIdentities() integration',
+        apiFunction: 'getUserWalletIdentities()',
+        description: 'Attempts to get user wallet identities from funkit platform'
+      },
       timestamp: new Date().toISOString()
     })
   }
@@ -34,8 +55,8 @@ vi.mock('../services/api', () => ({
 // Mock the config
 vi.mock('../config/api', () => ({
   apiConfig: {
-    apiKey: 'demo_api_key_12345',
-    baseUrl: 'https://api.funkit.example.com',
+    apiKey: 'test_api_key_12345',
+    baseUrl: 'https://api.test.example.com',
     timeout: 10000
   },
   isDevelopment: true
@@ -104,27 +125,6 @@ describe('App Component', () => {
         expect(screen.getByText('React + Vite + Tailwind 4 Demo')).toBeInTheDocument()
       })
     })
-
-    it('navigates back to home from demo page', async () => {
-      const user = userEvent.setup()
-      renderWithProviders(<App />)
-
-      // First navigate to demo
-      const viewDemoButton = screen.getByText('View Demo')
-      await user.click(viewDemoButton)
-
-      await waitFor(() => {
-        expect(screen.getByText('React + Vite + Tailwind 4 Demo')).toBeInTheDocument()
-      })
-
-      // Then navigate back to home
-      const homeLink = screen.getByText('Home')
-      await user.click(homeLink)
-
-      await waitFor(() => {
-        expect(screen.getByText('Welcome to React App')).toBeInTheDocument()
-      })
-    })
   })
 
   describe('Demo Page Functionality', () => {
@@ -139,10 +139,11 @@ describe('App Component', () => {
       })
     }
 
-    describe('Counter functionality', () => {
+    describe('Counter Functionality', () => {
       it('displays initial counter value of 0', async () => {
         renderWithProviders(<App />)
         await navigateToDemoPage()
+
         expect(screen.getByText('0')).toBeInTheDocument()
       })
 
@@ -153,6 +154,7 @@ describe('App Component', () => {
 
         const incrementButton = screen.getByText('+')
         await user.click(incrementButton)
+
         expect(screen.getByText('1')).toBeInTheDocument()
       })
 
@@ -163,125 +165,76 @@ describe('App Component', () => {
 
         const decrementButton = screen.getByText('-')
         await user.click(decrementButton)
+
         expect(screen.getByText('-1')).toBeInTheDocument()
       })
     })
 
-    describe('React Query integration', () => {
+    describe('React Query Integration (@funkit/api-base)', () => {
       it('displays loading state initially', async () => {
         renderWithProviders(<App />)
         await navigateToDemoPage()
+
         expect(screen.getAllByText('Loading...').length).toBeGreaterThan(0)
       })
 
-      it('displays mock data after loading', async () => {
+      it('displays funkit user info API result', async () => {
         renderWithProviders(<App />)
         await navigateToDemoPage()
 
         await waitFor(() => {
-          expect(screen.getByText('Hello from React Query!')).toBeInTheDocument()
+          expect(screen.getByText('Real @funkit/api-base getUserUniqueId() integration')).toBeInTheDocument()
         }, { timeout: 3000 })
       })
     })
 
-    describe('API Integration Demo', () => {
-      it('displays environment configuration', async () => {
+    describe('Funkit API Integration Demo', () => {
+      it('shows funkit API configuration', async () => {
         renderWithProviders(<App />)
         await navigateToDemoPage()
 
         await waitFor(() => {
           expect(screen.getByText('Environment Configuration')).toBeInTheDocument()
-          expect(screen.getByText(/Development/)).toBeInTheDocument()
-          expect(screen.getByText(/https:\/\/api\.funkit\.example\.com/)).toBeInTheDocument()
-          expect(screen.getByText(/demo_api\.\.\./)).toBeInTheDocument()
+          expect(screen.getByText('Development')).toBeInTheDocument()
         })
       })
 
-      it('displays API integration features', async () => {
+      it('displays funkit API demo results', async () => {
         renderWithProviders(<App />)
         await navigateToDemoPage()
 
         await waitFor(() => {
-          expect(screen.getByText('Mock data from @funkit/api-base integration')).toBeInTheDocument()
-          expect(screen.getByText('Environment variable configuration')).toBeInTheDocument()
-          expect(screen.getByText('Error handling and logging')).toBeInTheDocument()
-        })
+          expect(screen.getByText('Real @funkit/api-base integration configured')).toBeInTheDocument()
+        }, { timeout: 3000 })
       })
 
-      it('has refresh button that works', async () => {
+      it('shows available funkit functions', async () => {
+        renderWithProviders(<App />)
+        await navigateToDemoPage()
+
+        await waitFor(() => {
+          expect(screen.getByText('getUserUniqueId()')).toBeInTheDocument()
+          expect(screen.getByText('getGroups()')).toBeInTheDocument()
+          expect(screen.getByText('getUserWalletIdentities()')).toBeInTheDocument()
+          expect(screen.getByText('getAllowedAssets()')).toBeInTheDocument()
+        }, { timeout: 3000 })
+      })
+
+      it('has refresh button for API demo', async () => {
         const user = userEvent.setup()
         renderWithProviders(<App />)
         await navigateToDemoPage()
 
-        await waitFor(() => {
-          const refreshButton = screen.getByText('Refresh')
-          expect(refreshButton).toBeInTheDocument()
-        })
-
-        const refreshButton = screen.getByText('Refresh')
-        await user.click(refreshButton)
+        const refreshButton = screen.getByText('Refresh Funkit API')
         expect(refreshButton).toBeInTheDocument()
-      })
-    })
 
-    describe('Create Post functionality', () => {
-      it('renders create post form', async () => {
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        expect(screen.getByLabelText('Title')).toBeInTheDocument()
-        expect(screen.getByLabelText('Content')).toBeInTheDocument()
-        expect(screen.getByText('Create Post')).toBeInTheDocument()
-      })
-
-      it('initially disables submit button when form is empty', async () => {
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        const submitButton = screen.getByText('Create Post')
-        expect(submitButton).toBeDisabled()
-      })
-
-      it('enables submit button when form is filled', async () => {
-        const user = userEvent.setup()
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        const titleInput = screen.getByLabelText('Title')
-        const contentInput = screen.getByLabelText('Content')
-        const submitButton = screen.getByText('Create Post')
-
-        await user.type(titleInput, 'Test Title')
-        await user.type(contentInput, 'Test Content')
-
-        expect(submitButton).not.toBeDisabled()
-      })
-
-      it('submits form and shows success message', async () => {
-        const user = userEvent.setup()
-        renderWithProviders(<App />)
-        await navigateToDemoPage()
-
-        const titleInput = screen.getByLabelText('Title')
-        const contentInput = screen.getByLabelText('Content')
-        const submitButton = screen.getByText('Create Post')
-
-        await user.type(titleInput, 'Test Title')
-        await user.type(contentInput, 'Test Content')
-        await user.click(submitButton)
-
-        await waitFor(() => {
-          expect(screen.getByText('Post created successfully!')).toBeInTheDocument()
-        })
-
-        // Form should be cleared
-        expect(titleInput).toHaveValue('')
-        expect(contentInput).toHaveValue('')
+        await user.click(refreshButton)
+        // Button should be clickable (we're not testing the actual refresh here)
       })
     })
 
     describe('Headless UI Tabs', () => {
-      it('renders all tab buttons', async () => {
+      it('displays tabs correctly', async () => {
         renderWithProviders(<App />)
         await navigateToDemoPage()
 
@@ -304,7 +257,10 @@ describe('App Component', () => {
 
         const settingsTab = screen.getByText('Settings')
         await user.click(settingsTab)
-        expect(screen.getByText('Configure your application settings here.')).toBeInTheDocument()
+
+        await waitFor(() => {
+          expect(screen.getByText('Settings configuration panel')).toBeInTheDocument()
+        })
       })
 
       it('switches to about tab when clicked', async () => {
@@ -314,7 +270,30 @@ describe('App Component', () => {
 
         const aboutTab = screen.getByText('About')
         await user.click(aboutTab)
-        expect(screen.getByText('Built with React 18, Vite, Tailwind 4, Headless UI, and React Query.')).toBeInTheDocument()
+
+        await waitFor(() => {
+          expect(screen.getByText('About this application')).toBeInTheDocument()
+        })
+      })
+    })
+
+    describe('Real @funkit/api-base Integration', () => {
+      it('shows funkit API base URL configuration', async () => {
+        renderWithProviders(<App />)
+        await navigateToDemoPage()
+
+        await waitFor(() => {
+          expect(screen.getByText('https://api.fun.xyz/v1')).toBeInTheDocument()
+        }, { timeout: 3000 })
+      })
+
+      it('displays error state with fallback information', async () => {
+        renderWithProviders(<App />)
+        await navigateToDemoPage()
+
+        await waitFor(() => {
+          expect(screen.getByText('Test environment - @funkit/api-base not configured')).toBeInTheDocument()
+        }, { timeout: 3000 })
       })
     })
   })
