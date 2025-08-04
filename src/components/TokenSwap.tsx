@@ -7,9 +7,9 @@ import { tokenService, defaultTokenData } from '../utils/tokenData'
 export const TokenSwap = () => {
   const [sourceToken, setSourceToken] = useState('USDC')
   const [targetToken, setTargetToken] = useState('ETH')
-  const [amount, setAmount] = useState<string>('100')
   const [usdAmount, setUsdAmount] = useState<string>('100')
-  const [convertedAmount, setConvertedAmount] = useState<string>('0')
+  const [sourceTokenAmount, setSourceTokenAmount] = useState<string>('0')
+  const [targetTokenAmount, setTargetTokenAmount] = useState<string>('0')
   const [swapping, setSwapping] = useState(false)
   const [swapComplete, setSwapComplete] = useState(false)
 
@@ -28,58 +28,33 @@ export const TokenSwap = () => {
   // Available tokens for the top selector buttons (as per wireframe)
   const availableTokens = ['USDC', 'USDT', 'ETH', 'WBTC']
 
-  // Calculate converted amount when source token, target token, or amount changes
+  // Calculate token amounts from USD input
   useEffect(() => {
-    if (!amount || isNaN(parseFloat(amount))) {
-      setConvertedAmount('0')
+    if (!usdAmount || isNaN(parseFloat(usdAmount))) {
+      setSourceTokenAmount('0')
+      setTargetTokenAmount('0')
       return
     }
-    const sourceValue = parseFloat(amount) * (safeTokenData[sourceToken]?.usdPrice || 1)
-    const targetAmount = sourceValue / (safeTokenData[targetToken]?.usdPrice || 1)
-    // Format based on token decimal places
-    setConvertedAmount(targetAmount.toFixed(safeTokenData[targetToken]?.decimals || 2))
-  }, [sourceToken, targetToken, amount, safeTokenData])
-
-  // Update USD amount when source token changes
-  useEffect(() => {
-    const usdValue = calculateUSDFromToken(amount)
-    setUsdAmount(usdValue)
-  }, [sourceToken])
-
-  // Calculate token amount from USD input
-  const calculateTokenFromUSD = (usdValue: string) => {
-    if (!usdValue || isNaN(parseFloat(usdValue))) return '0'
-    const usd = parseFloat(usdValue)
-    const tokenAmount = usd / (safeTokenData[sourceToken]?.usdPrice || 1)
-    return tokenAmount.toFixed(safeTokenData[sourceToken]?.decimals || 2)
-  }
-
-  // Calculate USD amount from token input
-  const calculateUSDFromToken = (tokenValue: string) => {
-    if (!tokenValue || isNaN(parseFloat(tokenValue))) return '0'
-    const token = parseFloat(tokenValue)
-    const usdAmount = token * (safeTokenData[sourceToken]?.usdPrice || 1)
-    return usdAmount.toFixed(2)
-  }
+    const usd = parseFloat(usdAmount)
+    
+    // Calculate source token amount
+    const sourceAmount = usd / (safeTokenData[sourceToken]?.usdPrice || 1)
+    setSourceTokenAmount(sourceAmount.toFixed(safeTokenData[sourceToken]?.decimals || 2))
+    
+    // Calculate target token amount
+    const targetAmount = usd / (safeTokenData[targetToken]?.usdPrice || 1)
+    setTargetTokenAmount(targetAmount.toFixed(safeTokenData[targetToken]?.decimals || 2))
+  }, [sourceToken, targetToken, usdAmount, safeTokenData])
 
   // Handle USD amount change
   const handleUsdAmountChange = (value: string) => {
     setUsdAmount(value)
-    const tokenAmount = calculateTokenFromUSD(value)
-    setAmount(tokenAmount)
-  }
-
-  // Handle token amount change
-  const handleTokenAmountChange = (value: string) => {
-    setAmount(value)
-    const usdValue = calculateUSDFromToken(value)
-    setUsdAmount(usdValue)
   }
 
   // Check for insufficient balance
   const hasInsufficientBalance = () => {
-    if (!amount || isNaN(parseFloat(amount))) return false
-    return parseFloat(amount) > (safeTokenData[sourceToken]?.balance || 0)
+    if (!sourceTokenAmount || isNaN(parseFloat(sourceTokenAmount))) return false
+    return parseFloat(sourceTokenAmount) > (safeTokenData[sourceToken]?.balance || 0)
   }
 
   // Swap source and target tokens
@@ -90,7 +65,7 @@ export const TokenSwap = () => {
 
   // Execute the swap
   const executeSwap = () => {
-    if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0 || hasInsufficientBalance()) return
+    if (!usdAmount || isNaN(parseFloat(usdAmount)) || parseFloat(usdAmount) <= 0 || hasInsufficientBalance()) return
     setSwapping(true)
     // Simulate API call with timeout
     setTimeout(() => {
@@ -107,7 +82,7 @@ export const TokenSwap = () => {
   const getButtonState = () => {
     if (swapping) return 'bg-primary-500 text-white cursor-not-allowed'
     if (swapComplete) return 'bg-success-500 text-white'
-    if (!amount || parseFloat(amount) <= 0) return 'bg-gray-300 text-gray-500 cursor-not-allowed'
+    if (!usdAmount || parseFloat(usdAmount) <= 0) return 'bg-gray-300 text-gray-500 cursor-not-allowed'
     if (hasInsufficientBalance()) return 'bg-error-500 text-white cursor-not-allowed'
     return 'bg-primary-600 hover:bg-primary-700 text-white'
   }
@@ -163,7 +138,7 @@ export const TokenSwap = () => {
         {/* USD Input Field */}
         <div className="mb-3">
           <div className="flex items-center">
-            <span className="text-sm text-gray-500 mr-2">USD</span>
+            <span className="text-sm text-gray-500 mr-2">USD Amount</span>
             <input
               type="number"
               value={usdAmount}
@@ -175,17 +150,11 @@ export const TokenSwap = () => {
           </div>
         </div>
 
-        {/* Token Amount Input */}
+        {/* Source Token Amount Display */}
         <div className="flex items-center">
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => handleTokenAmountChange(e.target.value)}
-            className={`w-full bg-transparent text-token-amount outline-none ${
-              hasInsufficientBalance() ? 'text-error-500' : 'text-gray-900'
-            }`}
-            placeholder="0"
-          />
+          <div className="w-full bg-transparent text-token-amount outline-none text-gray-900">
+            {sourceTokenAmount}
+          </div>
           <TokenSelector
             selectedToken={sourceToken}
             onSelectToken={setSourceToken}
@@ -212,37 +181,30 @@ export const TokenSwap = () => {
         </button>
       </div>
 
-      {/* Target Token Section - TO */}
-      <div className="p-4 bg-gray-50 rounded-xl mt-2 mb-6">
-        <div className="flex justify-between mb-2">
-          <span className="text-sm text-gray-500">To</span>
-          <span className="text-sm text-gray-500">
-            Balance: {tokensLoading ? 'Loading...' : `${safeTokenData[targetToken]?.balance || 0} ${targetToken}`}
-          </span>
+              {/* Target Token Section - TO */}
+        <div className="p-4 bg-gray-50 rounded-xl mt-2 mb-6">
+          <div className="flex justify-between mb-2">
+            <span className="text-sm text-gray-500">To</span>
+            <span className="text-sm text-gray-500">
+              Balance: {tokensLoading ? 'Loading...' : `${safeTokenData[targetToken]?.balance || 0} ${targetToken}`}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-full bg-transparent text-token-amount outline-none text-gray-900">
+              {targetTokenAmount}
+            </div>
+            <TokenSelector
+              selectedToken={targetToken}
+              onSelectToken={setTargetToken}
+              disabledToken={sourceToken}
+              tokenData={safeTokenData}
+              isLoading={tokensLoading}
+            />
+          </div>
+          <div className="mt-1 text-right text-sm text-gray-500">
+            ≈ ${usdAmount}
+          </div>
         </div>
-        <div className="flex items-center">
-          <input
-            type="text"
-            value={convertedAmount}
-            readOnly
-            className="w-full bg-transparent text-token-amount outline-none text-gray-900"
-            placeholder="0"
-          />
-          <TokenSelector
-            selectedToken={targetToken}
-            onSelectToken={setTargetToken}
-            disabledToken={sourceToken}
-            tokenData={safeTokenData}
-            isLoading={tokensLoading}
-          />
-        </div>
-        <div className="mt-1 text-right text-sm text-gray-500">
-          ≈ $
-          {(
-            parseFloat(convertedAmount || '0') * (safeTokenData[targetToken]?.usdPrice || 1)
-          ).toFixed(2)}
-        </div>
-      </div>
 
       {/* Exchange Rate */}
       <div className="flex justify-between text-sm text-gray-500 mb-6">
@@ -263,7 +225,7 @@ export const TokenSwap = () => {
       {/* Swap Button - Prominent, elevated design with proper states */}
       <button
         onClick={executeSwap}
-        disabled={swapping || !amount || parseFloat(amount) <= 0 || hasInsufficientBalance()}
+        disabled={swapping || !usdAmount || parseFloat(usdAmount) <= 0 || hasInsufficientBalance()}
         className={`w-full py-4 px-4 rounded-xl font-medium flex justify-center items-center min-h-[44px] transition-colors ${getButtonState()}`}
       >
         {swapping ? (

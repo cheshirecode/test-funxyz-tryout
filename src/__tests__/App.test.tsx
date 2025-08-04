@@ -110,27 +110,27 @@ describe('TokenSwap App', () => {
     it('displays default amount and conversion', () => {
       render(<App />, { wrapper: createTestWrapper() })
 
-      // Should show default USD amount (FROM input)
-      const amountInputs = screen.getAllByPlaceholderText('0')
-      const fromInput = amountInputs.find((input) => input.getAttribute('type') === 'number') as HTMLInputElement
-      expect(fromInput).toHaveValue(100)
+      // Should show default USD amount
+      const usdInput = screen.getByDisplayValue('100')
+      expect(usdInput).toBeInTheDocument()
+      expect(usdInput).toHaveAttribute('type', 'number')
 
-      // Should show converted amount (≈ symbols exist)
-      expect(screen.getAllByText(/≈/)).toHaveLength(1) // TO section (exchange rate might be loading)
+      // Should show token amounts calculated from USD
+      expect(screen.getByText('100.00')).toBeInTheDocument() // USDC amount
+      expect(screen.getByText('0.028571')).toBeInTheDocument() // ETH amount
     })
 
-    it('updates conversion when amount changes', async () => {
+    it('updates conversion when USD amount changes', async () => {
       const user = userEvent.setup()
       render(<App />, { wrapper: createTestWrapper() })
 
-      const amountInputs = screen.getAllByPlaceholderText('0')
-      const fromInput = amountInputs.find((input) => input.getAttribute('type') === 'number') as HTMLInputElement
-      await user.clear(fromInput!)
-      await user.type(fromInput!, '200')
+      const usdInput = screen.getByDisplayValue('100') as HTMLInputElement
+      await user.clear(usdInput)
+      await user.type(usdInput, '200')
 
-      // Should recalculate conversion
+      // Should recalculate token amounts
       await waitFor(() => {
-        expect(fromInput).toHaveValue(200)
+        expect(usdInput).toHaveValue(200)
       })
     })
 
