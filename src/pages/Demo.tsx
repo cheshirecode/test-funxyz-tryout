@@ -105,7 +105,7 @@ function Demo() {
               </button>
             </Link>
             <div className='flex-1 text-center'>
-              <h1 className='text-4xl font-bold text-gray-900 mb-4'>React + Vite + Tailwind CSS Demo</h1>
+              <h1 className='text-4xl font-bold font-header text-gray-900 mb-4'>React + Vite + Tailwind CSS Demo</h1>
               <p className='text-lg text-gray-600'>
                 Modern React development stack with React Query
               </p>

@@ -76,7 +76,7 @@ export const TokenSwap = () => {
     <div className='w-full max-w-md mx-auto p-6 bg-surface-light dark:bg-surface-dark rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700'>
       {/* Header - Token Price Explorer as per wireframe */}
       <div className='text-center mb-6'>
-        <h1 className='text-2xl font-bold text-text-light-primary dark:text-text-dark-primary mb-2'>
+        <h1 className='text-2xl font-bold font-header text-text-light-primary dark:text-text-dark-primary mb-2'>
           Token Price Explorer
         </h1>
         <div className='flex items-center justify-between'>
@@ -104,7 +104,7 @@ export const TokenSwap = () => {
       {/* Quick Select Token Buttons */}
       <div className='mb-6'>
         <div className='flex items-center justify-between mb-3'>
-          <h3 className='text-lg font-semibold text-text-light-primary dark:text-text-dark-primary'>
+                      <h3 className='text-lg font-semibold font-header text-text-light-primary dark:text-text-dark-primary'>
             Quick Select
           </h3>
           <div className='flex items-center space-x-2 text-xs text-text-light-muted dark:text-text-dark-muted'>
