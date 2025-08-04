@@ -14,28 +14,31 @@ export const TokenSwap = () => {
   const [swapComplete, setSwapComplete] = useState(false)
 
   // Fetch token data from Funkit API using React Query
-  const { data: tokenData, isLoading: tokensLoading, error: tokensError } = useQuery({
+  const { data: tokenData, isLoading: tokensLoading } = useQuery({
     queryKey: ['tokens'],
     queryFn: () => tokenService.getTokens(),
     staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchInterval: 30 * 1000, // Refetch every 30 seconds
-    fallbackData: defaultTokenData
+    refetchInterval: 30 * 1000, // Refetch every 30 seconds,
+    initialData: defaultTokenData
   })
+
+  // Ensure tokenData is always available
+  const safeTokenData = tokenData || defaultTokenData
 
   // Available tokens for the top selector buttons (as per wireframe)
   const availableTokens = ['USDC', 'USDT', 'ETH', 'WBTC']
 
   // Calculate converted amount when source token, target token, or amount changes
   useEffect(() => {
-    if (!amount || isNaN(parseFloat(amount)) || !tokenData) {
+    if (!amount || isNaN(parseFloat(amount))) {
       setConvertedAmount('0')
       return
     }
-    const sourceValue = parseFloat(amount) * tokenData[sourceToken]?.usdPrice
-    const targetAmount = sourceValue / tokenData[targetToken]?.usdPrice
+    const sourceValue = parseFloat(amount) * (safeTokenData[sourceToken]?.usdPrice || 1)
+    const targetAmount = sourceValue / (safeTokenData[targetToken]?.usdPrice || 1)
     // Format based on token decimal places
-    setConvertedAmount(targetAmount.toFixed(tokenData[targetToken]?.decimals || 2))
-  }, [sourceToken, targetToken, amount, tokenData])
+    setConvertedAmount(targetAmount.toFixed(safeTokenData[targetToken]?.decimals || 2))
+  }, [sourceToken, targetToken, amount, safeTokenData])
 
   // Update USD amount when source token changes
   useEffect(() => {
@@ -45,17 +48,17 @@ export const TokenSwap = () => {
 
   // Calculate token amount from USD input
   const calculateTokenFromUSD = (usdValue: string) => {
-    if (!usdValue || isNaN(parseFloat(usdValue)) || !tokenData) return '0'
+    if (!usdValue || isNaN(parseFloat(usdValue))) return '0'
     const usd = parseFloat(usdValue)
-    const tokenAmount = usd / (tokenData[sourceToken]?.usdPrice || 1)
-    return tokenAmount.toFixed(tokenData[sourceToken]?.decimals || 2)
+    const tokenAmount = usd / (safeTokenData[sourceToken]?.usdPrice || 1)
+    return tokenAmount.toFixed(safeTokenData[sourceToken]?.decimals || 2)
   }
 
   // Calculate USD amount from token input
   const calculateUSDFromToken = (tokenValue: string) => {
-    if (!tokenValue || isNaN(parseFloat(tokenValue)) || !tokenData) return '0'
+    if (!tokenValue || isNaN(parseFloat(tokenValue))) return '0'
     const token = parseFloat(tokenValue)
-    const usdAmount = token * (tokenData[sourceToken]?.usdPrice || 1)
+    const usdAmount = token * (safeTokenData[sourceToken]?.usdPrice || 1)
     return usdAmount.toFixed(2)
   }
 
@@ -75,8 +78,8 @@ export const TokenSwap = () => {
 
   // Check for insufficient balance
   const hasInsufficientBalance = () => {
-    if (!amount || isNaN(parseFloat(amount)) || !tokenData) return false
-    return parseFloat(amount) > (tokenData[sourceToken]?.balance || 0)
+    if (!amount || isNaN(parseFloat(amount))) return false
+    return parseFloat(amount) > (safeTokenData[sourceToken]?.balance || 0)
   }
 
   // Swap source and target tokens
@@ -153,7 +156,7 @@ export const TokenSwap = () => {
         <div className="flex justify-between mb-2">
           <span className="text-sm text-gray-500">From</span>
           <span className={`text-sm ${hasInsufficientBalance() ? 'text-error-500' : 'text-gray-500'}`}>
-            Balance: {tokensLoading ? 'Loading...' : `${tokenData?.[sourceToken]?.balance || 0} ${sourceToken}`}
+            Balance: {tokensLoading ? 'Loading...' : `${safeTokenData[sourceToken]?.balance || 0} ${sourceToken}`}
           </span>
         </div>
         
@@ -187,7 +190,7 @@ export const TokenSwap = () => {
             selectedToken={sourceToken}
             onSelectToken={setSourceToken}
             disabledToken={targetToken}
-            tokenData={tokenData || {}}
+            tokenData={safeTokenData}
             isLoading={tokensLoading}
           />
         </div>
@@ -214,7 +217,7 @@ export const TokenSwap = () => {
         <div className="flex justify-between mb-2">
           <span className="text-sm text-gray-500">To</span>
           <span className="text-sm text-gray-500">
-            Balance: {tokensLoading ? 'Loading...' : `${tokenData?.[targetToken]?.balance || 0} ${targetToken}`}
+            Balance: {tokensLoading ? 'Loading...' : `${safeTokenData[targetToken]?.balance || 0} ${targetToken}`}
           </span>
         </div>
         <div className="flex items-center">
@@ -229,14 +232,14 @@ export const TokenSwap = () => {
             selectedToken={targetToken}
             onSelectToken={setTargetToken}
             disabledToken={sourceToken}
-            tokenData={tokenData || {}}
+            tokenData={safeTokenData}
             isLoading={tokensLoading}
           />
         </div>
         <div className="mt-1 text-right text-sm text-gray-500">
           ≈ $
           {(
-            parseFloat(convertedAmount || '0') * (tokenData?.[targetToken]?.usdPrice || 1)
+            parseFloat(convertedAmount || '0') * (safeTokenData[targetToken]?.usdPrice || 1)
           ).toFixed(2)}
         </div>
       </div>
@@ -249,7 +252,7 @@ export const TokenSwap = () => {
             <>
               1 {sourceToken} ≈{' '}
               {(
-                (tokenData?.[sourceToken]?.usdPrice || 1) / (tokenData?.[targetToken]?.usdPrice || 1)
+                (safeTokenData[sourceToken]?.usdPrice || 1) / (safeTokenData[targetToken]?.usdPrice || 1)
               ).toFixed(6)}{' '}
               {targetToken}
             </>

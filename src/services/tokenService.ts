@@ -71,7 +71,7 @@ export const tokenService = {
         const tokens: Record<string, TokenData> = {}
         
         // Process allowed assets from Funkit API
-        const assets = allowedAssetsResult.data.allowedAssets
+        const assets = allowedAssetsResult.data.allowedAssets || []
         
         // Map common tokens to our default structure
         const tokenMapping: Record<string, string> = {
@@ -84,20 +84,22 @@ export const tokenService = {
         }
         
         // Process each asset from Funkit API
-        assets.forEach((asset: any) => {
+        if (Array.isArray(assets)) {
+          assets.forEach((asset: any) => {
           const symbol = asset.symbol || asset.name
           const mappedSymbol = tokenMapping[symbol] || symbol
           
-          if (mappedSymbol && defaultTokens[mappedSymbol]) {
-            tokens[mappedSymbol] = {
-              ...defaultTokens[mappedSymbol],
-              usdPrice: asset.price || defaultTokens[mappedSymbol].usdPrice,
-              balance: asset.balance || defaultTokens[mappedSymbol].balance,
-              chainId: asset.chainId || '1',
-              contractAddress: asset.contractAddress || defaultTokens[mappedSymbol].contractAddress
+                      if (mappedSymbol && defaultTokens[mappedSymbol]) {
+              tokens[mappedSymbol] = {
+                ...defaultTokens[mappedSymbol],
+                usdPrice: asset.price || defaultTokens[mappedSymbol].usdPrice,
+                balance: asset.balance || defaultTokens[mappedSymbol].balance,
+                chainId: asset.chainId || '1',
+                contractAddress: asset.contractAddress || defaultTokens[mappedSymbol].contractAddress
+              }
             }
-          }
-        })
+          })
+        }
         
         // Fallback to default tokens if no data from API
         if (Object.keys(tokens).length === 0) {
