@@ -93,7 +93,10 @@ export const TokenSwap = () => {
             </Tooltip>
             <Tooltip content='View demo and API examples'>
               <Link href='/demo'>
-                <button className='p-1.5 sm:p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 min-h-[36px] sm:min-h-[44px] min-w-[36px] sm:min-w-[44px] flex items-center justify-center transition-colors'>
+                <button
+                  data-tutorial='demo-button'
+                  className='p-1.5 sm:p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 min-h-[36px] sm:min-h-[44px] min-w-[36px] sm:min-w-[44px] flex items-center justify-center transition-colors'
+                >
                   <PlayCircle
                     size={16}
                     className='sm:w-5 sm:h-5 text-neutral-600 dark:text-neutral-400'
@@ -112,7 +115,7 @@ export const TokenSwap = () => {
                 />
               </button>
             </Tooltip>
-            <ThemeSwitcher />
+            <ThemeSwitcher data-tutorial='theme-switcher' />
           </div>
         </div>
       </div>

@@ -11,6 +11,22 @@ interface TutorialStep {
 
 const tutorialSteps: TutorialStep[] = [
   {
+    id: 'demo-button',
+    title: 'Demo & API Examples',
+    description:
+      'Click here to view interactive demos and API examples. Learn how to integrate the token swap functionality into your own applications.',
+    targetSelector: '[data-tutorial="demo-button"]',
+    position: 'bottom',
+  },
+  {
+    id: 'theme-switcher',
+    title: 'Theme Switcher',
+    description:
+      'Toggle between light and dark themes. The interface automatically adapts to your preference and remembers your choice.',
+    targetSelector: '[data-tutorial="theme-switcher"]',
+    position: 'bottom',
+  },
+  {
     id: 'quick-select',
     title: 'Quick Token Selection',
     description:
@@ -193,8 +209,28 @@ export const TutorialOverlay = ({ isOpen, onClose }: TutorialOverlayProps) => {
       let tooltipLeft = 0
       let finalPosition = currentTutorialStep.position
 
-      // On mobile, prefer bottom positioning for better visibility
-      if (isMobile() && finalPosition === 'top') {
+      // Smart positioning for small elements like buttons
+      const isSmallElement = position.width < 60 || position.height < 60
+      const isHeaderElement = position.top < 100 // Elements in the top 100px are considered header elements
+
+      // Special handling for header elements - always position below them
+      if (isHeaderElement) {
+        finalPosition = 'bottom'
+      }
+      // For small elements that are not in header, prefer horizontal positioning
+      else if (isSmallElement) {
+        if (finalPosition === 'top' || finalPosition === 'bottom') {
+          // For small elements, prefer left/right positioning
+          if (position.left > viewportWidth / 2) {
+            finalPosition = 'left'
+          } else {
+            finalPosition = 'right'
+          }
+        }
+      }
+
+      // On mobile, prefer bottom positioning for better visibility (but not for small elements)
+      if (isMobile() && finalPosition === 'top' && !isSmallElement) {
         finalPosition = 'bottom'
       }
 
@@ -218,29 +254,97 @@ export const TutorialOverlay = ({ isOpen, onClose }: TutorialOverlayProps) => {
           break
       }
 
+      // Special offset for header elements to move tooltip down by 80px
+      if (isHeaderElement) {
+        tooltipTop += 80
+      }
+
       // Adjust position if tooltip goes off-screen
       const tooltipCenterX = tooltipLeft
       const tooltipCenterY = tooltipTop
 
       // Check horizontal boundaries
       if (tooltipCenterX - tooltipWidth / 2 < 0) {
-        tooltipLeft = tooltipWidth / 2 + 20
+        // Tooltip would go off left, try alternative positions
+        if (finalPosition === 'left') {
+          if (isSmallElement) {
+            // For small elements, try right instead
+            finalPosition = 'right'
+            tooltipLeft = position.left + position.width + tooltipOffset
+          } else {
+            tooltipLeft = tooltipWidth / 2 + 20
+          }
+        } else {
+          tooltipLeft = tooltipWidth / 2 + 20
+        }
       } else if (tooltipCenterX + tooltipWidth / 2 > viewportWidth) {
-        tooltipLeft = viewportWidth - tooltipWidth / 2 - 20
+        // Tooltip would go off right, try alternative positions
+        if (finalPosition === 'right') {
+          if (isSmallElement) {
+            // For small elements, try left instead
+            finalPosition = 'left'
+            tooltipLeft = position.left - tooltipOffset
+          } else {
+            tooltipLeft = viewportWidth - tooltipWidth / 2 - 20
+          }
+        } else {
+          tooltipLeft = viewportWidth - tooltipWidth / 2 - 20
+        }
       }
 
       // Check vertical boundaries and adjust position if needed
       if (tooltipCenterY - tooltipHeight / 2 < 0) {
-        // Tooltip would go off top, try bottom instead
+        // Tooltip would go off top, try alternative positions
         if (finalPosition === 'top') {
-          tooltipTop = position.top + position.height + tooltipOffset
-          finalPosition = 'bottom'
+          if (isHeaderElement) {
+            // For header elements, always try bottom
+            tooltipTop = position.top + position.height + tooltipOffset
+            finalPosition = 'bottom'
+          } else if (isSmallElement) {
+            // For small elements, try left/right instead
+            if (position.left > viewportWidth / 2) {
+              finalPosition = 'left'
+              tooltipTop = position.top + position.height / 2
+              tooltipLeft = position.left - tooltipOffset
+            } else {
+              finalPosition = 'right'
+              tooltipTop = position.top + position.height / 2
+              tooltipLeft = position.left + position.width + tooltipOffset
+            }
+          } else {
+            tooltipTop = position.top + position.height + tooltipOffset
+            finalPosition = 'bottom'
+          }
         }
       } else if (tooltipCenterY + tooltipHeight / 2 > viewportHeight) {
-        // Tooltip would go off bottom, try top instead
+        // Tooltip would go off bottom, try alternative positions
         if (finalPosition === 'bottom') {
-          tooltipTop = position.top - tooltipOffset
-          finalPosition = 'top'
+          if (isHeaderElement) {
+            // For header elements, try horizontal positioning
+            if (position.left > viewportWidth / 2) {
+              finalPosition = 'left'
+              tooltipTop = position.top + position.height / 2
+              tooltipLeft = position.left - tooltipOffset
+            } else {
+              finalPosition = 'right'
+              tooltipTop = position.top + position.height / 2
+              tooltipLeft = position.left + position.width + tooltipOffset
+            }
+          } else if (isSmallElement) {
+            // For small elements, try left/right instead
+            if (position.left > viewportWidth / 2) {
+              finalPosition = 'left'
+              tooltipTop = position.top + position.height / 2
+              tooltipLeft = position.left - tooltipOffset
+            } else {
+              finalPosition = 'right'
+              tooltipTop = position.top + position.height / 2
+              tooltipLeft = position.left + position.width + tooltipOffset
+            }
+          } else {
+            tooltipTop = position.top - tooltipOffset
+            finalPosition = 'top'
+          }
         }
       }
 
@@ -338,12 +442,18 @@ export const TutorialOverlay = ({ isOpen, onClose }: TutorialOverlayProps) => {
 
   return (
     <div className='fixed inset-0 z-50' ref={overlayRef}>
-      {/* Overlay background */}
-      <div ref={backgroundRef} className='absolute inset-0 bg-black bg-opacity-50 cursor-pointer' />
+      {/* Subtle blurred overlay background */}
+      <div
+        ref={backgroundRef}
+        className='absolute inset-0 bg-black bg-opacity-20 backdrop-blur-sm cursor-pointer'
+        style={{
+          filter: 'blur(1px)',
+        }}
+      />
 
       {/* Tutorial step */}
       <div className='absolute inset-0 pointer-events-none'>
-        {/* Highlight target element */}
+        {/* Clear cutout for highlighted element */}
         <div
           className='fixed border-2 border-blue-500 bg-blue-500 bg-opacity-10 rounded-lg pointer-events-none transition-all duration-300'
           style={{
