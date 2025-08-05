@@ -88,9 +88,11 @@ describe('SwapConfirmationDialog', () => {
     expect(screen.getByText('Swap Amount')).toBeInTheDocument()
     expect(screen.getAllByText('$100')).toHaveLength(2) // Header and fee summary
     expect(screen.getByText('Estimated Gas Fee')).toBeInTheDocument()
-    expect(screen.getByText('$0.0025')).toBeInTheDocument()
+    // Gas fee: 0.0025 ETH * $2000/ETH = $5.00
+    expect(screen.getByText('$5.0000')).toBeInTheDocument()
     expect(screen.getByText('Total Cost')).toBeInTheDocument()
-    expect(screen.getByText('$100.0025')).toBeInTheDocument()
+    // Total: $100 + $5.00 = $105.00
+    expect(screen.getByText('$105.0000')).toBeInTheDocument()
   })
 
   it('should call onClose when cancel button is clicked', () => {
@@ -133,8 +135,10 @@ describe('SwapConfirmationDialog', () => {
   it('should use default gas fee when none provided', () => {
     render(<SwapConfirmationDialog {...defaultProps} gasPrice={undefined} />)
 
-    expect(screen.getByText('$0.0100')).toBeInTheDocument() // Default 0.01
-    expect(screen.getByText('$100.0100')).toBeInTheDocument() // Total with default gas
+    // Default gas: 0.00005 ETH * $2000/ETH = $0.10
+    expect(screen.getByText('$0.1000')).toBeInTheDocument()
+    // Total: $100 + $0.10 = $100.10
+    expect(screen.getByText('$100.1000')).toBeInTheDocument()
   })
 
   it('should handle missing token data gracefully', () => {

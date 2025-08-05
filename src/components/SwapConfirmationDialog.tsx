@@ -54,7 +54,18 @@ export const SwapConfirmationDialog: React.FC<SwapConfirmationDialogProps> = ({
   const targetTokenData = tokenData[targetToken]
 
   // Calculate estimated gas fee in USD using tokenSwap costs
-  const estimatedGasFeeUsd = gasPrice?.data?.estimatedCosts?.tokenSwap?.costEth || 0.01 // Default fallback
+  const gasCostEth = gasPrice?.data?.estimatedCosts?.tokenSwap?.costEth || 0.00005 // Default ETH cost
+
+  // Get ETH price to convert gas cost from ETH to USD
+  const ethPrice =
+    tokenData['ETH']?.usdPrice ||
+    (sourceToken === 'ETH'
+      ? tokenData[sourceToken]?.usdPrice
+      : targetToken === 'ETH'
+        ? tokenData[targetToken]?.usdPrice
+        : 3500) // Default ETH price
+
+  const estimatedGasFeeUsd = gasCostEth * ethPrice
 
   // Calculate total cost in USD (swap amount + gas fee)
   const totalCostUsd = parseFloat(usdAmount || '0') + estimatedGasFeeUsd

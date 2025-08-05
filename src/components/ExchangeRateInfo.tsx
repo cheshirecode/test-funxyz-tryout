@@ -128,8 +128,17 @@ export const ExchangeRateInfo: React.FC<ExchangeRateInfoProps> = ({
                 content={`Gas Price: ${gasPrice.data.gasPriceGwei.toFixed(2)} Gwei | Limit: ~150,000`}
               >
                 <span className='cursor-help border-b border-dotted'>
-                  ~${(gasPrice.data.estimatedCosts.tokenSwap.costEth * 3500).toFixed(2)} (
-                  {gasPrice.data.estimatedCosts.tokenSwap.costEth.toFixed(6)} ETH)
+                  {(() => {
+                    // Get ETH price dynamically instead of hardcoding 3500
+                    const ethPrice =
+                      sourceToken === 'ETH' && sourceTokenPrice?.data?.priceUsd
+                        ? sourceTokenPrice.data.priceUsd
+                        : targetToken === 'ETH' && targetTokenPrice?.data?.priceUsd
+                          ? targetTokenPrice.data.priceUsd
+                          : 3500 // Fallback price
+
+                    return `~$${(gasPrice.data.estimatedCosts.tokenSwap.costEth * ethPrice).toFixed(2)} (${gasPrice.data.estimatedCosts.tokenSwap.costEth.toFixed(6)} ETH)`
+                  })()}
                 </span>
               </Tooltip>
             ) : (
