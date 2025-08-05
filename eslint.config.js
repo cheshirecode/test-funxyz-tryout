@@ -105,6 +105,9 @@ export default [
       'vite.config.ts',
       'tailwind.config.js',
       'postcss.config.js',
+      '**/__tests__/**',
+      '**/*.test.{js,ts,jsx,tsx}',
+      '**/*.spec.{js,ts,jsx,tsx}',
     ],
   },
 ]

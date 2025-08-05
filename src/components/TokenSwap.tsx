@@ -1,4 +1,3 @@
-import React from 'react'
 import { WalletIcon, HelpCircle } from 'lucide-react'
 import { Link } from 'wouter'
 import { ThemeSwitcher } from './ThemeSwitcher'
@@ -10,22 +9,17 @@ import { SwapDirectionButton } from './SwapDirectionButton'
 import { ExchangeRateInfo } from './ExchangeRateInfo'
 import { SwapButton } from './SwapButton'
 import { SwapConfirmationDialog } from './SwapConfirmationDialog'
-import { useRefreshRate } from './RefreshToggle'
-import {
-  useTokenData,
-  useSwapState,
-  useSwapExecution,
-  useTokenSelection,
-  useTokenPrice,
-  useGasPrice,
-  useSwapRate,
-} from '@hooks'
-import { getSwapButtonState } from '@helpers'
+import { useSwapFeature } from '../features'
+import type { RefreshRate } from '../utils/refresh/refreshUtils'
 
 export const TokenSwap = () => {
-  // Custom hooks for all business logic
-  const { tokenData, isLoading: tokensLoading } = useTokenData()
+  // Use the main swap feature hook that orchestrates all business logic
   const {
+    // Token data
+    tokenData,
+    tokensLoading,
+
+    // Swap state
     sourceToken,
     setSourceToken,
     targetToken,
@@ -38,129 +32,40 @@ export const TokenSwap = () => {
     swapping,
     swapComplete,
     showConfirmation,
-    setSwapState,
-    setTokenData,
+
+    // Pricing data
+    sourceTokenPrice,
+    targetTokenPrice,
+    gasPrice,
+    realSwapRate,
+    sourcePriceLoading,
+    targetPriceLoading,
+    gasPriceLoading,
+    swapRateLoading,
+
+    // Refresh control
+    refreshRate,
+    setRefreshRate,
+
+    // Swap execution
+    canExecuteSwap,
+
+    // Token selection
+    availableTokens,
+    handleQuickSelect,
+    getTokenSelectionState,
+
+    // Swap actions
     swapTokenPositions,
-  } = useSwapState()
 
-  // Refresh rate management with refactored hooks
-  const { refreshRate, setRefreshRate, refreshInterval, staleTime, queryKeySuffix } =
-    useRefreshRate('disabled')
+    // Confirmation dialog
+    handleSwapClick,
+    handleConfirmationCancel,
+    handleConfirmationConfirm,
 
-  // Real-time pricing and gas estimation with proper query deduplication
-  const { data: sourceTokenPrice, isLoading: sourcePriceLoading } = useTokenPrice(
-    '1',
-    sourceToken,
-    true,
-    refreshInterval,
-    staleTime,
-    queryKeySuffix
-  )
-  const { data: targetTokenPrice, isLoading: targetPriceLoading } = useTokenPrice(
-    '1',
-    targetToken,
-    true,
-    refreshInterval,
-    staleTime,
-    queryKeySuffix
-  )
-  const { data: gasPrice, isLoading: gasPriceLoading } = useGasPrice(
-    '1',
-    true,
-    refreshInterval,
-    staleTime,
-    queryKeySuffix
-  )
-
-  // Integrate token metadata and real-time pricing data into token data atom
-  React.useEffect(() => {
-    const baseTokenData = tokenData || {}
-    const updatedTokenData = { ...baseTokenData }
-
-    // Add source token pricing data
-    if (sourceTokenPrice?.data) {
-      updatedTokenData[sourceToken] = {
-        ...baseTokenData[sourceToken],
-        symbol: sourceToken,
-        usdPrice: sourceTokenPrice.data.priceUsd,
-        decimals: sourceTokenPrice.data.decimals || 18,
-        name: sourceTokenPrice.data.name || sourceToken,
-        icon: baseTokenData[sourceToken]?.icon || '',
-        balance: baseTokenData[sourceToken]?.balance || 0,
-      }
-    }
-
-    // Add target token pricing data
-    if (targetTokenPrice?.data) {
-      updatedTokenData[targetToken] = {
-        ...baseTokenData[targetToken],
-        symbol: targetToken,
-        usdPrice: targetTokenPrice.data.priceUsd,
-        decimals: targetTokenPrice.data.decimals || 18,
-        name: targetTokenPrice.data.name || targetToken,
-        icon: baseTokenData[targetToken]?.icon || '',
-        balance: baseTokenData[targetToken]?.balance || 0,
-      }
-    }
-
-    // Only update if we have pricing data for at least one token
-    if (sourceTokenPrice?.data || targetTokenPrice?.data) {
-      setTokenData(updatedTokenData)
-    }
-  }, [sourceTokenPrice, targetTokenPrice, sourceToken, targetToken, tokenData, setTokenData])
-  const { data: realSwapRate, isLoading: swapRateLoading } = useSwapRate(
-    '1',
-    sourceToken,
-    '1',
-    targetToken,
-    usdAmount || '100',
-    true,
-    refreshInterval,
-    staleTime,
-    queryKeySuffix
-  )
-
-  const { executeSwap, canExecuteSwap } = useSwapExecution({
-    usdAmount,
-    sourceTokenAmount,
-    sourceToken,
-    tokenData,
-    swapping,
-    setSwapState,
-  })
-
-  const { availableTokens, handleQuickSelect, getTokenSelectionState } = useTokenSelection({
-    sourceToken,
-    targetToken,
-    setSourceToken,
-    setTargetToken,
-  })
-
-  // Confirmation dialog handlers
-  const handleSwapClick = () => {
-    if (!canExecuteSwap) return
-    setSwapState({ showConfirmation: true })
-  }
-
-  const handleConfirmationCancel = () => {
-    setSwapState({ showConfirmation: false })
-  }
-
-  const handleConfirmationConfirm = () => {
-    setSwapState({ showConfirmation: false })
-    executeSwap()
-  }
-
-  // Get button state for UI
-  const buttonState = getSwapButtonState(
-    usdAmount,
-    sourceTokenAmount,
-    sourceToken,
-    targetToken,
-    tokenData,
-    swapping,
-    swapComplete
-  )
+    // Button state
+    buttonState,
+  } = useSwapFeature()
 
   return (
     <div className='w-full max-w-md mx-auto p-6 bg-surface-light dark:bg-surface-dark rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700'>
@@ -196,7 +101,7 @@ export const TokenSwap = () => {
         availableTokens={availableTokens}
         getTokenSelectionState={getTokenSelectionState}
         handleQuickSelect={handleQuickSelect}
-        tokenData={tokenData}
+        tokenData={tokenData || {}}
       />
 
       {/* USD Amount Section */}
@@ -209,7 +114,7 @@ export const TokenSwap = () => {
           selectedToken={sourceToken}
           onSelectToken={setSourceToken}
           disabledToken={targetToken}
-          tokenData={tokenData}
+          tokenData={tokenData || {}}
           tokenAmount={sourceTokenAmount}
           isLoading={tokensLoading}
           canExecuteSwap={canExecuteSwap}
@@ -226,7 +131,7 @@ export const TokenSwap = () => {
           selectedToken={targetToken}
           onSelectToken={setTargetToken}
           disabledToken={sourceToken}
-          tokenData={tokenData}
+          tokenData={tokenData || {}}
           tokenAmount={targetTokenAmount}
           isLoading={tokensLoading}
         />
@@ -237,8 +142,8 @@ export const TokenSwap = () => {
         sourceToken={sourceToken}
         targetToken={targetToken}
         exchangeRate={exchangeRate}
-        refreshRate={refreshRate}
-        onRefreshRateChange={setRefreshRate}
+        refreshRate={refreshRate as RefreshRate}
+        onRefreshRateChange={(rate) => setRefreshRate(rate as any)}
         isLoading={tokensLoading || swapRateLoading}
         realSwapRate={realSwapRate}
         sourceTokenPrice={sourceTokenPrice}
@@ -269,7 +174,7 @@ export const TokenSwap = () => {
         targetToken={targetToken}
         sourceTokenAmount={sourceTokenAmount}
         targetTokenAmount={targetTokenAmount}
-        tokenData={tokenData}
+        tokenData={tokenData || {}}
         exchangeRate={exchangeRate}
         gasPrice={gasPrice}
         isLoading={swapping}

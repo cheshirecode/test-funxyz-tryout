@@ -658,10 +658,11 @@ function EnhancedAPIDemo() {
       {/* Configuration Inputs */}
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg'>
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
+          <label htmlFor='wallet-address' className='block text-sm font-medium text-gray-700 mb-2'>
             Demo Wallet Address
           </label>
           <input
+            id='wallet-address'
             type='text'
             value={walletAddress}
             onChange={(e) => setWalletAddress(e.target.value)}
@@ -670,8 +671,11 @@ function EnhancedAPIDemo() {
           />
         </div>
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>Chain ID</label>
+          <label htmlFor='chain-id' className='block text-sm font-medium text-gray-700 mb-2'>
+            Chain ID
+          </label>
           <select
+            id='chain-id'
             value={chainId}
             onChange={(e) => setChainId(e.target.value)}
             className='w-full px-3 py-2 border border-gray-300 rounded-md text-sm'
@@ -984,8 +988,14 @@ function PricingDemo() {
       {/* Configuration */}
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg'>
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>Chain ID</label>
+          <label
+            htmlFor='pricing-chain-id'
+            className='block text-sm font-medium text-gray-700 mb-2'
+          >
+            Chain ID
+          </label>
           <select
+            id='pricing-chain-id'
             value={chainId}
             onChange={(e) => setChainId(e.target.value)}
             className='w-full px-3 py-2 border border-gray-300 rounded-md text-sm'
