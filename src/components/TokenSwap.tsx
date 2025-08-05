@@ -72,35 +72,44 @@ export const TokenSwap = () => {
   } = useSwapFeature()
 
   return (
-    <div className='w-full max-w-md mx-auto p-6 bg-surface-light dark:bg-surface-dark rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700'>
+    <div className='w-full max-w-sm sm:max-w-md mx-auto p-3 sm:p-6 bg-surface-light dark:bg-surface-dark rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700'>
       {/* Header - Token Price Explorer as per wireframe */}
-      <div className='text-center mb-6'>
-        <h1 className='text-2xl font-bold font-header text-text-light-primary dark:text-text-dark-primary mb-2'>
+      <div className='text-center mb-4 sm:mb-6'>
+        <h1 className='text-xl sm:text-2xl font-bold font-header text-text-light-primary dark:text-text-dark-primary mb-2'>
           Token Price Explorer
         </h1>
         <div className='flex items-center justify-between'>
-          <span className='text-sm text-text-light-secondary dark:text-text-dark-secondary'>
+          <span className='text-xs sm:text-sm text-text-light-secondary dark:text-text-dark-secondary'>
             Swap Tokens
           </span>
-          <div className='flex items-center gap-2'>
+          <div className='flex items-center gap-1 sm:gap-2'>
             <Tooltip content='incoming funkit wallet integration'>
-              <button className='p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 min-h-[44px] min-w-[44px] flex items-center justify-center opacity-50 cursor-not-allowed'>
-                <WalletIcon size={20} className='text-neutral-400 dark:text-neutral-500' />
+              <button className='p-1.5 sm:p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 min-h-[36px] sm:min-h-[44px] min-w-[36px] sm:min-w-[44px] flex items-center justify-center opacity-50 cursor-not-allowed'>
+                <WalletIcon
+                  size={16}
+                  className='sm:w-5 sm:h-5 text-neutral-400 dark:text-neutral-500'
+                />
               </button>
             </Tooltip>
             <Tooltip content='View demo and API examples'>
               <Link href='/demo'>
-                <button className='p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors'>
-                  <PlayCircle size={20} className='text-neutral-600 dark:text-neutral-400' />
+                <button className='p-1.5 sm:p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 min-h-[36px] sm:min-h-[44px] min-w-[36px] sm:min-w-[44px] flex items-center justify-center transition-colors'>
+                  <PlayCircle
+                    size={16}
+                    className='sm:w-5 sm:h-5 text-neutral-600 dark:text-neutral-400'
+                  />
                 </button>
               </Link>
             </Tooltip>
             <Tooltip content='Interactive tutorial guide'>
               <button
                 onClick={() => setShowTutorial(true)}
-                className='p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors'
+                className='p-1.5 sm:p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 min-h-[36px] sm:min-h-[44px] min-w-[36px] sm:min-w-[44px] flex items-center justify-center transition-colors'
               >
-                <HelpCircle size={20} className='text-neutral-600 dark:text-neutral-400' />
+                <HelpCircle
+                  size={16}
+                  className='sm:w-5 sm:h-5 text-neutral-600 dark:text-neutral-400'
+                />
               </button>
             </Tooltip>
             <ThemeSwitcher />
@@ -143,7 +152,7 @@ export const TokenSwap = () => {
       </div>
 
       {/* Target Token Section - TO */}
-      <div className='mt-2 mb-6' data-tutorial='target-token'>
+      <div className='mt-2 mb-4 sm:mb-6' data-tutorial='target-token'>
         <TokenSwapSection
           type='target'
           selectedToken={targetToken}

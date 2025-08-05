@@ -32,14 +32,14 @@ export const TokenSwapSection: React.FC<TokenSwapSectionProps> = ({
   const label = isSource ? 'From' : 'To'
 
   return (
-    <div className='p-4 bg-surface-light-secondary dark:bg-surface-dark-secondary rounded-xl border border-neutral-200 dark:border-neutral-700'>
+    <div className='p-3 sm:p-4 bg-surface-light-secondary dark:bg-surface-dark-secondary rounded-xl border border-neutral-200 dark:border-neutral-700'>
       <div className='flex justify-between mb-2'>
         <div className='flex items-center'>
           <div className={`w-2 h-2 ${indicatorColor} rounded-full mr-2`}></div>
-          <span className={`text-sm font-medium ${textColor}`}>{label}</span>
+          <span className={`text-xs sm:text-sm font-medium ${textColor}`}>{label}</span>
         </div>
         <span
-          className={`text-sm ${
+          className={`text-xs sm:text-sm ${
             isSource
               ? getBalanceTextStyle(tokenAmount, selectedToken, tokenData)
               : 'text-text-light-muted dark:text-text-dark-muted'
@@ -77,7 +77,9 @@ export const TokenSwapSection: React.FC<TokenSwapSectionProps> = ({
       {isSource &&
         !canExecuteSwap &&
         getBalanceTextStyle(tokenAmount, selectedToken, tokenData) === 'text-error-500' && (
-          <div className='mt-2 text-error-500 text-sm'>Insufficient {selectedToken} balance</div>
+          <div className='mt-2 text-error-500 text-xs sm:text-sm'>
+            Insufficient {selectedToken} balance
+          </div>
         )}
     </div>
   )

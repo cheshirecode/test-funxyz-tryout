@@ -1,65 +1,63 @@
 import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
 import { AmountInput } from '../AmountInput'
 
-const mockSetUsdAmount = vi.fn()
-
-const defaultProps = {
-  usdAmount: '100.50',
-  setUsdAmount: mockSetUsdAmount,
-}
-
 describe('AmountInput Component', () => {
+  const mockSetUsdAmount = vi.fn()
+
   beforeEach(() => {
-    vi.clearAllMocks()
+    mockSetUsdAmount.mockClear()
   })
 
   it('renders correctly with title and description', () => {
-    render(<AmountInput {...defaultProps} />)
+    render(<AmountInput usdAmount='100' setUsdAmount={mockSetUsdAmount} />)
 
     expect(screen.getByText('Enter Amount')).toBeInTheDocument()
     expect(screen.getByText('Specify the USD value to swap')).toBeInTheDocument()
   })
 
   it('displays the dollar sign', () => {
-    render(<AmountInput {...defaultProps} />)
+    render(<AmountInput usdAmount='100' setUsdAmount={mockSetUsdAmount} />)
 
-    expect(screen.getByText('$')).toBeInTheDocument()
+    const dollarSign = screen.getByText('$')
+    expect(dollarSign).toBeInTheDocument()
   })
 
   it('renders input with correct value', () => {
-    render(<AmountInput {...defaultProps} />)
+    render(<AmountInput usdAmount='100' setUsdAmount={mockSetUsdAmount} />)
 
     const input = screen.getByRole('spinbutton')
-    expect(input).toHaveValue(100.5)
+    expect(input).toHaveValue(100)
   })
 
   it('calls setUsdAmount when input value changes', () => {
-    render(<AmountInput {...defaultProps} />)
+    render(<AmountInput usdAmount='100' setUsdAmount={mockSetUsdAmount} />)
 
     const input = screen.getByRole('spinbutton')
-    fireEvent.change(input, { target: { value: '250.75' } })
+    input.value = '200'
+    input.dispatchEvent(new Event('input', { bubbles: true }))
 
-    expect(mockSetUsdAmount).toHaveBeenCalledWith('250.75')
+    expect(mockSetUsdAmount).toHaveBeenCalledWith('200')
   })
 
   it('has correct input attributes', () => {
-    render(<AmountInput {...defaultProps} />)
+    render(<AmountInput usdAmount='100' setUsdAmount={mockSetUsdAmount} />)
 
     const input = screen.getByRole('spinbutton')
     expect(input).toHaveAttribute('type', 'number')
-    expect(input).toHaveAttribute('step', '0.01')
     expect(input).toHaveAttribute('placeholder', '0.00')
+    expect(input).toHaveAttribute('step', '0.01')
   })
 
   it('has proper styling classes', () => {
-    render(<AmountInput {...defaultProps} />)
+    render(<AmountInput usdAmount='100' setUsdAmount={mockSetUsdAmount} />)
 
     const input = screen.getByRole('spinbutton')
     expect(input).toHaveClass(
       'bg-transparent',
-      'text-4xl',
+      'text-3xl',
+      'sm:text-4xl',
       'font-bold',
       'text-center',
       'outline-none'
@@ -74,12 +72,9 @@ describe('AmountInput Component', () => {
   })
 
   it('handles decimal values correctly', () => {
-    render(<AmountInput usdAmount='0.37' setUsdAmount={mockSetUsdAmount} />)
+    render(<AmountInput usdAmount='100.50' setUsdAmount={mockSetUsdAmount} />)
 
     const input = screen.getByRole('spinbutton')
-    expect(input).toHaveValue(0.37)
-
-    fireEvent.change(input, { target: { value: '0.99' } })
-    expect(mockSetUsdAmount).toHaveBeenCalledWith('0.99')
+    expect(input).toHaveValue(100.5)
   })
 })

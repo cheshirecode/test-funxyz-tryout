@@ -61,10 +61,10 @@ export const ExchangeRateInfo: React.FC<ExchangeRateInfoProps> = ({
   gasPriceLoading,
 }) => {
   return (
-    <div className='space-y-4 mb-4'>
+    <div className='space-y-3 sm:space-y-4 mb-3 sm:mb-4'>
       {/* Exchange Rate */}
-      <div className='flex justify-between items-center text-sm text-text-light-muted dark:text-text-dark-muted mb-3'>
-        <div className='flex items-center gap-2'>
+      <div className='flex justify-between items-center text-xs sm:text-sm text-text-light-muted dark:text-text-dark-muted mb-2 sm:mb-3'>
+        <div className='flex items-center gap-1 sm:gap-2'>
           <span>Exchange Rate</span>
           <RefreshToggle
             refreshRate={refreshRate}
@@ -72,25 +72,25 @@ export const ExchangeRateInfo: React.FC<ExchangeRateInfoProps> = ({
             isLoading={isLoading}
           />
         </div>
-        <span>
+        <span className='text-right'>
           {isLoading ? (
             <InlineLoader />
           ) : realSwapRate?.success && realSwapRate.data ? (
             <>
               1 {sourceToken} ≈ {realSwapRate.data.exchangeRate.toFixed(6)} {targetToken}
-              <span className='text-xs text-green-600 ml-2'>• Live</span>
+              <span className='text-xs text-green-600 ml-1 sm:ml-2'>• Live</span>
             </>
           ) : (
             <>
               1 {sourceToken} ≈ {exchangeRate.toFixed(6)} {targetToken}
-              <span className='text-xs text-yellow-600 ml-2'>• Estimated</span>
+              <span className='text-xs text-yellow-600 ml-1 sm:ml-2'>• Estimated</span>
             </>
           )}
         </span>
       </div>
 
       {/* Real-time Pricing Information */}
-      <div className='space-y-2'>
+      <div className='space-y-1.5 sm:space-y-2'>
         {/* Token Prices */}
         <div className='flex justify-between text-xs text-text-light-muted dark:text-text-dark-muted'>
           <span>{sourceToken} Price</span>
