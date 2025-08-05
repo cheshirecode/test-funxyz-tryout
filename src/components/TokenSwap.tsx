@@ -1,5 +1,6 @@
-import { WalletIcon, HelpCircle } from 'lucide-react'
+import { WalletIcon, PlayCircle, HelpCircle } from 'lucide-react'
 import { Link } from 'wouter'
+import { useState } from 'react'
 import { ThemeSwitcher } from './ThemeSwitcher'
 import { Tooltip } from './Tooltip'
 import { QuickSelect } from './QuickSelect'
@@ -9,10 +10,13 @@ import { SwapDirectionButton } from './SwapDirectionButton'
 import { ExchangeRateInfo } from './ExchangeRateInfo'
 import { SwapButton } from './SwapButton'
 import { SwapConfirmationDialog } from './SwapConfirmationDialog'
+import { TutorialOverlay } from './TutorialOverlay'
 import { useSwapFeature } from '../features'
 import type { RefreshRate } from '../utils/refresh/refreshUtils'
 
 export const TokenSwap = () => {
+  const [showTutorial, setShowTutorial] = useState(false)
+
   // Use the main swap feature hook that orchestrates all business logic
   const {
     // Token data
@@ -87,9 +91,17 @@ export const TokenSwap = () => {
             <Tooltip content='View demo and API examples'>
               <Link href='/demo'>
                 <button className='p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors'>
-                  <HelpCircle size={20} className='text-neutral-600 dark:text-neutral-400' />
+                  <PlayCircle size={20} className='text-neutral-600 dark:text-neutral-400' />
                 </button>
               </Link>
+            </Tooltip>
+            <Tooltip content='Interactive tutorial guide'>
+              <button
+                onClick={() => setShowTutorial(true)}
+                className='p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors'
+              >
+                <HelpCircle size={20} className='text-neutral-600 dark:text-neutral-400' />
+              </button>
             </Tooltip>
             <ThemeSwitcher />
           </div>
@@ -97,18 +109,22 @@ export const TokenSwap = () => {
       </div>
 
       {/* Quick Select Token Buttons */}
-      <QuickSelect
-        availableTokens={availableTokens}
-        getTokenSelectionState={getTokenSelectionState}
-        handleQuickSelect={handleQuickSelect}
-        tokenData={tokenData || {}}
-      />
+      <div data-tutorial='quick-select'>
+        <QuickSelect
+          availableTokens={availableTokens}
+          getTokenSelectionState={getTokenSelectionState}
+          handleQuickSelect={handleQuickSelect}
+          tokenData={tokenData || {}}
+        />
+      </div>
 
       {/* USD Amount Section */}
-      <AmountInput usdAmount={usdAmount} setUsdAmount={setUsdAmount} />
+      <div data-tutorial='amount-input'>
+        <AmountInput usdAmount={usdAmount} setUsdAmount={setUsdAmount} />
+      </div>
 
       {/* Source Token Section - FROM */}
-      <div className='mb-2'>
+      <div className='mb-2' data-tutorial='source-token'>
         <TokenSwapSection
           type='source'
           selectedToken={sourceToken}
@@ -122,10 +138,12 @@ export const TokenSwap = () => {
       </div>
 
       {/* Swap Direction Button */}
-      <SwapDirectionButton onClick={swapTokenPositions} />
+      <div data-tutorial='swap-direction'>
+        <SwapDirectionButton onClick={swapTokenPositions} />
+      </div>
 
       {/* Target Token Section - TO */}
-      <div className='mt-2 mb-6'>
+      <div className='mt-2 mb-6' data-tutorial='target-token'>
         <TokenSwapSection
           type='target'
           selectedToken={targetToken}
@@ -138,31 +156,35 @@ export const TokenSwap = () => {
       </div>
 
       {/* Exchange Rate and Pricing Information */}
-      <ExchangeRateInfo
-        sourceToken={sourceToken}
-        targetToken={targetToken}
-        exchangeRate={exchangeRate}
-        refreshRate={refreshRate as RefreshRate}
-        onRefreshRateChange={(rate) => setRefreshRate(rate as any)}
-        isLoading={tokensLoading || swapRateLoading}
-        realSwapRate={realSwapRate}
-        sourceTokenPrice={sourceTokenPrice}
-        targetTokenPrice={targetTokenPrice}
-        gasPrice={gasPrice}
-        sourcePriceLoading={sourcePriceLoading}
-        targetPriceLoading={targetPriceLoading}
-        gasPriceLoading={gasPriceLoading}
-      />
+      <div data-tutorial='exchange-rate'>
+        <ExchangeRateInfo
+          sourceToken={sourceToken}
+          targetToken={targetToken}
+          exchangeRate={exchangeRate}
+          refreshRate={refreshRate as RefreshRate}
+          onRefreshRateChange={(rate) => setRefreshRate(rate as any)}
+          isLoading={tokensLoading || swapRateLoading}
+          realSwapRate={realSwapRate}
+          sourceTokenPrice={sourceTokenPrice}
+          targetTokenPrice={targetTokenPrice}
+          gasPrice={gasPrice}
+          sourcePriceLoading={sourcePriceLoading}
+          targetPriceLoading={targetPriceLoading}
+          gasPriceLoading={gasPriceLoading}
+        />
+      </div>
 
       {/* Swap Button */}
-      <SwapButton
-        onClick={handleSwapClick}
-        disabled={buttonState.disabled}
-        isSwapping={swapping}
-        swapComplete={swapComplete}
-        buttonText={buttonState.text}
-        className={buttonState.className}
-      />
+      <div data-tutorial='swap-button'>
+        <SwapButton
+          onClick={handleSwapClick}
+          disabled={buttonState.disabled}
+          isSwapping={swapping}
+          swapComplete={swapComplete}
+          buttonText={buttonState.text}
+          className={buttonState.className}
+        />
+      </div>
 
       {/* Swap Confirmation Dialog */}
       <SwapConfirmationDialog
@@ -179,6 +201,9 @@ export const TokenSwap = () => {
         gasPrice={gasPrice}
         isLoading={swapping}
       />
+
+      {/* Tutorial Overlay */}
+      <TutorialOverlay isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
     </div>
   )
 }
