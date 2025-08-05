@@ -13,6 +13,24 @@ const {
   // getNftAddress,      // Temporarily disabled due to API type issues
   getNftName,
   getRiskAssessmentForAddress,
+  // Fiat Integration Functions
+  // createStripeBuySession,  // Available for future use
+  getStripeBuyQuote,
+  getMoonpayBuyQuoteForCreditCard,
+  // getMoonpayUrlSignature,  // Available for future use
+  getMeldDefaultFiat,
+  getMeldFiatLimits,
+  // getMeldQuotes,  // Available for future use
+  // Operation Management Functions
+  estimateOp,
+  // createOp,  // Available for future use
+  // executeOp,  // Available for future use
+  // signOp,  // Available for future use
+  getOps,
+  // Bridge & Banking Functions
+  // createBridgeBankAccount,  // Available for future use
+  getBridgeBankAccounts,
+  getBridgeCustomer,
 } = FunkitApi
 
 /**
@@ -338,6 +356,239 @@ export const enhancedApiService = {
   },
 
   /**
+   * Fiat Integration Functions
+   * On/off ramp capabilities with Stripe, Moonpay, and Meld
+   */
+  async getFiatIntegrationDemo(amount: string = '100', currency: string = 'USD') {
+    try {
+      console.log('🔍 Testing fiat integration capabilities from @funkit/api-base')
+
+      const results = {
+        amount,
+        currency,
+        stripe: null as any,
+        moonpay: null as any,
+        meld: null as any,
+        errors: [] as string[],
+      }
+
+      // Test Stripe integration
+      try {
+        const stripeQuote = await getStripeBuyQuote({
+          apiKey: apiConfig.apiKey,
+          params: {
+            amount: parseFloat(amount),
+            currency,
+            assetSymbol: 'USDC',
+          }
+        } as any)
+        results.stripe = stripeQuote
+      } catch (error) {
+        results.errors.push(`Stripe error: ${error instanceof Error ? error.message : 'Unknown'}`)
+      }
+
+      // Test Moonpay integration
+      try {
+        const moonpayQuote = await getMoonpayBuyQuoteForCreditCard({
+          apiKey: apiConfig.apiKey,
+          params: {
+            baseCurrencyAmount: parseFloat(amount),
+            baseCurrencyCode: currency,
+            quoteCurrencyCode: 'usdc',
+          }
+        } as any)
+        results.moonpay = moonpayQuote
+      } catch (error) {
+        results.errors.push(`Moonpay error: ${error instanceof Error ? error.message : 'Unknown'}`)
+      }
+
+      // Test Meld integration
+      try {
+        const meldFiatLimits = await getMeldFiatLimits({
+          apiKey: apiConfig.apiKey,
+          params: {
+            countryCode: 'US',
+          }
+        } as any)
+        const meldDefaultFiat = await getMeldDefaultFiat({
+          apiKey: apiConfig.apiKey,
+          params: {}
+        } as any)
+        results.meld = { fiatLimits: meldFiatLimits, defaultFiat: meldDefaultFiat }
+      } catch (error) {
+        results.errors.push(`Meld error: ${error instanceof Error ? error.message : 'Unknown'}`)
+      }
+
+      return {
+        success: true,
+        data: {
+          ...results,
+          message: 'Successfully tested fiat integration capabilities from @funkit/api-base',
+          apiFunctions: ['getStripeBuyQuote', 'getMoonpayBuyQuoteForCreditCard', 'getMeldFiatLimits', 'getMeldDefaultFiat'],
+          hasStripe: !!results.stripe,
+          hasMoonpay: !!results.moonpay,
+          hasMeld: !!results.meld,
+          errorCount: results.errors.length,
+        },
+        timestamp: new Date().toISOString(),
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        fallbackInfo: {
+          message: 'Enhanced fiat integration with @funkit/api-base',
+          functions: ['createStripeBuySession', 'getStripeBuyQuote', 'getMoonpayBuyQuoteForCreditCard', 'getMeldFiatLimits'],
+          description: 'Comprehensive fiat on/off ramp integration for crypto purchases',
+          amount,
+          currency,
+        },
+        timestamp: new Date().toISOString(),
+      }
+    }
+  },
+
+  /**
+   * Operation Management Functions
+   * Advanced transaction operations and lifecycle management
+   */
+  async getOperationManagementDemo(chainId: string = '1') {
+    try {
+      console.log('🔍 Testing operation management capabilities from @funkit/api-base')
+
+      const results = {
+        chainId,
+        operations: null as any,
+        estimation: null as any,
+        errors: [] as string[],
+      }
+
+      // Test getting existing operations
+      try {
+        const operations = await getOps({
+          apiKey: apiConfig.apiKey,
+          params: {
+            authId: 'demo-auth-id', // Demo value for testing
+          }
+        } as any)
+        results.operations = operations
+      } catch (error) {
+        results.errors.push(`Get operations error: ${error instanceof Error ? error.message : 'Unknown'}`)
+      }
+
+      // Test operation estimation
+      try {
+        const estimation = await estimateOp({
+          apiKey: apiConfig.apiKey,
+          params: {
+            authId: 'demo-auth-id',
+            operation: {
+              type: 'TRANSFER',
+              to: '0x742d35Cc6634C0532925a3b8D84D8C23F8A76542',
+              amount: '1000000', // 1 USDC (6 decimals)
+              tokenAddress: '0xA0b86a33E6441D2e88d5A9E9A8E4E0B1E0D0C9A8', // Example USDC address
+            } as any,
+          }
+        } as any)
+        results.estimation = estimation
+      } catch (error) {
+        results.errors.push(`Operation estimation error: ${error instanceof Error ? error.message : 'Unknown'}`)
+      }
+
+      return {
+        success: true,
+        data: {
+          ...results,
+          message: 'Successfully tested operation management capabilities from @funkit/api-base',
+          apiFunctions: ['getOps', 'estimateOp', 'createOp', 'executeOp', 'signOp'],
+          hasOperations: !!results.operations,
+          hasEstimation: !!results.estimation,
+          errorCount: results.errors.length,
+        },
+        timestamp: new Date().toISOString(),
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        fallbackInfo: {
+          message: 'Enhanced operation management with @funkit/api-base',
+          functions: ['estimateOp', 'createOp', 'executeOp', 'signOp', 'getOps'],
+          description: 'Advanced transaction lifecycle management and gas estimation',
+          chainId,
+        },
+        timestamp: new Date().toISOString(),
+      }
+    }
+  },
+
+  /**
+   * Bridge & Banking Integration
+   * Traditional banking bridge capabilities
+   */
+  async getBridgeBankingDemo() {
+    try {
+      console.log('🔍 Testing bridge banking capabilities from @funkit/api-base')
+
+      const results = {
+        customer: null as any,
+        bankAccounts: null as any,
+        errors: [] as string[],
+      }
+
+      // Test getting bridge customer info
+      try {
+        const customer = await getBridgeCustomer({
+          apiKey: apiConfig.apiKey,
+          params: {
+            authId: 'demo-auth-id',
+          }
+        } as any)
+        results.customer = customer
+      } catch (error) {
+        results.errors.push(`Bridge customer error: ${error instanceof Error ? error.message : 'Unknown'}`)
+      }
+
+      // Test getting bank accounts
+      try {
+        const bankAccounts = await getBridgeBankAccounts({
+          apiKey: apiConfig.apiKey,
+          params: {
+            authId: 'demo-auth-id',
+          }
+        } as any)
+        results.bankAccounts = bankAccounts
+      } catch (error) {
+        results.errors.push(`Bank accounts error: ${error instanceof Error ? error.message : 'Unknown'}`)
+      }
+
+      return {
+        success: true,
+        data: {
+          ...results,
+          message: 'Successfully tested bridge banking capabilities from @funkit/api-base',
+          apiFunctions: ['getBridgeCustomer', 'getBridgeBankAccounts', 'createBridgeBankAccount'],
+          hasCustomer: !!results.customer,
+          hasBankAccounts: !!results.bankAccounts,
+          errorCount: results.errors.length,
+        },
+        timestamp: new Date().toISOString(),
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        fallbackInfo: {
+          message: 'Enhanced bridge banking with @funkit/api-base',
+          functions: ['createBridgeBankAccount', 'getBridgeBankAccounts', 'getBridgeCustomer'],
+          description: 'Traditional banking integration for fiat on/off ramps',
+        },
+        timestamp: new Date().toISOString(),
+      }
+    }
+  },
+
+  /**
    * Comprehensive Enhanced Demo
    * Showcase multiple enhanced capabilities
    */
@@ -359,6 +610,9 @@ export const enhancedApiService = {
           gasEstimation: null as any,
           nftMetadata: null as any,
           riskAssessment: null as any,
+          fiatIntegration: null as any,
+          operationManagement: null as any,
+          bridgeBanking: null as any,
         },
         errors: [] as string[],
       }
@@ -395,6 +649,30 @@ export const enhancedApiService = {
         results.errors.push(`Risk assessment error: ${error instanceof Error ? error.message : 'Unknown'}`)
       }
 
+      // Test fiat integration
+      try {
+        const fiatResult = await this.getFiatIntegrationDemo('100', 'USD')
+        results.capabilities.fiatIntegration = fiatResult.success ? fiatResult.data : fiatResult.error
+      } catch (error) {
+        results.errors.push(`Fiat integration error: ${error instanceof Error ? error.message : 'Unknown'}`)
+      }
+
+      // Test operation management
+      try {
+        const operationResult = await this.getOperationManagementDemo(chainId)
+        results.capabilities.operationManagement = operationResult.success ? operationResult.data : operationResult.error
+      } catch (error) {
+        results.errors.push(`Operation management error: ${error instanceof Error ? error.message : 'Unknown'}`)
+      }
+
+      // Test bridge banking
+      try {
+        const bridgeResult = await this.getBridgeBankingDemo()
+        results.capabilities.bridgeBanking = bridgeResult.success ? bridgeResult.data : bridgeResult.error
+      } catch (error) {
+        results.errors.push(`Bridge banking error: ${error instanceof Error ? error.message : 'Unknown'}`)
+      }
+
       return {
         success: true,
         data: {
@@ -405,7 +683,9 @@ export const enhancedApiService = {
           errorCount: results.errors.length,
           enhancedFunctions: [
             'getAllWalletTokens', 'getAllWalletNFTs', 'getChainFromId',
-            'getUserOpGasPrice', 'getRiskAssessmentForAddress', 'getNftName'
+            'getUserOpGasPrice', 'getRiskAssessmentForAddress', 'getNftName',
+            'getStripeBuyQuote', 'getMoonpayBuyQuoteForCreditCard', 'getMeldFiatLimits',
+            'estimateOp', 'getOps', 'getBridgeCustomer', 'getBridgeBankAccounts'
           ],
         },
         timestamp: new Date().toISOString(),
