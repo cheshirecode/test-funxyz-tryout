@@ -49,15 +49,13 @@ export const RefreshToggle: React.FC<RefreshToggleProps> = ({
         aria-label={config.label}
       >
         <RotateCcw
-          className={`w-4 h-4 transition-transform duration-300 ${
-            isLoading ? 'animate-spin' : ''
-          }`}
+          className={`w-4 h-4 transition-transform duration-300 ${isLoading ? 'animate-spin' : ''}`}
         />
 
         {/* Overlay text for active refresh rates */}
         {config.showOverlay && (
-          <div className="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-sm px-1">
-            <span className="text-[10px] font-medium text-gray-700 dark:text-gray-300">
+          <div className='absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-sm px-1'>
+            <span className='text-[10px] font-medium text-gray-700 dark:text-gray-300'>
               {refreshRate}
             </span>
           </div>
@@ -65,8 +63,8 @@ export const RefreshToggle: React.FC<RefreshToggleProps> = ({
 
         {/* Loading indicator */}
         {isLoading && (
-          <div className="absolute inset-0 bg-white/20 dark:bg-black/20 rounded-lg flex items-center justify-center">
-            <div className="w-2 h-2 bg-current rounded-full animate-pulse" />
+          <div className='absolute inset-0 bg-white/20 dark:bg-black/20 rounded-lg flex items-center justify-center'>
+            <div className='w-2 h-2 bg-current rounded-full animate-pulse' />
           </div>
         )}
       </button>

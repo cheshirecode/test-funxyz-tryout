@@ -71,7 +71,9 @@ export const enhancedApiService = {
           })
         }
       } catch (error) {
-        results.errors.push(`Token fetch error: ${error instanceof Error ? error.message : 'Unknown'}`)
+        results.errors.push(
+          `Token fetch error: ${error instanceof Error ? error.message : 'Unknown'}`
+        )
       }
 
       // Get all NFTs for the wallet
@@ -89,7 +91,9 @@ export const enhancedApiService = {
           })
         }
       } catch (error) {
-        results.errors.push(`NFT fetch error: ${error instanceof Error ? error.message : 'Unknown'}`)
+        results.errors.push(
+          `NFT fetch error: ${error instanceof Error ? error.message : 'Unknown'}`
+        )
       }
 
       return {
@@ -97,7 +101,9 @@ export const enhancedApiService = {
         data: {
           ...results,
           message: 'Successfully retrieved wallet portfolio from @funkit/api-base',
-          apiFunction: chainId ? 'getAllWalletTokensByChainId() + getAllWalletNFTsByChainId()' : 'getAllWalletTokens() + getAllWalletNFTs()',
+          apiFunction: chainId
+            ? 'getAllWalletTokensByChainId() + getAllWalletNFTsByChainId()'
+            : 'getAllWalletTokens() + getAllWalletNFTs()',
           hasTokens: !!results.tokens,
           hasNfts: !!results.nfts,
           errorCount: results.errors.length,
@@ -110,7 +116,12 @@ export const enhancedApiService = {
         error: error instanceof Error ? error.message : 'Unknown error',
         fallbackInfo: {
           message: 'Enhanced portfolio management with @funkit/api-base',
-          functions: ['getAllWalletTokens', 'getAllWalletTokensByChainId', 'getAllWalletNFTs', 'getAllWalletNFTsByChainId'],
+          functions: [
+            'getAllWalletTokens',
+            'getAllWalletTokensByChainId',
+            'getAllWalletNFTs',
+            'getAllWalletNFTsByChainId',
+          ],
           description: 'Get complete token and NFT portfolio for any wallet address',
           walletAddress,
           chainId,
@@ -130,7 +141,7 @@ export const enhancedApiService = {
 
       const chainInfo = await getChainFromId({
         apiKey: apiConfig.apiKey,
-        chainId
+        chainId,
       })
 
       return {
@@ -236,9 +247,13 @@ export const enhancedApiService = {
         //   contractAddress: contractAddress,
         //   chainId,
         // })
-        results.nftAddress = { info: 'NFT address lookup temporarily disabled due to API type mismatch' }
+        results.nftAddress = {
+          info: 'NFT address lookup temporarily disabled due to API type mismatch',
+        }
       } catch (error) {
-        results.errors.push(`NFT address error: ${error instanceof Error ? error.message : 'Unknown'}`)
+        results.errors.push(
+          `NFT address error: ${error instanceof Error ? error.message : 'Unknown'}`
+        )
       }
 
       return {
@@ -380,7 +395,7 @@ export const enhancedApiService = {
             amount: parseFloat(amount),
             currency,
             assetSymbol: 'USDC',
-          }
+          },
         } as any)
         results.stripe = stripeQuote
       } catch (error) {
@@ -395,7 +410,7 @@ export const enhancedApiService = {
             baseCurrencyAmount: parseFloat(amount),
             baseCurrencyCode: currency,
             quoteCurrencyCode: 'usdc',
-          }
+          },
         } as any)
         results.moonpay = moonpayQuote
       } catch (error) {
@@ -408,11 +423,11 @@ export const enhancedApiService = {
           apiKey: apiConfig.apiKey,
           params: {
             countryCode: 'US',
-          }
+          },
         } as any)
         const meldDefaultFiat = await getMeldDefaultFiat({
           apiKey: apiConfig.apiKey,
-          params: {}
+          params: {},
         } as any)
         results.meld = { fiatLimits: meldFiatLimits, defaultFiat: meldDefaultFiat }
       } catch (error) {
@@ -424,7 +439,12 @@ export const enhancedApiService = {
         data: {
           ...results,
           message: 'Successfully tested fiat integration capabilities from @funkit/api-base',
-          apiFunctions: ['getStripeBuyQuote', 'getMoonpayBuyQuoteForCreditCard', 'getMeldFiatLimits', 'getMeldDefaultFiat'],
+          apiFunctions: [
+            'getStripeBuyQuote',
+            'getMoonpayBuyQuoteForCreditCard',
+            'getMeldFiatLimits',
+            'getMeldDefaultFiat',
+          ],
           hasStripe: !!results.stripe,
           hasMoonpay: !!results.moonpay,
           hasMeld: !!results.meld,
@@ -438,7 +458,12 @@ export const enhancedApiService = {
         error: error instanceof Error ? error.message : 'Unknown error',
         fallbackInfo: {
           message: 'Enhanced fiat integration with @funkit/api-base',
-          functions: ['createStripeBuySession', 'getStripeBuyQuote', 'getMoonpayBuyQuoteForCreditCard', 'getMeldFiatLimits'],
+          functions: [
+            'createStripeBuySession',
+            'getStripeBuyQuote',
+            'getMoonpayBuyQuoteForCreditCard',
+            'getMeldFiatLimits',
+          ],
           description: 'Comprehensive fiat on/off ramp integration for crypto purchases',
           amount,
           currency,
@@ -469,11 +494,13 @@ export const enhancedApiService = {
           apiKey: apiConfig.apiKey,
           params: {
             authId: 'demo-auth-id', // Demo value for testing
-          }
+          },
         } as any)
         results.operations = operations
       } catch (error) {
-        results.errors.push(`Get operations error: ${error instanceof Error ? error.message : 'Unknown'}`)
+        results.errors.push(
+          `Get operations error: ${error instanceof Error ? error.message : 'Unknown'}`
+        )
       }
 
       // Test operation estimation
@@ -488,11 +515,13 @@ export const enhancedApiService = {
               amount: '1000000', // 1 USDC (6 decimals)
               tokenAddress: '0xA0b86a33E6441D2e88d5A9E9A8E4E0B1E0D0C9A8', // Example USDC address
             } as any,
-          }
+          },
         } as any)
         results.estimation = estimation
       } catch (error) {
-        results.errors.push(`Operation estimation error: ${error instanceof Error ? error.message : 'Unknown'}`)
+        results.errors.push(
+          `Operation estimation error: ${error instanceof Error ? error.message : 'Unknown'}`
+        )
       }
 
       return {
@@ -542,11 +571,13 @@ export const enhancedApiService = {
           apiKey: apiConfig.apiKey,
           params: {
             authId: 'demo-auth-id',
-          }
+          },
         } as any)
         results.customer = customer
       } catch (error) {
-        results.errors.push(`Bridge customer error: ${error instanceof Error ? error.message : 'Unknown'}`)
+        results.errors.push(
+          `Bridge customer error: ${error instanceof Error ? error.message : 'Unknown'}`
+        )
       }
 
       // Test getting bank accounts
@@ -555,11 +586,13 @@ export const enhancedApiService = {
           apiKey: apiConfig.apiKey,
           params: {
             authId: 'demo-auth-id',
-          }
+          },
         } as any)
         results.bankAccounts = bankAccounts
       } catch (error) {
-        results.errors.push(`Bank accounts error: ${error instanceof Error ? error.message : 'Unknown'}`)
+        results.errors.push(
+          `Bank accounts error: ${error instanceof Error ? error.message : 'Unknown'}`
+        )
       }
 
       return {
@@ -620,9 +653,13 @@ export const enhancedApiService = {
       // Test portfolio functions
       try {
         const portfolioResult = await this.getWalletPortfolio(demoWallet, chainId)
-        results.capabilities.portfolio = portfolioResult.success ? portfolioResult.data : portfolioResult.error
+        results.capabilities.portfolio = portfolioResult.success
+          ? portfolioResult.data
+          : portfolioResult.error
       } catch (error) {
-        results.errors.push(`Portfolio error: ${error instanceof Error ? error.message : 'Unknown'}`)
+        results.errors.push(
+          `Portfolio error: ${error instanceof Error ? error.message : 'Unknown'}`
+        )
       }
 
       // Test chain info
@@ -630,7 +667,9 @@ export const enhancedApiService = {
         const chainResult = await this.getChainInformation(chainId)
         results.capabilities.chainInfo = chainResult.success ? chainResult.data : chainResult.error
       } catch (error) {
-        results.errors.push(`Chain info error: ${error instanceof Error ? error.message : 'Unknown'}`)
+        results.errors.push(
+          `Chain info error: ${error instanceof Error ? error.message : 'Unknown'}`
+        )
       }
 
       // Test gas estimation
@@ -638,39 +677,57 @@ export const enhancedApiService = {
         const gasResult = await this.getGasEstimation(chainId)
         results.capabilities.gasEstimation = gasResult.success ? gasResult.data : gasResult.error
       } catch (error) {
-        results.errors.push(`Gas estimation error: ${error instanceof Error ? error.message : 'Unknown'}`)
+        results.errors.push(
+          `Gas estimation error: ${error instanceof Error ? error.message : 'Unknown'}`
+        )
       }
 
       // Test risk assessment
       try {
         const riskResult = await this.getAddressRiskAssessment(demoWallet)
-        results.capabilities.riskAssessment = riskResult.success ? riskResult.data : riskResult.error
+        results.capabilities.riskAssessment = riskResult.success
+          ? riskResult.data
+          : riskResult.error
       } catch (error) {
-        results.errors.push(`Risk assessment error: ${error instanceof Error ? error.message : 'Unknown'}`)
+        results.errors.push(
+          `Risk assessment error: ${error instanceof Error ? error.message : 'Unknown'}`
+        )
       }
 
       // Test fiat integration
       try {
         const fiatResult = await this.getFiatIntegrationDemo('100', 'USD')
-        results.capabilities.fiatIntegration = fiatResult.success ? fiatResult.data : fiatResult.error
+        results.capabilities.fiatIntegration = fiatResult.success
+          ? fiatResult.data
+          : fiatResult.error
       } catch (error) {
-        results.errors.push(`Fiat integration error: ${error instanceof Error ? error.message : 'Unknown'}`)
+        results.errors.push(
+          `Fiat integration error: ${error instanceof Error ? error.message : 'Unknown'}`
+        )
       }
 
       // Test operation management
       try {
         const operationResult = await this.getOperationManagementDemo(chainId)
-        results.capabilities.operationManagement = operationResult.success ? operationResult.data : operationResult.error
+        results.capabilities.operationManagement = operationResult.success
+          ? operationResult.data
+          : operationResult.error
       } catch (error) {
-        results.errors.push(`Operation management error: ${error instanceof Error ? error.message : 'Unknown'}`)
+        results.errors.push(
+          `Operation management error: ${error instanceof Error ? error.message : 'Unknown'}`
+        )
       }
 
       // Test bridge banking
       try {
         const bridgeResult = await this.getBridgeBankingDemo()
-        results.capabilities.bridgeBanking = bridgeResult.success ? bridgeResult.data : bridgeResult.error
+        results.capabilities.bridgeBanking = bridgeResult.success
+          ? bridgeResult.data
+          : bridgeResult.error
       } catch (error) {
-        results.errors.push(`Bridge banking error: ${error instanceof Error ? error.message : 'Unknown'}`)
+        results.errors.push(
+          `Bridge banking error: ${error instanceof Error ? error.message : 'Unknown'}`
+        )
       }
 
       return {
@@ -679,13 +736,24 @@ export const enhancedApiService = {
           ...results,
           message: 'Comprehensive enhanced @funkit/api-base capabilities demonstration',
           totalCapabilities: Object.keys(results.capabilities).length,
-          successfulCapabilities: Object.values(results.capabilities).filter(cap => cap && typeof cap === 'object' && cap.message).length,
+          successfulCapabilities: Object.values(results.capabilities).filter(
+            (cap) => cap && typeof cap === 'object' && cap.message
+          ).length,
           errorCount: results.errors.length,
           enhancedFunctions: [
-            'getAllWalletTokens', 'getAllWalletNFTs', 'getChainFromId',
-            'getUserOpGasPrice', 'getRiskAssessmentForAddress', 'getNftName',
-            'getStripeBuyQuote', 'getMoonpayBuyQuoteForCreditCard', 'getMeldFiatLimits',
-            'estimateOp', 'getOps', 'getBridgeCustomer', 'getBridgeBankAccounts'
+            'getAllWalletTokens',
+            'getAllWalletNFTs',
+            'getChainFromId',
+            'getUserOpGasPrice',
+            'getRiskAssessmentForAddress',
+            'getNftName',
+            'getStripeBuyQuote',
+            'getMoonpayBuyQuoteForCreditCard',
+            'getMeldFiatLimits',
+            'estimateOp',
+            'getOps',
+            'getBridgeCustomer',
+            'getBridgeBankAccounts',
           ],
         },
         timestamp: new Date().toISOString(),
@@ -707,7 +775,7 @@ export const enhancedApiService = {
             'Faucet Integration',
             'Fiat On/Off Ramps (Stripe, Moonpay)',
             'Cross-chain Operations',
-            'Advanced Transaction Management'
+            'Advanced Transaction Management',
           ],
         },
         timestamp: new Date().toISOString(),

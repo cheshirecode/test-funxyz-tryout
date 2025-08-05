@@ -10,7 +10,12 @@ interface ContractInfoProps {
   className?: string
 }
 
-export const ContractInfo = ({ contractAddress, chainId = '1', symbol, className = '' }: ContractInfoProps) => {
+export const ContractInfo = ({
+  contractAddress,
+  chainId = '1',
+  symbol,
+  className = '',
+}: ContractInfoProps) => {
   const { copied, copy } = useClipboard()
 
   if (!contractAddress) return null
@@ -44,7 +49,10 @@ export const ContractInfo = ({ contractAddress, chainId = '1', symbol, className
           {copied ? (
             <Check size={11} className='text-success-500' />
           ) : (
-            <Copy size={11} className='text-text-light-muted dark:text-text-dark-muted hover:text-text-light-secondary dark:hover:text-text-dark-secondary' />
+            <Copy
+              size={11}
+              className='text-text-light-muted dark:text-text-dark-muted hover:text-text-light-secondary dark:hover:text-text-dark-secondary'
+            />
           )}
         </button>
       </div>

@@ -628,6 +628,31 @@ function EnhancedAPIDemo() {
     enabled: false,
   })
 
+  // New enhanced capability queries
+  const fiatIntegrationQuery = useQuery({
+    queryKey: ['fiat-integration'],
+    queryFn: () => enhancedApiService.getFiatIntegrationDemo('100', 'USD'),
+    enabled: false,
+  })
+
+  const operationManagementQuery = useQuery({
+    queryKey: ['operation-management', chainId],
+    queryFn: () => enhancedApiService.getOperationManagementDemo(chainId),
+    enabled: false,
+  })
+
+  const bridgeBankingQuery = useQuery({
+    queryKey: ['bridge-banking'],
+    queryFn: () => enhancedApiService.getBridgeBankingDemo(),
+    enabled: false,
+  })
+
+  const riskAssessmentQuery = useQuery({
+    queryKey: ['risk-assessment', walletAddress],
+    queryFn: () => enhancedApiService.getAddressRiskAssessment(walletAddress as `0x${string}`),
+    enabled: false,
+  })
+
   return (
     <div className='space-y-6'>
       {/* Configuration Inputs */}
@@ -689,6 +714,34 @@ function EnhancedAPIDemo() {
         >
           {gasEstimationQuery.isFetching ? 'Loading...' : 'Get Gas Price'}
         </button>
+        <button
+          onClick={() => fiatIntegrationQuery.refetch()}
+          disabled={fiatIntegrationQuery.isFetching}
+          className='px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 disabled:opacity-50 text-sm'
+        >
+          {fiatIntegrationQuery.isFetching ? 'Loading...' : 'Test Fiat Integration'}
+        </button>
+        <button
+          onClick={() => operationManagementQuery.refetch()}
+          disabled={operationManagementQuery.isFetching}
+          className='px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 text-sm'
+        >
+          {operationManagementQuery.isFetching ? 'Loading...' : 'Test Operations'}
+        </button>
+        <button
+          onClick={() => bridgeBankingQuery.refetch()}
+          disabled={bridgeBankingQuery.isFetching}
+          className='px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 disabled:opacity-50 text-sm'
+        >
+          {bridgeBankingQuery.isFetching ? 'Loading...' : 'Test Bridge Banking'}
+        </button>
+        <button
+          onClick={() => riskAssessmentQuery.refetch()}
+          disabled={riskAssessmentQuery.isFetching}
+          className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 text-sm'
+        >
+          {riskAssessmentQuery.isFetching ? 'Loading...' : 'Test Risk Assessment'}
+        </button>
       </div>
 
       {/* Results Display */}
@@ -733,11 +786,55 @@ function EnhancedAPIDemo() {
           </div>
         )}
 
+        {/* Fiat Integration Results */}
+        {fiatIntegrationQuery.data && (
+          <div className='p-4 bg-pink-50 rounded-lg'>
+            <h4 className='font-medium text-pink-800 mb-3'>💳 Fiat Integration Results</h4>
+            <pre className='text-xs bg-white p-3 rounded border overflow-auto max-h-64'>
+              {JSON.stringify(fiatIntegrationQuery.data, null, 2)}
+            </pre>
+          </div>
+        )}
+
+        {/* Operation Management Results */}
+        {operationManagementQuery.data && (
+          <div className='p-4 bg-indigo-50 rounded-lg'>
+            <h4 className='font-medium text-indigo-800 mb-3'>⚙️ Operation Management Results</h4>
+            <pre className='text-xs bg-white p-3 rounded border overflow-auto max-h-64'>
+              {JSON.stringify(operationManagementQuery.data, null, 2)}
+            </pre>
+          </div>
+        )}
+
+        {/* Bridge Banking Results */}
+        {bridgeBankingQuery.data && (
+          <div className='p-4 bg-teal-50 rounded-lg'>
+            <h4 className='font-medium text-teal-800 mb-3'>🏦 Bridge Banking Results</h4>
+            <pre className='text-xs bg-white p-3 rounded border overflow-auto max-h-64'>
+              {JSON.stringify(bridgeBankingQuery.data, null, 2)}
+            </pre>
+          </div>
+        )}
+
+        {/* Risk Assessment Results */}
+        {riskAssessmentQuery.data && (
+          <div className='p-4 bg-red-50 rounded-lg'>
+            <h4 className='font-medium text-red-800 mb-3'>🔒 Risk Assessment Results</h4>
+            <pre className='text-xs bg-white p-3 rounded border overflow-auto max-h-64'>
+              {JSON.stringify(riskAssessmentQuery.data, null, 2)}
+            </pre>
+          </div>
+        )}
+
         {/* Error States */}
         {(enhancedDemoQuery.error ||
           portfolioQuery.error ||
           chainInfoQuery.error ||
-          gasEstimationQuery.error) && (
+          gasEstimationQuery.error ||
+          fiatIntegrationQuery.error ||
+          operationManagementQuery.error ||
+          bridgeBankingQuery.error ||
+          riskAssessmentQuery.error) && (
           <div className='p-4 bg-red-50 rounded-lg'>
             <h4 className='font-medium text-red-800 mb-3'>❌ Errors</h4>
             {enhancedDemoQuery.error && (
@@ -758,6 +855,26 @@ function EnhancedAPIDemo() {
                 Gas Estimation: {gasEstimationQuery.error.message}
               </p>
             )}
+            {fiatIntegrationQuery.error && (
+              <p className='text-sm text-red-700 mb-2'>
+                Fiat Integration: {fiatIntegrationQuery.error.message}
+              </p>
+            )}
+            {operationManagementQuery.error && (
+              <p className='text-sm text-red-700 mb-2'>
+                Operation Management: {operationManagementQuery.error.message}
+              </p>
+            )}
+            {bridgeBankingQuery.error && (
+              <p className='text-sm text-red-700 mb-2'>
+                Bridge Banking: {bridgeBankingQuery.error.message}
+              </p>
+            )}
+            {riskAssessmentQuery.error && (
+              <p className='text-sm text-red-700 mb-2'>
+                Risk Assessment: {riskAssessmentQuery.error.message}
+              </p>
+            )}
           </div>
         )}
       </div>
@@ -765,7 +882,7 @@ function EnhancedAPIDemo() {
       {/* Information Panel */}
       <div className='p-4 bg-blue-50 rounded-lg'>
         <h4 className='font-medium text-blue-800 mb-3'>📘 Enhanced Capabilities Overview</h4>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4 text-sm'>
           <div>
             <h5 className='font-medium text-gray-800 mb-2'>Portfolio Management</h5>
             <ul className='text-gray-600 space-y-1'>
@@ -798,8 +915,26 @@ function EnhancedAPIDemo() {
             <ul className='text-gray-600 space-y-1'>
               <li>• Stripe payment sessions</li>
               <li>• Moonpay integration</li>
+              <li>• Meld fiat limits</li>
               <li>• On/off ramp quotes</li>
-              <li>• Fiat limit checks</li>
+            </ul>
+          </div>
+          <div>
+            <h5 className='font-medium text-gray-800 mb-2'>Operation Management</h5>
+            <ul className='text-gray-600 space-y-1'>
+              <li>• Transaction estimation</li>
+              <li>• Operation lifecycle</li>
+              <li>• User operations</li>
+              <li>• Gas optimization</li>
+            </ul>
+          </div>
+          <div>
+            <h5 className='font-medium text-gray-800 mb-2'>Bridge & Banking</h5>
+            <ul className='text-gray-600 space-y-1'>
+              <li>• Traditional banking</li>
+              <li>• Customer management</li>
+              <li>• Bank account linking</li>
+              <li>• Fiat on/off ramps</li>
             </ul>
           </div>
         </div>

@@ -1,10 +1,13 @@
 # @funkit/api-base API Exploration Report
 
 ## Overview
+
 This document catalogs all 128 available exports from the @funkit/api-base package and categorizes them by functionality to identify additional metadata and features that can enhance the token swap application.
 
 ## Current Usage
+
 The application currently uses only 4 functions:
+
 - `getUserUniqueId` - Get user unique identifier
 - `getGroups` - Get user groups
 - `getUserWalletIdentities` - Get wallet identities
@@ -13,14 +16,17 @@ The application currently uses only 4 functions:
 ## Complete Function Categorization
 
 ### 🪙 **Asset & Token Functions** (High Priority)
+
 These functions provide enhanced token metadata and pricing information:
 
 **Currently Used:**
+
 - `getAssetErc20ByChainAndSymbol` - Get ERC20 token by chain and symbol
 - `getAssetPriceInfo` - Get asset price information
 - `getAllowedAssets` - Get allowed assets
 
 **Available for Enhancement:**
+
 - `getAssetFromFaucet` - Get test tokens from faucet
 - `getAllWalletTokens` - Get all tokens in a wallet
 - `getAllWalletTokensByChainId` - Get tokens by specific chain
@@ -30,6 +36,7 @@ These functions provide enhanced token metadata and pricing information:
 - `getNftName` - Get NFT collection name
 
 ### 🔗 **Chain & Network Functions** (Medium Priority)
+
 Functions for multi-chain support and network information:
 
 - `getChainFromId` - Get chain info from chain ID
@@ -37,18 +44,22 @@ Functions for multi-chain support and network information:
 - `getUserOpGasPrice` - Get gas prices for user operations
 
 ### 💰 **Payment & Checkout Functions** (Medium Priority)
+
 Functions for crypto-to-fiat integration:
 
 **Stripe Integration:**
+
 - `createStripeBuySession` - Create Stripe payment session
 - `getStripeBuyQuote` - Get Stripe purchase quote
 - `getStripeBuySession` - Get Stripe session details
 
 **Moonpay Integration:**
+
 - `getMoonpayBuyQuoteForCreditCard` - Get Moonpay quote
 - `getMoonpayUrlSignature` - Get signed Moonpay URL
 
 **Meld Integration:**
+
 - `getMeldDefaultFiat` - Get default fiat currency
 - `getMeldFiatLimits` - Get fiat purchase limits
 - `getMeldQuotes` - Get Meld quotes
@@ -56,6 +67,7 @@ Functions for crypto-to-fiat integration:
 - `startMeldSession` - Start Meld session
 
 **Checkout System:**
+
 - `initializeCheckout` - Initialize payment checkout
 - `initializeCheckoutTokenTransferAddress` - Initialize token transfer
 - `getCheckoutQuote` - Get checkout quote
@@ -67,6 +79,7 @@ Functions for crypto-to-fiat integration:
 - `generateRandomCheckoutSalt` - Generate checkout salt
 
 ### 🌉 **Bridge & Banking Functions** (Low Priority)
+
 Functions for traditional banking integration:
 
 - `createBridgeBankAccount` - Create bank account
@@ -76,9 +89,11 @@ Functions for traditional banking integration:
 - `getBridgeKycLink` - Get KYC verification link
 
 ### 🔄 **Transaction & Operation Functions** (High Priority)
+
 Functions for advanced transaction handling:
 
 **Operation Management:**
+
 - `createOp` - Create user operation
 - `estimateOp` - Estimate operation gas
 - `executeOp` - Execute operation
@@ -89,6 +104,7 @@ Functions for advanced transaction handling:
 - `getOpsOfWallet` - Get wallet operations
 
 **Transaction Management:**
+
 - `addTransaction` - Add transaction
 - `createDirectExecution` - Create direct execution
 - `getDirectExecutionByTxHash` - Get execution by tx hash
@@ -96,21 +112,26 @@ Functions for advanced transaction handling:
 - `getFullReceipt` - Get full transaction receipt
 
 **Paymaster Integration:**
+
 - `getPaymasterDataForCheckoutSponsoredTransfer` - Get paymaster data
 
 ### 👤 **User & Wallet Management** (Medium Priority)
+
 Extended user and wallet functionality:
 
 **User Management:**
+
 - `createUser` - Create new user
 - `addUserToWallet` - Add user to wallet
 - `getUserWalletsByAddr` - Get wallets by address
 
 **Wallet Operations:**
+
 - `checkWalletAccessInitialization` - Check wallet access
 - `initializeWalletAccess` - Initialize wallet access
 
 ### 🕸️ **Mesh Integration Functions** (Low Priority)
+
 Mesh network integration for cross-chain operations:
 
 - `meshConfigureTransfer` - Configure mesh transfer
@@ -127,6 +148,7 @@ Mesh network integration for cross-chain operations:
 - `removeTokensFromMeshProxy` - Remove tokens from mesh
 
 ### 🏦 **DeFi Integration Functions** (Medium Priority)
+
 Specialized DeFi protocol integrations:
 
 - `getWalletLidoWithdrawalsByChainId` - Get Lido withdrawals
@@ -134,12 +156,14 @@ Specialized DeFi protocol integrations:
 - `getFrogAccount` - Get Frog account details
 
 ### 🔒 **Security & Risk Functions** (Medium Priority)
+
 Security and compliance features:
 
 - `getRiskAssessmentForAddress` - Get address risk assessment
 - `sendSupportMessage` - Send support message
 
 ### 🛠️ **Utility Functions** (Low Priority)
+
 Helper and utility functions:
 
 - `randomBytes` - Generate random bytes
@@ -148,6 +172,7 @@ Helper and utility functions:
 - `getOrganizationIdByApiKey` - Get org ID from API key
 
 ### 🌐 **HTTP Utilities** (Low Priority)
+
 Direct HTTP request functions:
 
 - `sendDeleteRequest` - Send DELETE request
@@ -157,9 +182,11 @@ Direct HTTP request functions:
 - `sendRequest` - Send generic request
 
 ### 📊 **Constants & Configuration** (Reference)
+
 Configuration constants and enums:
 
 **API Keys & URLs:**
+
 - `API_BASE_URL` - Base API URL
 - `DEV_API_KEY` - Development API key
 - `FUN_FAUCET_URL` - Faucet URL
@@ -167,6 +194,7 @@ Configuration constants and enums:
 - Various partner API keys (BANKR, BENQI, BSX, DEGEN, etc.)
 
 **Status Enums:**
+
 - `AuthType`, `BridgeCustomerStatus`, `BridgeCustomerType`
 - `CheckoutRefundState`, `CheckoutState`
 - `DirectExecutionType`, `MeldServiceProvider`
@@ -174,12 +202,14 @@ Configuration constants and enums:
 - `RelayExecutionStatus`
 
 **State Arrays:**
+
 - `FROM_PROGRESS_CHECKOUT_STATES`
 - `IN_PROGRESS_CHECKOUT_STATES`
 - `TERMINAL_CHECKOUT_STATES`
 - `TO_PROGRESS_CHECKOUT_STATES`
 
 **Configuration:**
+
 - `DEFAULT_RETRY_OPTIONS` - Default retry configuration
 - `MELD_PROVIDER_CATEGORIES` - Meld provider categories
 

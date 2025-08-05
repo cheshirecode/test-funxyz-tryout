@@ -231,9 +231,19 @@ describe('TokenSwap Component Integration', () => {
       expect(screen.getByText('Swap USDC to ETH')).toBeInTheDocument()
     })
 
-    // Click the main swap button
+    // Click the main swap button to open confirmation dialog
     const swapButton = screen.getByText('Swap USDC to ETH')
     fireEvent.click(swapButton)
+
+    // Should show confirmation dialog
+    await waitFor(() => {
+      expect(screen.getByText('Confirm Swap')).toBeInTheDocument()
+    })
+
+    // Click the confirm button in the dialog to execute swap
+    const confirmButtons = screen.getAllByText('Confirm Swap')
+    const confirmButton = confirmButtons.find((el) => el.tagName === 'BUTTON')
+    fireEvent.click(confirmButton!)
 
     // Should show swapping state
     await waitFor(() => {

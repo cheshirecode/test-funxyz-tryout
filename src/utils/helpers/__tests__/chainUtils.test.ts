@@ -5,7 +5,7 @@ import {
   getExplorerBaseUrl,
   getExplorerUrl,
   getSupportedChainIds,
-  isSupportedChain
+  isSupportedChain,
 } from '../chainUtils'
 
 describe('chainUtils', () => {
@@ -15,19 +15,19 @@ describe('chainUtils', () => {
       expect(CHAIN_CONFIG['1']).toEqual({
         name: 'ETH',
         explorer: 'https://etherscan.io',
-        symbol: 'ETH'
+        symbol: 'ETH',
       })
 
       expect(CHAIN_CONFIG).toHaveProperty('137')
       expect(CHAIN_CONFIG['137']).toEqual({
         name: 'MATIC',
         explorer: 'https://polygonscan.com',
-        symbol: 'MATIC'
+        symbol: 'MATIC',
       })
     })
 
     it('should have all required properties for each chain', () => {
-      Object.values(CHAIN_CONFIG).forEach(chain => {
+      Object.values(CHAIN_CONFIG).forEach((chain) => {
         expect(chain).toHaveProperty('name')
         expect(chain).toHaveProperty('explorer')
         expect(chain).toHaveProperty('symbol')
@@ -76,22 +76,31 @@ describe('chainUtils', () => {
     const testAddress = '0x1234567890123456789012345678901234567890'
 
     it('should return correct explorer URLs for contract addresses', () => {
-      expect(getExplorerUrl(testAddress, '1')).toBe('https://etherscan.io/address/0x1234567890123456789012345678901234567890')
-      expect(getExplorerUrl(testAddress, '137')).toBe('https://polygonscan.com/address/0x1234567890123456789012345678901234567890')
+      expect(getExplorerUrl(testAddress, '1')).toBe(
+        'https://etherscan.io/address/0x1234567890123456789012345678901234567890'
+      )
+      expect(getExplorerUrl(testAddress, '137')).toBe(
+        'https://polygonscan.com/address/0x1234567890123456789012345678901234567890'
+      )
     })
 
     it('should handle zero address (ETH) by redirecting to WETH contract', () => {
       const zeroAddress = '0x0000000000000000000000000000000000000000'
-      const expectedWethUrl = 'https://etherscan.io/address/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+      const expectedWethUrl =
+        'https://etherscan.io/address/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
 
       expect(getExplorerUrl(zeroAddress, '1')).toBe(expectedWethUrl)
 
       // Should still use the correct chain's explorer
-      expect(getExplorerUrl(zeroAddress, '137')).toBe('https://polygonscan.com/address/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2')
+      expect(getExplorerUrl(zeroAddress, '137')).toBe(
+        'https://polygonscan.com/address/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+      )
     })
 
     it('should use default explorer for unsupported chains', () => {
-      expect(getExplorerUrl(testAddress, '999')).toBe('https://etherscan.io/address/0x1234567890123456789012345678901234567890')
+      expect(getExplorerUrl(testAddress, '999')).toBe(
+        'https://etherscan.io/address/0x1234567890123456789012345678901234567890'
+      )
     })
   })
 

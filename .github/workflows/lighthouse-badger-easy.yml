@@ -27,7 +27,7 @@ on:
   #
   # THAT'S IT; YOU'RE DONE;
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
     inputs:
       urls:
@@ -44,7 +44,6 @@ concurrency:
 ########################################################################
 # THAT'S IT; YOU DON'T HAVE TO DEFINE ANYTHING IN THE FOLLOWING
 ########################################################################
-
 
 jobs:
   lighthouse-badger-easy:

@@ -5,8 +5,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'sans': ['Noto Sans', 'system-ui', 'sans-serif'],
-        'header': ['Lato', 'system-ui', 'sans-serif'],
+        sans: ['Noto Sans', 'system-ui', 'sans-serif'],
+        header: ['Lato', 'system-ui', 'sans-serif'],
       },
       colors: {
         // Enhanced primary colors for better light/dark theme support

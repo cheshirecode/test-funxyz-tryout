@@ -58,7 +58,15 @@ export function useSwapRate(
   queryKeySuffix?: string
 ) {
   return useQuery({
-    queryKey: ['swap-rate', fromChainId, fromSymbol, toChainId, toSymbol, amount, queryKeySuffix].filter(Boolean),
+    queryKey: [
+      'swap-rate',
+      fromChainId,
+      fromSymbol,
+      toChainId,
+      toSymbol,
+      amount,
+      queryKeySuffix,
+    ].filter(Boolean),
     queryFn: () => pricingService.getSwapRate(fromChainId, fromSymbol, toChainId, toSymbol, amount),
     enabled: enabled && !!fromChainId && !!fromSymbol && !!toChainId && !!toSymbol && !!amount,
     staleTime,
@@ -81,23 +89,28 @@ export function usePricingDemo(chainId: string = '1', enabled: boolean = false) 
 /**
  * Hook for multiple token prices at once
  */
-export function useTokenPrices(tokens: Array<{ chainId: string; symbol: string }>, enabled: boolean = true) {
+export function useTokenPrices(
+  tokens: Array<{ chainId: string; symbol: string }>,
+  enabled: boolean = true
+) {
   return useQuery({
     queryKey: ['token-prices', tokens],
     queryFn: async () => {
       const results = await Promise.allSettled(
-        tokens.map(({ chainId, symbol }) =>
-          pricingService.getTokenBySymbol(chainId, symbol)
-        )
+        tokens.map(({ chainId, symbol }) => pricingService.getTokenBySymbol(chainId, symbol))
       )
 
-      return tokens.reduce((acc, { chainId, symbol }, index) => {
-        const result = results[index]
-        acc[`${chainId}-${symbol}`] = result.status === 'fulfilled'
-          ? result.value
-          : { success: false, error: 'Failed to fetch' }
-        return acc
-      }, {} as Record<string, any>)
+      return tokens.reduce(
+        (acc, { chainId, symbol }, index) => {
+          const result = results[index]
+          acc[`${chainId}-${symbol}`] =
+            result.status === 'fulfilled'
+              ? result.value
+              : { success: false, error: 'Failed to fetch' }
+          return acc
+        },
+        {} as Record<string, any>
+      )
     },
     enabled: enabled && tokens.length > 0,
     staleTime: 30 * 1000, // 30 seconds

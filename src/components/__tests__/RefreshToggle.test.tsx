@@ -11,12 +11,7 @@ describe('RefreshToggle Component', () => {
   })
 
   it('renders with disabled state by default', () => {
-    render(
-      <RefreshToggle
-        refreshRate="disabled"
-        onRefreshRateChange={mockOnRefreshRateChange}
-      />
-    )
+    render(<RefreshToggle refreshRate='disabled' onRefreshRateChange={mockOnRefreshRateChange} />)
 
     const button = screen.getByRole('button', { name: /auto-refresh disabled/i })
     expect(button).toBeInTheDocument()
@@ -27,12 +22,7 @@ describe('RefreshToggle Component', () => {
   })
 
   it('renders with 5s state and shows overlay', () => {
-    render(
-      <RefreshToggle
-        refreshRate="5s"
-        onRefreshRateChange={mockOnRefreshRateChange}
-      />
-    )
+    render(<RefreshToggle refreshRate='5s' onRefreshRateChange={mockOnRefreshRateChange} />)
 
     const button = screen.getByRole('button', { name: /auto-refresh every 5 seconds/i })
     expect(button).toBeInTheDocument()
@@ -43,12 +33,7 @@ describe('RefreshToggle Component', () => {
   })
 
   it('renders with 30s state and shows overlay', () => {
-    render(
-      <RefreshToggle
-        refreshRate="30s"
-        onRefreshRateChange={mockOnRefreshRateChange}
-      />
-    )
+    render(<RefreshToggle refreshRate='30s' onRefreshRateChange={mockOnRefreshRateChange} />)
 
     const button = screen.getByRole('button', { name: /auto-refresh every 30 seconds/i })
     expect(button).toBeInTheDocument()
@@ -60,10 +45,7 @@ describe('RefreshToggle Component', () => {
 
   it('cycles through states when clicked: disabled → 5s → 30s → disabled', () => {
     const { rerender } = render(
-      <RefreshToggle
-        refreshRate="disabled"
-        onRefreshRateChange={mockOnRefreshRateChange}
-      />
+      <RefreshToggle refreshRate='disabled' onRefreshRateChange={mockOnRefreshRateChange} />
     )
 
     const button = screen.getByRole('button')
@@ -73,24 +55,14 @@ describe('RefreshToggle Component', () => {
     expect(mockOnRefreshRateChange).toHaveBeenCalledWith('5s')
 
     // Update props to reflect state change
-    rerender(
-      <RefreshToggle
-        refreshRate="5s"
-        onRefreshRateChange={mockOnRefreshRateChange}
-      />
-    )
+    rerender(<RefreshToggle refreshRate='5s' onRefreshRateChange={mockOnRefreshRateChange} />)
 
     // Click 2: 5s → 30s
     fireEvent.click(button)
     expect(mockOnRefreshRateChange).toHaveBeenCalledWith('30s')
 
     // Update props to reflect state change
-    rerender(
-      <RefreshToggle
-        refreshRate="30s"
-        onRefreshRateChange={mockOnRefreshRateChange}
-      />
-    )
+    rerender(<RefreshToggle refreshRate='30s' onRefreshRateChange={mockOnRefreshRateChange} />)
 
     // Click 3: 30s → disabled
     fireEvent.click(button)
@@ -102,7 +74,7 @@ describe('RefreshToggle Component', () => {
   it('shows loading state when isLoading is true', () => {
     render(
       <RefreshToggle
-        refreshRate="5s"
+        refreshRate='5s'
         onRefreshRateChange={mockOnRefreshRateChange}
         isLoading={true}
       />
@@ -116,7 +88,7 @@ describe('RefreshToggle Component', () => {
   it('does not call onRefreshRateChange when disabled', () => {
     render(
       <RefreshToggle
-        refreshRate="5s"
+        refreshRate='5s'
         onRefreshRateChange={mockOnRefreshRateChange}
         isLoading={true}
       />
@@ -131,9 +103,9 @@ describe('RefreshToggle Component', () => {
   it('applies custom className', () => {
     const { container } = render(
       <RefreshToggle
-        refreshRate="disabled"
+        refreshRate='disabled'
         onRefreshRateChange={mockOnRefreshRateChange}
-        className="custom-class"
+        className='custom-class'
       />
     )
 
@@ -147,9 +119,9 @@ describe('useRefreshRate Hook', () => {
 
     return (
       <div>
-        <span data-testid="refresh-rate">{refreshRate}</span>
-        <span data-testid="refresh-interval">{refreshInterval.toString()}</span>
-        <span data-testid="stale-time">{staleTime}</span>
+        <span data-testid='refresh-rate'>{refreshRate}</span>
+        <span data-testid='refresh-interval'>{refreshInterval.toString()}</span>
+        <span data-testid='stale-time'>{staleTime}</span>
         <button onClick={() => setRefreshRate('5s')}>Set 5s</button>
         <button onClick={() => setRefreshRate('30s')}>Set 30s</button>
         <button onClick={() => setRefreshRate('disabled')}>Set disabled</button>
@@ -166,7 +138,7 @@ describe('useRefreshRate Hook', () => {
   })
 
   it('initializes with custom initial rate', () => {
-    render(<TestComponent initialRate="5s" />)
+    render(<TestComponent initialRate='5s' />)
 
     expect(screen.getByTestId('refresh-rate')).toHaveTextContent('5s')
     expect(screen.getByTestId('refresh-interval')).toHaveTextContent('5000') // 5 seconds
@@ -194,7 +166,7 @@ describe('useRefreshRate Hook', () => {
   })
 
   it('returns correct intervals for disabled rate', () => {
-    render(<TestComponent initialRate="5s" />)
+    render(<TestComponent initialRate='5s' />)
 
     fireEvent.click(screen.getByText('Set disabled'))
 
@@ -210,12 +182,9 @@ describe('RefreshToggle Integration', () => {
 
     return (
       <div>
-        <RefreshToggle
-          refreshRate={refreshRate}
-          onRefreshRateChange={setRefreshRate}
-        />
-        <div data-testid="current-interval">{refreshInterval.toString()}</div>
-        <div data-testid="current-stale-time">{staleTime}</div>
+        <RefreshToggle refreshRate={refreshRate} onRefreshRateChange={setRefreshRate} />
+        <div data-testid='current-interval'>{refreshInterval.toString()}</div>
+        <div data-testid='current-stale-time'>{staleTime}</div>
       </div>
     )
   }

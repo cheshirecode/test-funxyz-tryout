@@ -10,6 +10,7 @@ export function hasInsufficientBalance(
   tokenData: Record<string, TokenData>
 ): boolean {
   if (!sourceTokenAmount || isNaN(parseFloat(sourceTokenAmount))) return false
+  if (!tokenData || !tokenData[sourceToken]) return false
   return parseFloat(sourceTokenAmount) > (tokenData[sourceToken]?.balance || 0)
 }
 
@@ -41,6 +42,7 @@ export function isSwapValid(
   tokenData: Record<string, TokenData>,
   isSwapping: boolean
 ): boolean {
+  if (!tokenData) return false
   return (
     isValidUsdAmount(usdAmount) &&
     !hasInsufficientBalance(sourceTokenAmount, sourceToken, tokenData) &&

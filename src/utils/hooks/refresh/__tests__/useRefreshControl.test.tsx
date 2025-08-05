@@ -105,7 +105,12 @@ describe('useRefreshControl Hook', () => {
       expectedStaleTime: number
       expectedActive: boolean
     }> = [
-      { rate: 'disabled', expectedInterval: false, expectedStaleTime: 300000, expectedActive: false },
+      {
+        rate: 'disabled',
+        expectedInterval: false,
+        expectedStaleTime: 300000,
+        expectedActive: false,
+      },
       { rate: '5s', expectedInterval: 5000, expectedStaleTime: 2000, expectedActive: true },
       { rate: '30s', expectedInterval: 30000, expectedStaleTime: 15000, expectedActive: true },
     ]

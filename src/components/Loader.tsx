@@ -26,27 +26,12 @@ const sizeMap = {
  * Reusable loader component with spinning animation
  * Uses Loader2 icon from lucide-react with Tailwind CSS animations
  */
-export const Loader = ({
-  size = 'md',
-  text,
-  className,
-  iconOnly = false
-}: LoaderProps) => {
+export const Loader = ({ size = 'md', text, className, iconOnly = false }: LoaderProps) => {
   return (
-    <div className={cn(
-      'flex items-center justify-center gap-2',
-      className
-    )}>
-      <Loader2
-        className={cn(
-          'animate-spin text-blue-500 dark:text-blue-400',
-          sizeMap[size]
-        )}
-      />
+    <div className={cn('flex items-center justify-center gap-2', className)}>
+      <Loader2 className={cn('animate-spin text-blue-500 dark:text-blue-400', sizeMap[size])} />
       {!iconOnly && text && (
-        <span className="text-sm text-gray-600 dark:text-gray-400">
-          {text}
-        </span>
+        <span className='text-sm text-gray-600 dark:text-gray-400'>{text}</span>
       )}
     </div>
   )
@@ -56,14 +41,14 @@ export const Loader = ({
  * Inline loader for buttons and small spaces
  */
 export const InlineLoader = ({ size = 'sm' }: Pick<LoaderProps, 'size'>) => (
-  <Loader size={size} iconOnly className="inline-flex" />
+  <Loader size={size} iconOnly className='inline-flex' />
 )
 
 /**
  * Full-width loader for larger sections
  */
 export const BlockLoader = ({ text = 'Loading...', size = 'md' }: LoaderProps) => (
-  <div className="flex items-center justify-center py-4">
+  <div className='flex items-center justify-center py-4'>
     <Loader size={size} text={text} />
   </div>
 )

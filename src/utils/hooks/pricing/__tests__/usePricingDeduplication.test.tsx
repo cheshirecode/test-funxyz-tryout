@@ -93,7 +93,18 @@ describe('Pricing Hooks API Deduplication', () => {
       const wrapper = createWrapper()
 
       const { result: result1 } = renderHook(
-        () => useSwapRate('1', 'USDC', '1', 'ETH', '100', true, false, 300000, 'refresh-disabled-false-300000'),
+        () =>
+          useSwapRate(
+            '1',
+            'USDC',
+            '1',
+            'ETH',
+            '100',
+            true,
+            false,
+            300000,
+            'refresh-disabled-false-300000'
+          ),
         { wrapper }
       )
 

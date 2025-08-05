@@ -2,24 +2,20 @@ import * as FunkitApi from '@funkit/api-base'
 import { apiConfig } from './config'
 
 // Extract pricing and gas functions
-const {
-  getAssetPriceInfo,
-  getUserOpGasPrice,
-  getAssetErc20ByChainAndSymbol,
-} = FunkitApi
+const { getAssetPriceInfo, getUserOpGasPrice, getAssetErc20ByChainAndSymbol } = FunkitApi
 
 /**
  * Enhanced pricing service using real @funkit/api-base functions
  * Provides real-time token pricing and gas estimation for the swap UI
  */
 export const pricingService = {
-    /**
+  /**
    * Get real-time token price information
    */
   async getTokenPrice(chainId: string, tokenAddress: `0x${string}`) {
     try {
       console.log('🔍 Getting real token price from @funkit/api-base')
-      
+
       const priceInfo = await getAssetPriceInfo({
         apiKey: apiConfig.apiKey,
         chainId,
@@ -128,7 +124,7 @@ export const pricingService = {
       // Convert bigint values to decimal
       const maxFeePerGasWei = Number(gasPrice.maxFeePerGas)
       // const maxPriorityFeePerGasWei = Number(gasPrice.maxPriorityFeePerGas)
-      
+
       // Use maxFeePerGas as the main gas price
       const gasPriceWei = maxFeePerGasWei
       const gasPriceGwei = gasPriceWei / 1e9
@@ -299,9 +295,13 @@ export const pricingService = {
       for (const pair of swapPairs) {
         try {
           const swapData = await this.getSwapRate(chainId, pair.from, chainId, pair.to, '1000')
-          results.swapRates[`${pair.from}-${pair.to}`] = swapData.success ? swapData.data : swapData.error
+          results.swapRates[`${pair.from}-${pair.to}`] = swapData.success
+            ? swapData.data
+            : swapData.error
         } catch (error) {
-          results.errors.push(`${pair.from}-${pair.to}: ${error instanceof Error ? error.message : 'Unknown'}`)
+          results.errors.push(
+            `${pair.from}-${pair.to}: ${error instanceof Error ? error.message : 'Unknown'}`
+          )
         }
       }
 
@@ -312,11 +312,17 @@ export const pricingService = {
           message: 'Comprehensive real-time pricing demo with @funkit/api-base',
           totalTokens: demoTokens.length,
           successfulPrices: Object.keys(results.tokenPrices).filter(
-            k => results.tokenPrices[k] && typeof results.tokenPrices[k] === 'object' && results.tokenPrices[k].price
+            (k) =>
+              results.tokenPrices[k] &&
+              typeof results.tokenPrices[k] === 'object' &&
+              results.tokenPrices[k].price
           ).length,
           totalSwapRates: swapPairs.length,
           successfulSwapRates: Object.keys(results.swapRates).filter(
-            k => results.swapRates[k] && typeof results.swapRates[k] === 'object' && results.swapRates[k].exchangeRate
+            (k) =>
+              results.swapRates[k] &&
+              typeof results.swapRates[k] === 'object' &&
+              results.swapRates[k].exchangeRate
           ).length,
           errorCount: results.errors.length,
         },

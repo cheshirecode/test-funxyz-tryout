@@ -9,7 +9,9 @@ export interface UseSwapExecutionProps {
   sourceToken: string
   tokenData: Record<string, TokenData>
   swapping: boolean
-  setSwapState: (state: Partial<{ swapping: boolean; swapComplete: boolean }>) => void
+  setSwapState: (
+    state: Partial<{ swapping: boolean; swapComplete: boolean; showConfirmation: boolean }>
+  ) => void
 }
 
 export interface UseSwapExecutionReturn {

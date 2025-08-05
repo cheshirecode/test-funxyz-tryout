@@ -15,33 +15,33 @@ export const CHAIN_CONFIG: Record<string, ChainInfo> = {
   '1': {
     name: 'ETH',
     explorer: 'https://etherscan.io',
-    symbol: 'ETH'
+    symbol: 'ETH',
   },
   '137': {
     name: 'MATIC',
     explorer: 'https://polygonscan.com',
-    symbol: 'MATIC'
+    symbol: 'MATIC',
   },
   '56': {
     name: 'BSC',
     explorer: 'https://bscscan.com',
-    symbol: 'BNB'
+    symbol: 'BNB',
   },
   '43114': {
     name: 'AVAX',
     explorer: 'https://snowtrace.io',
-    symbol: 'AVAX'
+    symbol: 'AVAX',
   },
   '42161': {
     name: 'ARB',
     explorer: 'https://arbiscan.io',
-    symbol: 'ETH'
+    symbol: 'ETH',
   },
   '10': {
     name: 'OP',
     explorer: 'https://optimistic.etherscan.io',
-    symbol: 'ETH'
-  }
+    symbol: 'ETH',
+  },
 }
 
 /**

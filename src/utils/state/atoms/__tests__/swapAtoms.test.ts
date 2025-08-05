@@ -11,6 +11,10 @@ import {
   swapTokenPositionsAtom,
   isSwappingAtom,
   isSwapCompleteAtom,
+  tokenDataAtom,
+  swapSourceTokenAmountAtom,
+  swapTargetTokenAmountAtom,
+  swapExchangeRateAtom,
 } from '../swapAtoms'
 
 // Mock localStorage
@@ -108,6 +112,7 @@ describe('Swap Atoms', () => {
       expect(state).toEqual({
         swapping: false,
         swapComplete: false,
+        showConfirmation: false,
       })
     })
 
@@ -117,6 +122,7 @@ describe('Swap Atoms', () => {
       expect(state).toEqual({
         swapping: true,
         swapComplete: false,
+        showConfirmation: false,
       })
     })
 
@@ -131,6 +137,7 @@ describe('Swap Atoms', () => {
       expect(state).toEqual({
         swapping: true,
         swapComplete: true,
+        showConfirmation: false,
       })
     })
   })
@@ -209,6 +216,72 @@ describe('Swap Atoms', () => {
       // Should fall back to default values
       const newStore = createStore()
       expect(newStore.get(swapSourceTokenAtom)).toBe('USDC')
+    })
+  })
+
+  describe('Token Amount Calculations', () => {
+    beforeEach(() => {
+      // Reset localStorage mocks
+      vi.clearAllMocks()
+      localStorageMock.setItem.mockImplementation(() => {})
+      localStorageMock.getItem.mockReturnValue(null)
+
+      // Set up mock token data with USD prices
+      store.set(tokenDataAtom, {
+        ETH: {
+          symbol: 'ETH',
+          name: 'Ethereum',
+          icon: '',
+          usdPrice: 2000,
+          balance: 1,
+          decimals: 18,
+        },
+        USDC: {
+          symbol: 'USDC',
+          name: 'USD Coin',
+          icon: '',
+          usdPrice: 1,
+          balance: 1000,
+          decimals: 6,
+        },
+      })
+      store.set(swapUsdAmountAtom, '100')
+      store.set(swapSourceTokenAtom, 'ETH')
+      store.set(swapTargetTokenAtom, 'USDC')
+    })
+
+    it('should calculate source token amount correctly', () => {
+      const sourceAmount = store.get(swapSourceTokenAmountAtom)
+      // $100 / $2000 per ETH = 0.05 ETH
+      expect(sourceAmount).toBe('0.050000')
+    })
+
+    it('should calculate target token amount correctly', () => {
+      const targetAmount = store.get(swapTargetTokenAmountAtom)
+      // $100 / $1 per USDC = 100 USDC
+      expect(targetAmount).toBe('100.000000')
+    })
+
+    it('should calculate exchange rate correctly', () => {
+      const exchangeRate = store.get(swapExchangeRateAtom)
+      // ETH price ($2000) / USDC price ($1) = 2000
+      expect(exchangeRate).toBe(2000)
+    })
+
+    it('should return 0 when token data is missing', () => {
+      store.set(tokenDataAtom, {})
+      const sourceAmount = store.get(swapSourceTokenAmountAtom)
+      const targetAmount = store.get(swapTargetTokenAmountAtom)
+      expect(sourceAmount).toBe('0')
+      expect(targetAmount).toBe('0')
+    })
+
+    it('should return 0 when USD amount is invalid', () => {
+      store.set(swapUsdAmountAtom, '')
+      const sourceAmount = store.get(swapSourceTokenAmountAtom)
+      const targetAmount = store.get(swapTargetTokenAmountAtom)
+      expect(sourceAmount).toBe('0')
+      expect(targetAmount).toBe('0')
     })
   })
 })

@@ -1,5 +1,10 @@
 import { useMemo } from 'react'
-import { RefreshRate, getRefreshInterval, getStaleTime, getRefreshQueryKey } from '../../refresh/refreshUtils'
+import {
+  RefreshRate,
+  getRefreshInterval,
+  getStaleTime,
+  getRefreshQueryKey,
+} from '../../refresh/refreshUtils'
 
 export interface UseRefreshIntervalReturn {
   /** Refresh interval in milliseconds (false for disabled) */

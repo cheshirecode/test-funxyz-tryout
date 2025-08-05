@@ -20,7 +20,7 @@ export const useRefreshState = (initialRate: RefreshRate = 'disabled'): UseRefre
   const [refreshRate, setRefreshRate] = useState<RefreshRate>(initialRate)
 
   const cycleRefreshRate = useCallback(() => {
-    setRefreshRate(current => getNextRefreshRate(current))
+    setRefreshRate((current) => getNextRefreshRate(current))
   }, [])
 
   const config = getRefreshConfig(refreshRate)

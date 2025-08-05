@@ -23,18 +23,13 @@ describe('ContractInfo', () => {
 
   describe('rendering', () => {
     it('should not render when contractAddress is not provided', () => {
-      const { container } = render(
-        <ContractInfo symbol="ETH" />
-      )
+      const { container } = render(<ContractInfo symbol='ETH' />)
       expect(container.firstChild).toBeNull()
     })
 
     it('should render contract info when contractAddress is provided', () => {
       render(
-        <ContractInfo
-          contractAddress="0x1234567890123456789012345678901234567890"
-          symbol="ETH"
-        />
+        <ContractInfo contractAddress='0x1234567890123456789012345678901234567890' symbol='ETH' />
       )
 
       expect(screen.getByText('ETH')).toBeInTheDocument() // Chain badge
@@ -45,9 +40,9 @@ describe('ContractInfo', () => {
     it('should display correct chain name for different chains', () => {
       const { rerender } = render(
         <ContractInfo
-          contractAddress="0x1234567890123456789012345678901234567890"
-          chainId="137"
-          symbol="USDC"
+          contractAddress='0x1234567890123456789012345678901234567890'
+          chainId='137'
+          symbol='USDC'
         />
       )
 
@@ -55,9 +50,9 @@ describe('ContractInfo', () => {
 
       rerender(
         <ContractInfo
-          contractAddress="0x1234567890123456789012345678901234567890"
-          chainId="56"
-          symbol="USDC"
+          contractAddress='0x1234567890123456789012345678901234567890'
+          chainId='56'
+          symbol='USDC'
         />
       )
 
@@ -67,9 +62,9 @@ describe('ContractInfo', () => {
     it('should apply custom className', () => {
       const { container } = render(
         <ContractInfo
-          contractAddress="0x1234567890123456789012345678901234567890"
-          symbol="ETH"
-          className="custom-class"
+          contractAddress='0x1234567890123456789012345678901234567890'
+          symbol='ETH'
+          className='custom-class'
         />
       )
 
@@ -82,10 +77,7 @@ describe('ContractInfo', () => {
       mockWriteText.mockResolvedValue(undefined)
 
       render(
-        <ContractInfo
-          contractAddress="0x1234567890123456789012345678901234567890"
-          symbol="ETH"
-        />
+        <ContractInfo contractAddress='0x1234567890123456789012345678901234567890' symbol='ETH' />
       )
 
       const copyButton = screen.getByTitle('Copy ETH contract address')
@@ -100,10 +92,7 @@ describe('ContractInfo', () => {
       mockWriteText.mockResolvedValue(undefined)
 
       render(
-        <ContractInfo
-          contractAddress="0x1234567890123456789012345678901234567890"
-          symbol="ETH"
-        />
+        <ContractInfo contractAddress='0x1234567890123456789012345678901234567890' symbol='ETH' />
       )
 
       const copyButton = screen.getByTitle('Copy ETH contract address')
@@ -121,10 +110,7 @@ describe('ContractInfo', () => {
       mockWriteText.mockRejectedValue(new Error('Clipboard not available'))
 
       render(
-        <ContractInfo
-          contractAddress="0x1234567890123456789012345678901234567890"
-          symbol="ETH"
-        />
+        <ContractInfo contractAddress='0x1234567890123456789012345678901234567890' symbol='ETH' />
       )
 
       const copyButton = screen.getByTitle('Copy ETH contract address')
@@ -142,9 +128,9 @@ describe('ContractInfo', () => {
     it('should open explorer URL when explorer button is clicked', () => {
       render(
         <ContractInfo
-          contractAddress="0x1234567890123456789012345678901234567890"
-          symbol="ETH"
-          chainId="1"
+          contractAddress='0x1234567890123456789012345678901234567890'
+          symbol='ETH'
+          chainId='1'
         />
       )
 
@@ -161,9 +147,9 @@ describe('ContractInfo', () => {
     it('should use correct explorer for different chains', () => {
       render(
         <ContractInfo
-          contractAddress="0x1234567890123456789012345678901234567890"
-          symbol="USDC"
-          chainId="137"
+          contractAddress='0x1234567890123456789012345678901234567890'
+          symbol='USDC'
+          chainId='137'
         />
       )
 
@@ -180,9 +166,9 @@ describe('ContractInfo', () => {
     it('should handle zero address (ETH) by redirecting to WETH contract', () => {
       render(
         <ContractInfo
-          contractAddress="0x0000000000000000000000000000000000000000"
-          symbol="ETH"
-          chainId="1"
+          contractAddress='0x0000000000000000000000000000000000000000'
+          symbol='ETH'
+          chainId='1'
         />
       )
 
@@ -200,10 +186,7 @@ describe('ContractInfo', () => {
   describe('accessibility', () => {
     it('should have proper button types', () => {
       render(
-        <ContractInfo
-          contractAddress="0x1234567890123456789012345678901234567890"
-          symbol="ETH"
-        />
+        <ContractInfo contractAddress='0x1234567890123456789012345678901234567890' symbol='ETH' />
       )
 
       const copyButton = screen.getByTitle('Copy ETH contract address')
@@ -215,10 +198,7 @@ describe('ContractInfo', () => {
 
     it('should have descriptive titles for buttons', () => {
       render(
-        <ContractInfo
-          contractAddress="0x1234567890123456789012345678901234567890"
-          symbol="USDC"
-        />
+        <ContractInfo contractAddress='0x1234567890123456789012345678901234567890' symbol='USDC' />
       )
 
       expect(screen.getByTitle('Copy USDC contract address')).toBeInTheDocument()
@@ -229,10 +209,7 @@ describe('ContractInfo', () => {
   describe('responsive behavior', () => {
     it('should hide explorer text on small screens', () => {
       render(
-        <ContractInfo
-          contractAddress="0x1234567890123456789012345678901234567890"
-          symbol="ETH"
-        />
+        <ContractInfo contractAddress='0x1234567890123456789012345678901234567890' symbol='ETH' />
       )
 
       const explorerText = screen.getByText('Explorer')

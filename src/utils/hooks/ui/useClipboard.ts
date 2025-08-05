@@ -46,20 +46,24 @@ export const useClipboard = (options: UseClipboardOptions = {}): UseClipboardRet
   const { timeout = 2000, onSuccess, onError } = options
   const [copied, setCopied] = useState(false)
 
-  const copy = useCallback(async (text: string): Promise<void> => {
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopied(true)
-      onSuccess?.()
+  const copy = useCallback(
+    async (text: string): Promise<void> => {
+      try {
+        await navigator.clipboard.writeText(text)
+        setCopied(true)
+        onSuccess?.()
 
-      // Reset copied state after timeout
-      setTimeout(() => setCopied(false), timeout)
-    } catch (error) {
-      const clipboardError = error instanceof Error ? error : new Error('Failed to copy to clipboard')
-      onError?.(clipboardError)
-      console.error('Failed to copy to clipboard:', clipboardError)
-    }
-  }, [timeout, onSuccess, onError])
+        // Reset copied state after timeout
+        setTimeout(() => setCopied(false), timeout)
+      } catch (error) {
+        const clipboardError =
+          error instanceof Error ? error : new Error('Failed to copy to clipboard')
+        onError?.(clipboardError)
+        console.error('Failed to copy to clipboard:', clipboardError)
+      }
+    },
+    [timeout, onSuccess, onError]
+  )
 
   const reset = useCallback(() => {
     setCopied(false)

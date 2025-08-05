@@ -32,7 +32,10 @@ export interface UseSwapStateReturn {
   // Swap execution state
   swapping: boolean
   swapComplete: boolean
-  setSwapState: (state: Partial<{ swapping: boolean; swapComplete: boolean }>) => void
+  showConfirmation: boolean
+  setSwapState: (
+    state: Partial<{ swapping: boolean; swapComplete: boolean; showConfirmation: boolean }>
+  ) => void
 
   // Token data management
   setTokenData: (data: Record<string, any>) => void
@@ -63,7 +66,7 @@ export function useSwapState(): UseSwapStateReturn {
   // Token data management
   const [, setTokenData] = useAtom(tokenDataAtom)
 
-  const { swapping, swapComplete } = swapState
+  const { swapping, swapComplete, showConfirmation } = swapState
 
   return {
     // Token selection
@@ -84,6 +87,7 @@ export function useSwapState(): UseSwapStateReturn {
     // Swap state
     swapping,
     swapComplete,
+    showConfirmation,
     setSwapState: setSwapStateAction,
 
     // Token data management

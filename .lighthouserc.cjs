@@ -3,18 +3,16 @@ module.exports = {
     build: {
       // Build command is handled by GitHub workflow
       command: 'pnpm run build',
-      outputDir: './dist'
+      outputDir: './dist',
     },
     upload: {
-      target: 'temporary-public-storage'
+      target: 'temporary-public-storage',
     },
     collect: {
       // Test the built static files
       staticDistDir: './dist',
       // URLs to audit (relative to staticDistDir)
-      url: [
-        'http://localhost/index.html'
-      ],
+      url: ['http://localhost/index.html'],
       numberOfRuns: 3,
       settings: {
         // Run desktop audits for better performance consistency
@@ -25,13 +23,8 @@ module.exports = {
           'meta-description', // Demo app might not have meta descriptions
         ],
         // Configure Chrome flags for consistent testing
-        chromeFlags: [
-          '--no-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-gpu',
-          '--headless'
-        ]
-      }
+        chromeFlags: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--headless'],
+      },
     },
     assert: {
       assertions: {
@@ -48,12 +41,12 @@ module.exports = {
 
         // Bundle size checks
         'total-byte-weight': ['warn', { maxNumericValue: 1024000 }], // 1MB
-        'unused-javascript': ['warn', { maxNumericValue: 51200 }],   // 50KB
+        'unused-javascript': ['warn', { maxNumericValue: 51200 }], // 50KB
 
         // Security
         'is-on-https': 'off', // Static hosting might not use HTTPS in CI
-        'redirects-http': 'off'
-      }
-    }
-  }
-};
+        'redirects-http': 'off',
+      },
+    },
+  },
+}

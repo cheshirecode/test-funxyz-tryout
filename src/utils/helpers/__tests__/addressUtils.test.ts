@@ -38,10 +38,10 @@ describe('addressUtils', () => {
       const validAddresses = [
         '0x1234567890123456789012345678901234567890',
         '0xabcdefABCDEF12345678901234567890abcdefAB',
-        '0x0000000000000000000000000000000000000000'
+        '0x0000000000000000000000000000000000000000',
       ]
 
-      validAddresses.forEach(address => {
+      validAddresses.forEach((address) => {
         expect(isValidAddress(address)).toBe(true)
       })
     })
@@ -54,10 +54,10 @@ describe('addressUtils', () => {
         '0x123456789012345678901234567890123456789g', // invalid character
         '', // empty string
         '0x', // just prefix
-        'not an address'
+        'not an address',
       ]
 
-      invalidAddresses.forEach(address => {
+      invalidAddresses.forEach((address) => {
         expect(isValidAddress(address)).toBe(false)
       })
     })
@@ -73,10 +73,10 @@ describe('addressUtils', () => {
       const nonZeroAddresses = [
         '0x1234567890123456789012345678901234567890',
         '0x0000000000000000000000000000000000000001',
-        '0x000000000000000000000000000000000000000'
+        '0x000000000000000000000000000000000000000',
       ]
 
-      nonZeroAddresses.forEach(address => {
+      nonZeroAddresses.forEach((address) => {
         expect(isZeroAddress(address)).toBe(false)
       })
     })

@@ -24,6 +24,7 @@ export type ApiResponse<T = any> = {
 export type SwapState = {
   swapping: boolean
   swapComplete: boolean
+  showConfirmation: boolean
 }
 
 export type SwapAtoms = {

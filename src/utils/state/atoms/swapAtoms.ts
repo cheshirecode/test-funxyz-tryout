@@ -16,15 +16,21 @@ export const swapSourceTokenAmountAtom = atom((get) => {
   const usdAmount = get(swapUsdAmountAtom)
   const sourceToken = get(swapSourceTokenAtom)
   const tokenData = get(tokenDataAtom)
-  
-  if (!usdAmount || isNaN(parseFloat(usdAmount)) || !tokenData || !sourceToken || !tokenData[sourceToken]) {
+
+  if (
+    !usdAmount ||
+    isNaN(parseFloat(usdAmount)) ||
+    !tokenData ||
+    !sourceToken ||
+    !tokenData[sourceToken]
+  ) {
     return '0'
   }
-  
+
   // Calculate source token amount from USD
-  const price = tokenData[sourceToken]?.price || 0
+  const price = tokenData[sourceToken]?.usdPrice || 0
   if (price === 0) return '0'
-  
+
   return (parseFloat(usdAmount) / price).toFixed(6)
 })
 
@@ -32,15 +38,21 @@ export const swapTargetTokenAmountAtom = atom((get) => {
   const usdAmount = get(swapUsdAmountAtom)
   const targetToken = get(swapTargetTokenAtom)
   const tokenData = get(tokenDataAtom)
-  
-  if (!usdAmount || isNaN(parseFloat(usdAmount)) || !tokenData || !targetToken || !tokenData[targetToken]) {
+
+  if (
+    !usdAmount ||
+    isNaN(parseFloat(usdAmount)) ||
+    !tokenData ||
+    !targetToken ||
+    !tokenData[targetToken]
+  ) {
     return '0'
   }
-  
+
   // Calculate target token amount from USD
-  const price = tokenData[targetToken]?.price || 0
+  const price = tokenData[targetToken]?.usdPrice || 0
   if (price === 0) return '0'
-  
+
   return (parseFloat(usdAmount) / price).toFixed(6)
 })
 
@@ -49,16 +61,22 @@ export const swapExchangeRateAtom = atom((get) => {
   const sourceToken = get(swapSourceTokenAtom)
   const targetToken = get(swapTargetTokenAtom)
   const tokenData = get(tokenDataAtom)
-  
-  if (!tokenData || !sourceToken || !targetToken || !tokenData[sourceToken] || !tokenData[targetToken]) {
+
+  if (
+    !tokenData ||
+    !sourceToken ||
+    !targetToken ||
+    !tokenData[sourceToken] ||
+    !tokenData[targetToken]
+  ) {
     return 0
   }
-  
-  const sourcePrice = tokenData[sourceToken]?.price || 0
-  const targetPrice = tokenData[targetToken]?.price || 0
-  
+
+  const sourcePrice = tokenData[sourceToken]?.usdPrice || 0
+  const targetPrice = tokenData[targetToken]?.usdPrice || 0
+
   if (sourcePrice === 0 || targetPrice === 0) return 0
-  
+
   return sourcePrice / targetPrice
 })
 
@@ -66,6 +84,7 @@ export const swapExchangeRateAtom = atom((get) => {
 export const swapStateAtom = atom({
   swapping: false,
   swapComplete: false,
+  showConfirmation: false,
 })
 
 // Derived atom to check if swap is in progress
@@ -77,7 +96,11 @@ export const isSwapCompleteAtom = atom((get) => get(swapStateAtom).swapComplete)
 // Write-only atom to update swap state
 export const setSwapStateAtom = atom(
   null,
-  (get, set, update: Partial<{ swapping: boolean; swapComplete: boolean }>) => {
+  (
+    get,
+    set,
+    update: Partial<{ swapping: boolean; swapComplete: boolean; showConfirmation: boolean }>
+  ) => {
     const current = get(swapStateAtom)
     set(swapStateAtom, { ...current, ...update })
   }
