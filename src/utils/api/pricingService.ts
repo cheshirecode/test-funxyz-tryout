@@ -125,9 +125,9 @@ export const pricingService = {
         chainId,
       })
 
-      // Convert hex values to decimal
-      const maxFeePerGasWei = parseInt(gasPrice.maxFeePerGas, 16)
-      const maxPriorityFeePerGasWei = parseInt(gasPrice.maxPriorityFeePerGas, 16)
+      // Convert bigint values to decimal
+      const maxFeePerGasWei = Number(gasPrice.maxFeePerGas)
+      // const maxPriorityFeePerGasWei = Number(gasPrice.maxPriorityFeePerGas)
       
       // Use maxFeePerGas as the main gas price
       const gasPriceWei = maxFeePerGasWei
@@ -205,8 +205,8 @@ export const pricingService = {
         throw new Error('Failed to get token price data for swap calculation')
       }
 
-      const fromPrice = fromToken.data.priceUsd || 0
-      const toPrice = toToken.data.priceUsd || 0
+      const fromPrice = fromToken.data?.priceUsd || 0
+      const toPrice = toToken.data?.priceUsd || 0
 
       if (fromPrice === 0 || toPrice === 0) {
         throw new Error('Price data not available for one or both tokens')

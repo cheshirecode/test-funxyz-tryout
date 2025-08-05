@@ -3,7 +3,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'wouter'
 import { InlineLoader, BlockLoader } from '../components/Loader'
-import { apiClient as apiService, enhancedApiService, pricingService, tokenService, apiConfig, isDevelopment } from '@api'
+import {
+  apiClient as apiService,
+  enhancedApiService,
+  pricingService,
+  tokenService,
+  apiConfig,
+  isDevelopment,
+} from '@api'
 
 function Demo() {
   const [demoUsdAmount, setDemoUsdAmount] = useState('100')
@@ -83,8 +90,6 @@ function Demo() {
     userBalancesMutation.mutate()
   }
 
-
-
   return (
     <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8'>
       <div className='max-w-4xl mx-auto'>
@@ -97,15 +102,15 @@ function Demo() {
               </button>
             </Link>
             <div className='flex-1 text-center'>
-              <h1 className='text-4xl font-bold font-header text-gray-900 mb-4'>React + Vite + Tailwind CSS Demo</h1>
-          <p className='text-lg text-gray-600'>
+              <h1 className='text-4xl font-bold font-header text-gray-900 mb-4'>
+                React + Vite + Tailwind CSS Demo
+              </h1>
+              <p className='text-lg text-gray-600'>
                 Modern React development stack with React Query
-          </p>
+              </p>
             </div>
           </div>
         </header>
-
-
 
         {/* React Query Demo */}
         <div className='bg-white rounded-lg shadow-lg p-8 mb-8'>
@@ -120,9 +125,7 @@ function Demo() {
               authentic API error handling.
             </p>
           </div>
-          {isLoading && (
-            <BlockLoader text="Loading API data..." />
-          )}
+          {isLoading && <BlockLoader text='Loading API data...' />}
           {error && (
             <div className='p-4 bg-red-50 border border-red-200 rounded-md'>
               <p className='text-red-700'>Error fetching data</p>
@@ -569,8 +572,9 @@ function Demo() {
             Enhanced @funkit/api-base Capabilities
           </h2>
           <p className='text-gray-600 mb-6'>
-            Explore 124 additional functions beyond the basic 4 currently used. This demo showcases portfolio management,
-            gas estimation, chain information, NFT metadata, and security features.
+            Explore 124 additional functions beyond the basic 4 currently used. This demo showcases
+            portfolio management, gas estimation, chain information, NFT metadata, and security
+            features.
           </p>
 
           <EnhancedAPIDemo />
@@ -582,13 +586,12 @@ function Demo() {
             Real-time Pricing & Gas Estimation
           </h2>
           <p className='text-gray-600 mb-6'>
-            Live demonstration of getAssetPriceInfo and getUserOpGasPrice integration for real token pricing and gas costs.
+            Live demonstration of getAssetPriceInfo and getUserOpGasPrice integration for real token
+            pricing and gas costs.
           </p>
 
           <PricingDemo />
         </div>
-
-
       </div>
     </div>
   )
@@ -642,9 +645,7 @@ function EnhancedAPIDemo() {
           />
         </div>
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
-            Chain ID
-          </label>
+          <label className='block text-sm font-medium text-gray-700 mb-2'>Chain ID</label>
           <select
             value={chainId}
             onChange={(e) => setChainId(e.target.value)}
@@ -672,7 +673,7 @@ function EnhancedAPIDemo() {
           disabled={portfolioQuery.isFetching}
           className='px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 text-sm'
         >
-                        {portfolioQuery.isFetching ? <InlineLoader /> : 'Get Portfolio'}
+          {portfolioQuery.isFetching ? <InlineLoader /> : 'Get Portfolio'}
         </button>
         <button
           onClick={() => chainInfoQuery.refetch()}
@@ -733,20 +734,29 @@ function EnhancedAPIDemo() {
         )}
 
         {/* Error States */}
-        {(enhancedDemoQuery.error || portfolioQuery.error || chainInfoQuery.error || gasEstimationQuery.error) && (
+        {(enhancedDemoQuery.error ||
+          portfolioQuery.error ||
+          chainInfoQuery.error ||
+          gasEstimationQuery.error) && (
           <div className='p-4 bg-red-50 rounded-lg'>
             <h4 className='font-medium text-red-800 mb-3'>❌ Errors</h4>
             {enhancedDemoQuery.error && (
-              <p className='text-sm text-red-700 mb-2'>Complete Demo: {enhancedDemoQuery.error.message}</p>
+              <p className='text-sm text-red-700 mb-2'>
+                Complete Demo: {enhancedDemoQuery.error.message}
+              </p>
             )}
             {portfolioQuery.error && (
               <p className='text-sm text-red-700 mb-2'>Portfolio: {portfolioQuery.error.message}</p>
             )}
             {chainInfoQuery.error && (
-              <p className='text-sm text-red-700 mb-2'>Chain Info: {chainInfoQuery.error.message}</p>
+              <p className='text-sm text-red-700 mb-2'>
+                Chain Info: {chainInfoQuery.error.message}
+              </p>
             )}
             {gasEstimationQuery.error && (
-              <p className='text-sm text-red-700 mb-2'>Gas Estimation: {gasEstimationQuery.error.message}</p>
+              <p className='text-sm text-red-700 mb-2'>
+                Gas Estimation: {gasEstimationQuery.error.message}
+              </p>
             )}
           </div>
         )}
@@ -839,9 +849,7 @@ function PricingDemo() {
       {/* Configuration */}
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg'>
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
-            Chain ID
-          </label>
+          <label className='block text-sm font-medium text-gray-700 mb-2'>Chain ID</label>
           <select
             value={chainId}
             onChange={(e) => setChainId(e.target.value)}
@@ -854,7 +862,9 @@ function PricingDemo() {
         </div>
         <div className='flex items-end'>
           <div className='text-sm text-gray-600'>
-            <p><strong>Functions demonstrated:</strong></p>
+            <p>
+              <strong>Functions demonstrated:</strong>
+            </p>
             <p>• getAssetPriceInfo() - Real token prices</p>
             <p>• getUserOpGasPrice() - Live gas estimation</p>
           </div>
@@ -919,14 +929,28 @@ function PricingDemo() {
             {usdcPriceQuery.data.success ? (
               <div className='grid grid-cols-2 gap-4 text-sm'>
                 <div>
-                  <p><strong>Price:</strong> ${usdcPriceQuery.data.data.priceUsd.toFixed(4)}</p>
-                  <p><strong>Symbol:</strong> {usdcPriceQuery.data.data.symbol}</p>
-                  <p><strong>Name:</strong> {usdcPriceQuery.data.data.name}</p>
+                  <p>
+                    <strong>Price:</strong> $
+                    {usdcPriceQuery.data?.data?.priceUsd?.toFixed(4) ?? 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Symbol:</strong> {usdcPriceQuery.data?.data?.symbol ?? 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Name:</strong> {usdcPriceQuery.data?.data?.name ?? 'N/A'}
+                  </p>
                 </div>
                 <div>
-                  <p><strong>Chain ID:</strong> {usdcPriceQuery.data.data.chainId}</p>
-                  <p><strong>Decimals:</strong> {usdcPriceQuery.data.data.decimals}</p>
-                  <p><strong>Address:</strong> {usdcPriceQuery.data.data.tokenAddress?.substring(0, 10)}...</p>
+                  <p>
+                    <strong>Chain ID:</strong> {usdcPriceQuery.data?.data?.chainId ?? 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Decimals:</strong> {usdcPriceQuery.data?.data?.decimals ?? 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Address:</strong>{' '}
+                    {usdcPriceQuery.data?.data?.tokenAddress?.substring(0, 10) ?? 'N/A'}...
+                  </p>
                 </div>
               </div>
             ) : (
@@ -941,14 +965,28 @@ function PricingDemo() {
             {ethPriceQuery.data.success ? (
               <div className='grid grid-cols-2 gap-4 text-sm'>
                 <div>
-                  <p><strong>Price:</strong> ${ethPriceQuery.data.data.priceUsd.toFixed(2)}</p>
-                  <p><strong>Symbol:</strong> {ethPriceQuery.data.data.symbol}</p>
-                  <p><strong>Name:</strong> {ethPriceQuery.data.data.name}</p>
+                  <p>
+                    <strong>Price:</strong> $
+                    {ethPriceQuery.data?.data?.priceUsd?.toFixed(2) ?? 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Symbol:</strong> {ethPriceQuery.data?.data?.symbol ?? 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Name:</strong> {ethPriceQuery.data?.data?.name ?? 'N/A'}
+                  </p>
                 </div>
                 <div>
-                  <p><strong>Chain ID:</strong> {ethPriceQuery.data.data.chainId}</p>
-                  <p><strong>Decimals:</strong> {ethPriceQuery.data.data.decimals}</p>
-                  <p><strong>Address:</strong> {ethPriceQuery.data.data.tokenAddress?.substring(0, 10)}...</p>
+                  <p>
+                    <strong>Chain ID:</strong> {ethPriceQuery.data?.data?.chainId ?? 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Decimals:</strong> {ethPriceQuery.data?.data?.decimals ?? 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Address:</strong>{' '}
+                    {ethPriceQuery.data?.data?.tokenAddress?.substring(0, 10) ?? 'N/A'}...
+                  </p>
                 </div>
               </div>
             ) : (
@@ -963,14 +1001,38 @@ function PricingDemo() {
             {gasQuery.data.success ? (
               <div className='grid grid-cols-2 gap-4 text-sm'>
                 <div>
-                  <p><strong>Gas Price:</strong> {gasQuery.data.data.gasPriceGwei.toFixed(2)} Gwei</p>
-                  <p><strong>Simple Transfer:</strong> ${(gasQuery.data.data.estimatedCosts.simpleTransfer.costEth * 3500).toFixed(3)}</p>
-                  <p><strong>Token Swap:</strong> ${(gasQuery.data.data.estimatedCosts.tokenSwap.costEth * 3500).toFixed(3)}</p>
+                  <p>
+                    <strong>Gas Price:</strong>{' '}
+                    {gasQuery.data?.data?.gasPriceGwei?.toFixed(2) ?? 'N/A'} Gwei
+                  </p>
+                  <p>
+                    <strong>Simple Transfer:</strong> $
+                    {(
+                      (gasQuery.data?.data?.estimatedCosts?.simpleTransfer?.costEth ?? 0) * 3500
+                    ).toFixed(3)}
+                  </p>
+                  <p>
+                    <strong>Token Swap:</strong> $
+                    {(
+                      (gasQuery.data?.data?.estimatedCosts?.tokenSwap?.costEth ?? 0) * 3500
+                    ).toFixed(3)}
+                  </p>
                 </div>
                 <div>
-                  <p><strong>Chain ID:</strong> {gasQuery.data.data.chainId}</p>
-                  <p><strong>Simple Transfer:</strong> {gasQuery.data.data.estimatedCosts.simpleTransfer.costEth.toFixed(6)} ETH</p>
-                  <p><strong>Token Swap:</strong> {gasQuery.data.data.estimatedCosts.tokenSwap.costEth.toFixed(6)} ETH</p>
+                  <p>
+                    <strong>Chain ID:</strong> {gasQuery.data?.data?.chainId ?? 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Simple Transfer:</strong>{' '}
+                    {gasQuery.data?.data?.estimatedCosts?.simpleTransfer?.costEth?.toFixed(6) ??
+                      'N/A'}{' '}
+                    ETH
+                  </p>
+                  <p>
+                    <strong>Token Swap:</strong>{' '}
+                    {gasQuery.data?.data?.estimatedCosts?.tokenSwap?.costEth?.toFixed(6) ?? 'N/A'}{' '}
+                    ETH
+                  </p>
                 </div>
               </div>
             ) : (
@@ -985,14 +1047,30 @@ function PricingDemo() {
             {swapRateQuery.data.success ? (
               <div className='grid grid-cols-2 gap-4 text-sm'>
                 <div>
-                  <p><strong>Input:</strong> 1000 USDC</p>
-                  <p><strong>Output:</strong> {swapRateQuery.data.data.outputAmount.toFixed(6)} ETH</p>
-                  <p><strong>Exchange Rate:</strong> 1 USDC = {swapRateQuery.data.data.exchangeRate.toFixed(6)} ETH</p>
+                  <p>
+                    <strong>Input:</strong> 1000 USDC
+                  </p>
+                  <p>
+                    <strong>Output:</strong>{' '}
+                    {swapRateQuery.data?.data?.outputAmount?.toFixed(6) ?? 'N/A'} ETH
+                  </p>
+                  <p>
+                    <strong>Exchange Rate:</strong> 1 USDC ={' '}
+                    {swapRateQuery.data?.data?.exchangeRate?.toFixed(6) ?? 'N/A'} ETH
+                  </p>
                 </div>
                 <div>
-                  <p><strong>USDC Price:</strong> ${swapRateQuery.data.data.fromPrice.toFixed(4)}</p>
-                  <p><strong>ETH Price:</strong> ${swapRateQuery.data.data.toPrice.toFixed(2)}</p>
-                  <p><strong>Route:</strong> {swapRateQuery.data.data.route}</p>
+                  <p>
+                    <strong>USDC Price:</strong> $
+                    {swapRateQuery.data?.data?.fromPrice?.toFixed(4) ?? 'N/A'}
+                  </p>
+                  <p>
+                    <strong>ETH Price:</strong> $
+                    {swapRateQuery.data?.data?.toPrice?.toFixed(2) ?? 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Route:</strong> {swapRateQuery.data?.data?.route ?? 'N/A'}
+                  </p>
                 </div>
               </div>
             ) : (

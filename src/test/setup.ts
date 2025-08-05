@@ -61,6 +61,18 @@ Object.defineProperty(document, 'documentElement', {
   writable: true,
 })
 
+// Mock ResizeObserver for scroll fader tests
+const ResizeObserverMock = vi.fn().mockImplementation((_callback) => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}))
+
+Object.defineProperty(window, 'ResizeObserver', {
+  value: ResizeObserverMock,
+  writable: true,
+})
+
 // Mock console methods to avoid noise in tests
 const originalConsoleError = console.error
 const originalConsoleWarn = console.warn

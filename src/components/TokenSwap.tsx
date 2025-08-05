@@ -67,10 +67,11 @@ export const TokenSwap = () => {
       updatedTokenData[sourceToken] = {
         ...baseTokenData[sourceToken],
         symbol: sourceToken,
-        price: sourceTokenPrice.data.priceUsd,
-        priceUsd: sourceTokenPrice.data.priceUsd,
+        usdPrice: sourceTokenPrice.data.priceUsd,
         decimals: sourceTokenPrice.data.decimals || 18,
         name: sourceTokenPrice.data.name || sourceToken,
+        icon: baseTokenData[sourceToken]?.icon || '',
+        balance: baseTokenData[sourceToken]?.balance || 0,
       }
     }
 
@@ -79,10 +80,11 @@ export const TokenSwap = () => {
       updatedTokenData[targetToken] = {
         ...baseTokenData[targetToken],
         symbol: targetToken,
-        price: targetTokenPrice.data.priceUsd,
-        priceUsd: targetTokenPrice.data.priceUsd,
+        usdPrice: targetTokenPrice.data.priceUsd,
         decimals: targetTokenPrice.data.decimals || 18,
         name: targetTokenPrice.data.name || targetToken,
+        icon: baseTokenData[targetToken]?.icon || '',
+        balance: baseTokenData[targetToken]?.balance || 0,
       }
     }
 
@@ -359,7 +361,7 @@ export const TokenSwap = () => {
         <span>
                   {tokensLoading || swapRateLoading ? (
           <InlineLoader />
-          ) : realSwapRate?.success ? (
+          ) : realSwapRate?.success && realSwapRate.data ? (
             <>
               1 {sourceToken} ≈ {realSwapRate.data.exchangeRate.toFixed(6)} {targetToken}
               <span className='text-xs text-green-600 ml-2'>• Live</span>
@@ -381,7 +383,7 @@ export const TokenSwap = () => {
           <span>
                     {sourcePriceLoading ? (
           <InlineLoader />
-            ) : sourceTokenPrice?.success ? (
+            ) : sourceTokenPrice?.success && sourceTokenPrice.data ? (
               <>${sourceTokenPrice.data.priceUsd.toFixed(2)}</>
             ) : (
               'Price unavailable'
@@ -393,7 +395,7 @@ export const TokenSwap = () => {
           <span>
                     {targetPriceLoading ? (
           <InlineLoader />
-            ) : targetTokenPrice?.success ? (
+            ) : targetTokenPrice?.success && targetTokenPrice.data ? (
               <>${targetTokenPrice.data.priceUsd.toFixed(2)}</>
             ) : (
               'Price unavailable'
@@ -407,7 +409,7 @@ export const TokenSwap = () => {
           <span>
                     {gasPriceLoading ? (
           <InlineLoader />
-            ) : gasPrice?.success ? (
+            ) : gasPrice?.success && gasPrice.data ? (
               <Tooltip content={`Gas Price: ${gasPrice.data.gasPriceGwei.toFixed(2)} Gwei | Limit: ~150,000`}>
                 <span className='cursor-help border-b border-dotted'>
                   ~${(gasPrice.data.estimatedCosts.tokenSwap.costEth * 3500).toFixed(2)} ({gasPrice.data.estimatedCosts.tokenSwap.costEth.toFixed(6)} ETH)

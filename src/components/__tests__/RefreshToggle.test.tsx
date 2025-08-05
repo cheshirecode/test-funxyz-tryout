@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
-import { RefreshToggle, useRefreshRate, type RefreshRate } from '../RefreshToggle'
+import { RefreshToggle, useRefreshRate } from '../RefreshToggle'
+import type { RefreshRate } from '../../utils/refresh'
 
 describe('RefreshToggle Component', () => {
   const mockOnRefreshRateChange = vi.fn()
@@ -20,7 +21,7 @@ describe('RefreshToggle Component', () => {
     const button = screen.getByRole('button', { name: /auto-refresh disabled/i })
     expect(button).toBeInTheDocument()
     expect(button).toHaveClass('text-gray-400', 'bg-gray-100')
-    
+
     // Should not show overlay text for disabled state
     expect(screen.queryByText('disabled')).not.toBeInTheDocument()
   })
@@ -36,7 +37,7 @@ describe('RefreshToggle Component', () => {
     const button = screen.getByRole('button', { name: /auto-refresh every 5 seconds/i })
     expect(button).toBeInTheDocument()
     expect(button).toHaveClass('text-green-600', 'bg-green-100')
-    
+
     // Should show overlay text for 5s state
     expect(screen.getByText('5s')).toBeInTheDocument()
   })
@@ -52,7 +53,7 @@ describe('RefreshToggle Component', () => {
     const button = screen.getByRole('button', { name: /auto-refresh every 30 seconds/i })
     expect(button).toBeInTheDocument()
     expect(button).toHaveClass('text-blue-600', 'bg-blue-100')
-    
+
     // Should show overlay text for 30s state
     expect(screen.getByText('30s')).toBeInTheDocument()
   })
@@ -123,7 +124,7 @@ describe('RefreshToggle Component', () => {
 
     const button = screen.getByRole('button')
     fireEvent.click(button)
-    
+
     expect(mockOnRefreshRateChange).not.toHaveBeenCalled()
   })
 
@@ -223,14 +224,14 @@ describe('RefreshToggle Integration', () => {
     render(<IntegrationTestComponent />)
 
     const button = screen.getByRole('button')
-    
+
     // Initial state - disabled
     expect(screen.getByTestId('current-interval')).toHaveTextContent('false')
     expect(screen.getByTestId('current-stale-time')).toHaveTextContent('300000')
 
     // Click to 5s
     fireEvent.click(button)
-    
+
     await waitFor(() => {
       expect(screen.getByTestId('current-interval')).toHaveTextContent('5000')
       expect(screen.getByTestId('current-stale-time')).toHaveTextContent('2000')
@@ -239,7 +240,7 @@ describe('RefreshToggle Integration', () => {
 
     // Click to 30s
     fireEvent.click(button)
-    
+
     await waitFor(() => {
       expect(screen.getByTestId('current-interval')).toHaveTextContent('30000')
       expect(screen.getByTestId('current-stale-time')).toHaveTextContent('15000')
@@ -248,7 +249,7 @@ describe('RefreshToggle Integration', () => {
 
     // Click back to disabled
     fireEvent.click(button)
-    
+
     await waitFor(() => {
       expect(screen.getByTestId('current-interval')).toHaveTextContent('false')
       expect(screen.getByTestId('current-stale-time')).toHaveTextContent('300000')
