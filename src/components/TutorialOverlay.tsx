@@ -87,6 +87,41 @@ export const TutorialOverlay = ({ isOpen, onClose }: TutorialOverlayProps) => {
   const currentTutorialStep = tutorialSteps[currentStep]
   const isLastStep = currentStep === tutorialSteps.length - 1
 
+  // Check if device is mobile
+  const isMobile = () => {
+    return window.innerWidth <= 768
+  }
+
+  // Update element position on scroll
+  const updateElementPosition = () => {
+    if (!isActive || !currentTutorialStep) return
+
+    const element = document.querySelector(currentTutorialStep.targetSelector)
+    if (!element) return
+
+    const rect = element.getBoundingClientRect()
+    const position: ElementPosition = {
+      top: rect.top,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+    }
+
+    setTargetElement(position)
+  }
+
+  // Handle scroll events to update highlight position
+  useEffect(() => {
+    if (!isActive) return
+
+    const handleScroll = () => {
+      updateElementPosition()
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [isActive, currentTutorialStep])
+
   // Handle click outside to close
   useEffect(() => {
     if (!isOpen || !isActive) return
@@ -124,10 +159,33 @@ export const TutorialOverlay = ({ isOpen, onClose }: TutorialOverlayProps) => {
 
       setTargetElement(position)
 
+      // Scroll to the highlighted element
+      const scrollToElement = () => {
+        const elementTop = rect.top + window.scrollY
+        const elementBottom = rect.bottom + window.scrollY
+        const viewportHeight = window.innerHeight
+        const currentScrollY = window.scrollY
+
+        // Calculate the center of the element
+        const elementCenter = elementTop + rect.height / 2
+
+        // If element is not in view, scroll to it
+        if (elementTop < currentScrollY || elementBottom > currentScrollY + viewportHeight) {
+          const targetScrollY = elementCenter - viewportHeight / 2
+          window.scrollTo({
+            top: Math.max(0, targetScrollY),
+            behavior: 'smooth',
+          })
+        }
+      }
+
+      // Scroll after a small delay to ensure positioning is complete
+      setTimeout(scrollToElement, 150)
+
       // Calculate tooltip position with viewport boundary detection
-      const tooltipOffset = 20
-      const tooltipWidth = 320 // Approximate tooltip width
-      const tooltipHeight = 200 // Approximate tooltip height
+      const tooltipOffset = isMobile() ? 10 : 20
+      const tooltipWidth = isMobile() ? 280 : 320 // Smaller on mobile
+      const tooltipHeight = isMobile() ? 180 : 200 // Smaller on mobile
       const viewportWidth = window.innerWidth
       const viewportHeight = window.innerHeight
 
@@ -135,8 +193,13 @@ export const TutorialOverlay = ({ isOpen, onClose }: TutorialOverlayProps) => {
       let tooltipLeft = 0
       let finalPosition = currentTutorialStep.position
 
+      // On mobile, prefer bottom positioning for better visibility
+      if (isMobile() && finalPosition === 'top') {
+        finalPosition = 'bottom'
+      }
+
       // Calculate initial position based on step preference
-      switch (currentTutorialStep.position) {
+      switch (finalPosition) {
         case 'top':
           tooltipTop = position.top - tooltipOffset
           tooltipLeft = position.left + position.width / 2
@@ -225,9 +288,9 @@ export const TutorialOverlay = ({ isOpen, onClose }: TutorialOverlayProps) => {
   if (!isActive) {
     return (
       <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
-        <div className='bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4 shadow-xl'>
+        <div className='bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 max-w-md mx-4 shadow-xl'>
           <div className='flex items-center justify-between mb-4'>
-            <h2 className='text-xl font-bold text-gray-900 dark:text-white'>
+            <h2 className='text-lg sm:text-xl font-bold text-gray-900 dark:text-white'>
               Welcome to Token Swap Tutorial
             </h2>
             <button
@@ -237,20 +300,20 @@ export const TutorialOverlay = ({ isOpen, onClose }: TutorialOverlayProps) => {
               <X size={20} className='text-gray-500' />
             </button>
           </div>
-          <p className='text-gray-600 dark:text-gray-300 mb-6'>
+          <p className='text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-6'>
             Learn how to use the token swap interface step by step. We'll highlight each feature and
             explain how it works.
           </p>
           <div className='flex gap-2'>
             <button
               onClick={handleStart}
-              className='flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors'
+              className='flex-1 bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base'
             >
               Start Tutorial
             </button>
             <button
               onClick={handleClose}
-              className='px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors'
+              className='px-3 sm:px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-sm sm:text-base'
             >
               Skip
             </button>
@@ -282,7 +345,7 @@ export const TutorialOverlay = ({ isOpen, onClose }: TutorialOverlayProps) => {
       <div className='absolute inset-0 pointer-events-none'>
         {/* Highlight target element */}
         <div
-          className='absolute border-2 border-blue-500 bg-blue-500 bg-opacity-10 rounded-lg pointer-events-none transition-all duration-300'
+          className='fixed border-2 border-blue-500 bg-blue-500 bg-opacity-10 rounded-lg pointer-events-none transition-all duration-300'
           style={{
             top: targetElement.top,
             left: targetElement.left,
@@ -294,7 +357,7 @@ export const TutorialOverlay = ({ isOpen, onClose }: TutorialOverlayProps) => {
 
         {/* Tutorial tooltip */}
         <div
-          className='absolute bg-white dark:bg-gray-800 rounded-lg p-4 shadow-xl max-w-sm pointer-events-auto transition-all duration-300'
+          className='absolute bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 shadow-xl max-w-xs sm:max-w-sm pointer-events-auto transition-all duration-300'
           style={{
             top: tooltipPosition.top,
             left: tooltipPosition.left,
@@ -303,7 +366,7 @@ export const TutorialOverlay = ({ isOpen, onClose }: TutorialOverlayProps) => {
           }}
         >
           <div className='flex items-start justify-between mb-2'>
-            <h3 className='font-semibold text-gray-900 dark:text-white'>
+            <h3 className='font-semibold text-gray-900 dark:text-white text-sm sm:text-base'>
               {currentTutorialStep.title}
             </h3>
             <button
@@ -313,28 +376,28 @@ export const TutorialOverlay = ({ isOpen, onClose }: TutorialOverlayProps) => {
               <X size={16} className='text-gray-500' />
             </button>
           </div>
-          <p className='text-gray-600 dark:text-gray-300 text-sm mb-4'>
+          <p className='text-gray-600 dark:text-gray-300 text-xs sm:text-sm mb-3 sm:mb-4'>
             {currentTutorialStep.description}
           </p>
           <div className='flex items-center justify-between'>
             <div className='text-xs text-gray-500'>
               {currentStep + 1} of {tutorialSteps.length}
             </div>
-            <div className='flex gap-2'>
+            <div className='flex gap-1 sm:gap-2'>
               {currentStep > 0 && (
                 <button
                   onClick={handlePrevious}
-                  className='px-3 py-1 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors'
+                  className='px-2 sm:px-3 py-1 text-xs sm:text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors'
                 >
                   Previous
                 </button>
               )}
               <button
                 onClick={handleNext}
-                className='px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center gap-1'
+                className='px-2 sm:px-3 py-1 text-xs sm:text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center gap-1'
               >
                 {isLastStep ? 'Finish' : 'Next'}
-                {!isLastStep && <ArrowRight size={14} />}
+                {!isLastStep && <ArrowRight size={12} className='sm:w-3 sm:h-3' />}
               </button>
             </div>
           </div>
