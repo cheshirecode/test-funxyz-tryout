@@ -18,6 +18,14 @@ export const tutorialSteps: TutorialStep[] = [
     position: 'bottom',
   },
   {
+    id: 'network-switcher',
+    title: 'Network Switcher',
+    description:
+      'Select different blockchain networks (Ethereum, Polygon, Arbitrum, etc.). Token prices and swap rates will update automatically based on your selected network.',
+    targetSelector: '[data-tutorial="network-switcher"]',
+    position: 'bottom',
+  },
+  {
     id: 'quick-select',
     title: 'Quick Token Selection',
     description:

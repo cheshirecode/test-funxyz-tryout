@@ -1,4 +1,4 @@
-import { WalletIcon, PlayCircle, HelpCircle } from 'lucide-react'
+import { PlayCircle, HelpCircle } from 'lucide-react'
 import { Link } from 'wouter'
 import { useState } from 'react'
 import { ThemeSwitcher } from './ThemeSwitcher'
@@ -11,6 +11,7 @@ import { ExchangeRateInfo } from './ExchangeRateInfo'
 import { SwapButton } from './SwapButton'
 import { SwapConfirmationDialog } from './SwapConfirmationDialog'
 import { TutorialOverlay } from './TutorialOverlay'
+import { ChainSelector } from './ChainSelector'
 import { useSwapFeature } from '../features'
 import type { RefreshRate } from '../utils/refresh/refreshUtils'
 
@@ -69,41 +70,32 @@ export const TokenSwap = () => {
 
     // Button state
     buttonState,
+
+    // Chain management - available for future use
+    // currentChainId,
+    // setCurrentChainId,
   } = useSwapFeature()
 
   return (
-    <div className='w-full max-w-sm sm:max-w-md mx-auto p-3 sm:p-6 bg-surface-light dark:bg-surface-dark rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700'>
-      {/* Header - Token Price Explorer as per wireframe */}
-      <div className='text-center mb-4 sm:mb-6'>
-        <h1 className='text-xl sm:text-2xl font-bold font-header text-text-light-primary dark:text-text-dark-primary mb-2'>
-          Token Price Explorer
-        </h1>
-        <div className='flex items-center justify-between'>
-          <span className='text-xs sm:text-sm text-text-light-secondary dark:text-text-dark-secondary'>
-            Swap Tokens
-          </span>
+    <div className='w-full max-w-sm sm:max-w-md mx-auto p-3 sm:p-6'>
+      {/* Header */}
+      <div className='mb-4 sm:mb-6'>
+        <div className='flex items-center justify-between mb-2'>
+          <h1 className='text-xl sm:text-2xl font-bold text-text-light-primary dark:text-text-dark-primary'>
+            Token Price Explorer
+          </h1>
           <div className='flex items-center gap-1 sm:gap-2'>
-            <Tooltip content='incoming funkit wallet integration'>
-              <button className='p-1.5 sm:p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 min-h-[36px] sm:min-h-[44px] min-w-[36px] sm:min-w-[44px] flex items-center justify-center opacity-50 cursor-not-allowed'>
-                <WalletIcon
+            <Link href='/demo'>
+              <button
+                data-tutorial='demo-button'
+                className='p-1.5 sm:p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 min-h-[36px] sm:min-h-[44px] min-w-[36px] sm:min-w-[44px] flex items-center justify-center transition-colors'
+              >
+                <PlayCircle
                   size={16}
-                  className='sm:w-5 sm:h-5 text-neutral-400 dark:text-neutral-500'
+                  className='sm:w-5 sm:h-5 text-neutral-600 dark:text-neutral-400'
                 />
               </button>
-            </Tooltip>
-            <Tooltip content='View demo and API examples'>
-              <Link href='/demo'>
-                <button
-                  data-tutorial='demo-button'
-                  className='p-1.5 sm:p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 min-h-[36px] sm:min-h-[44px] min-w-[36px] sm:min-w-[44px] flex items-center justify-center transition-colors'
-                >
-                  <PlayCircle
-                    size={16}
-                    className='sm:w-5 sm:h-5 text-neutral-600 dark:text-neutral-400'
-                  />
-                </button>
-              </Link>
-            </Tooltip>
+            </Link>
             <Tooltip content='Interactive tutorial guide'>
               <button
                 onClick={() => setShowTutorial(true)}
@@ -117,6 +109,19 @@ export const TokenSwap = () => {
             </Tooltip>
             <ThemeSwitcher data-tutorial='theme-switcher' />
           </div>
+        </div>
+        <p className='text-xs sm:text-sm text-text-light-secondary dark:text-text-dark-secondary'>
+          Real-time token prices and swap rates
+        </p>
+      </div>
+
+      {/* Chain Selector */}
+      <div className='mb-4 sm:mb-6'>
+        <div className='flex items-center justify-between'>
+          <span className='text-sm font-medium text-text-light-primary dark:text-text-dark-primary'>
+            Network
+          </span>
+          <ChainSelector />
         </div>
       </div>
 

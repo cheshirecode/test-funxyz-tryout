@@ -68,6 +68,8 @@ describe('TutorialOverlay - New Button Coverage', () => {
     expect(themeStep?.description).toContain('light and dark themes')
   })
 
+    // Note: Network switcher tutorial step is added to tutorial data
+
   it('should have correct step order with new buttons first', () => {
     // Import the tutorial steps directly to verify they exist
     const tutorialSteps = [

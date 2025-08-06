@@ -184,6 +184,11 @@ export const useTutorial = (isOpen: boolean, onClose: () => void) => {
         tooltipTop += 80
       }
 
+      // Additional offset for network switcher to move it lower by another 80px
+      if (currentTutorialStep.id === 'network-switcher') {
+        tooltipTop += 120
+      }
+
       // Adjust position if tooltip goes off-screen
       const tooltipCenterX = tooltipLeft
       const tooltipCenterY = tooltipTop

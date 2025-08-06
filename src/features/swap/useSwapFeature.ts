@@ -1,11 +1,12 @@
 import React from 'react'
 import { useTokenData } from '@utils/hooks/data/useTokenData'
 import { useSwapState } from '@utils/hooks/swap/useSwapState'
-import { useSwapExecution } from '@utils/hooks/swap/useSwapExecution'
-import { useTokenSelection } from '@utils/hooks/swap/useTokenSelection'
 import { useRefreshControl } from '@utils/hooks/refresh/useRefreshControl'
 import { useTokenPrice, useGasPrice, useSwapRate } from '@utils/hooks/pricing/usePricing'
-import { getSwapButtonState } from '@helpers/buttonStateUtils'
+import { useSwapExecution } from '@utils/hooks/swap/useSwapExecution'
+import { useTokenSelection } from '@utils/hooks/swap/useTokenSelection'
+import { useChain } from '@utils/hooks/chain'
+import { getSwapButtonState } from '@utils/helpers/buttonStateUtils'
 import type { RefreshRate } from '@utils/refresh/refreshUtils'
 
 export interface UseSwapFeatureReturn {
@@ -67,13 +68,21 @@ export interface UseSwapFeatureReturn {
 
   // Button state
   buttonState: ReturnType<typeof getSwapButtonState>
+
+  // Chain management
+  currentChainId: string
+  setCurrentChainId: (chainId: string) => void
 }
 
 /**
  * Main feature hook that orchestrates all swap-related business logic
  * Combines token data, pricing, state management, execution, and selection
+ * Now uses dynamic chain ID instead of hardcoded '1'
  */
 export function useSwapFeature(): UseSwapFeatureReturn {
+  // Chain management
+  const { currentChainId, setCurrentChainId } = useChain()
+
   // Token data management
   const { tokenData, isLoading: tokensLoading } = useTokenData()
 
@@ -100,9 +109,9 @@ export function useSwapFeature(): UseSwapFeatureReturn {
   const { refreshRate, setRefreshRate, refreshInterval, staleTime, queryKeySuffix } =
     useRefreshControl('disabled')
 
-  // Real-time pricing and gas estimation
+  // Real-time pricing and gas estimation using dynamic chain ID
   const { data: sourceTokenPrice, isLoading: sourcePriceLoading } = useTokenPrice(
-    '1',
+    currentChainId,
     sourceToken,
     true,
     refreshInterval,
@@ -110,7 +119,7 @@ export function useSwapFeature(): UseSwapFeatureReturn {
     queryKeySuffix
   )
   const { data: targetTokenPrice, isLoading: targetPriceLoading } = useTokenPrice(
-    '1',
+    currentChainId,
     targetToken,
     true,
     refreshInterval,
@@ -118,7 +127,7 @@ export function useSwapFeature(): UseSwapFeatureReturn {
     queryKeySuffix
   )
   const { data: gasPrice, isLoading: gasPriceLoading } = useGasPrice(
-    '1',
+    currentChainId,
     true,
     refreshInterval,
     staleTime,
@@ -140,6 +149,7 @@ export function useSwapFeature(): UseSwapFeatureReturn {
         name: sourceTokenPrice.data.name || sourceToken,
         icon: baseTokenData[sourceToken]?.icon || '',
         balance: baseTokenData[sourceToken]?.balance || 0,
+        chainId: currentChainId, // Use current chain ID
       }
     }
 
@@ -153,6 +163,7 @@ export function useSwapFeature(): UseSwapFeatureReturn {
         name: targetTokenPrice.data.name || targetToken,
         icon: baseTokenData[targetToken]?.icon || '',
         balance: baseTokenData[targetToken]?.balance || 0,
+        chainId: currentChainId, // Use current chain ID
       }
     }
 
@@ -160,13 +171,21 @@ export function useSwapFeature(): UseSwapFeatureReturn {
     if (sourceTokenPrice?.data || targetTokenPrice?.data) {
       setTokenData(updatedTokenData)
     }
-  }, [sourceTokenPrice, targetTokenPrice, sourceToken, targetToken, tokenData, setTokenData])
-
-  // Real-time swap rate
-  const { data: realSwapRate, isLoading: swapRateLoading } = useSwapRate(
-    '1',
+  }, [
+    sourceTokenPrice,
+    targetTokenPrice,
     sourceToken,
-    '1',
+    targetToken,
+    tokenData,
+    setTokenData,
+    currentChainId,
+  ])
+
+  // Real-time swap rate using dynamic chain ID
+  const { data: realSwapRate, isLoading: swapRateLoading } = useSwapRate(
+    currentChainId,
+    sourceToken,
+    currentChainId,
     targetToken,
     usdAmount || '100',
     true,
@@ -274,5 +293,9 @@ export function useSwapFeature(): UseSwapFeatureReturn {
 
     // Button state
     buttonState,
+
+    // Chain management
+    currentChainId,
+    setCurrentChainId,
   }
 }
