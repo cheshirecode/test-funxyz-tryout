@@ -1,6 +1,6 @@
 import { ChevronDownIcon } from 'lucide-react'
 import { type TokenData } from '@utils/tokenData'
-import { useDropdown } from '@hooks/ui'
+import { useTokenSelector } from '@utils/hooks/ui'
 import { handleTokenIconError, formatTokenBalance } from '@helpers'
 import { BlockLoader } from './Loader'
 
@@ -19,12 +19,11 @@ export const TokenSelector = ({
   tokenData,
   isLoading = false,
 }: TokenSelectorProps) => {
-  const { isOpen, toggle, close, dropdownRef } = useDropdown()
-
-  const handleTokenSelect = (token: string) => {
-    onSelectToken(token)
-    close()
-  }
+  const { isOpen, toggle, dropdownRef, handleTokenSelect, isTokenDisabled } = useTokenSelector({
+    selectedToken,
+    onSelectToken,
+    disabledToken,
+  })
 
   return (
     <div className='relative ml-4' ref={dropdownRef}>
@@ -56,9 +55,9 @@ export const TokenSelector = ({
               <button
                 key={token}
                 onClick={() => handleTokenSelect(token)}
-                disabled={token === disabledToken}
+                disabled={isTokenDisabled(token)}
                 className={`w-full flex items-center px-4 py-3 text-left hover:bg-neutral-100 dark:hover:bg-neutral-600 min-h-[44px] transition-all duration-150 hover:shadow-sm
-                ${token === disabledToken ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02]'}
+                ${isTokenDisabled(token) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02]'}
                 ${token === selectedToken ? 'bg-primary-50 dark:bg-primary-900/30 border-r-4 border-primary-500 shadow-sm' : ''}`}
               >
                 <img

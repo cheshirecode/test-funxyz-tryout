@@ -4,7 +4,7 @@ This directory contains feature-specific business logic that follows the separat
 
 ## Structure
 
-```
+```text
 src/features/
 ├── swap/                    # Swap-related features
 │   ├── useSwapFeature.ts   # Main orchestrator hook

@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { enhancedApiService } from '@utils/api/enhancedService'
 
 export interface ChainLogoInfo {
   chainId: string
@@ -13,16 +12,39 @@ export interface ChainLogoInfo {
 
 // Fallback chain icons from reliable sources
 const FALLBACK_CHAIN_LOGOS: Record<string, string> = {
-  '1': 'https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=32&q=75',
-  '137':
-    'https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_polygon.jpg&w=32&q=75',
-  '56': 'https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_bsc.jpg&w=32&q=75',
-  '43114':
-    'https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_avalanche.jpg&w=32&q=75',
-  '42161':
-    'https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_arbitrum.jpg&w=32&q=75',
-  '10': 'https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_optimism.jpg&w=32&q=75',
-  '8453': 'https://images.icon-icons.com/1858/PNG/512/iconfinder-cdn-4263517_117865.png', // Base - using generic icon
+  '1': 'https://icons.llamao.fi/icons/chains/rsz_ethereum.jpg',
+  '137': 'https://icons.llamao.fi/icons/chains/rsz_polygon.jpg',
+  '56': 'https://icons.llamao.fi/icons/chains/rsz_binance.jpg',
+  '43114': 'https://icons.llamao.fi/icons/chains/rsz_avalanche.jpg',
+  '42161': 'https://icons.llamao.fi/icons/chains/rsz_arbitrum.jpg',
+  '10': 'https://icons.llamao.fi/icons/chains/rsz_optimism.jpg',
+  '8453': 'https://icons.llamao.fi/icons/chains/rsz_base.jpg',
+}
+
+interface ChainListChain {
+  chainId: number
+  name: string
+  chain: string
+  icon?: string
+  rpc: string[]
+  faucets: string[]
+  nativeCurrency: {
+    name: string
+    symbol: string
+    decimals: number
+  }
+  infoURL: string
+  shortName: string
+  networkId: number
+  slip44?: number
+  ens?: {
+    registry: string
+  }
+  explorers?: Array<{
+    name: string
+    url: string
+    standard: string
+  }>
 }
 
 export interface UseChainLogosReturn {
@@ -32,74 +54,52 @@ export interface UseChainLogosReturn {
 }
 
 /**
- * Hook to get chain logos from Funkit API with fallbacks
- * Tests if Funkit API provides chain icons and uses fallbacks otherwise
+ * Hook to get chain logos from chainlist API with fallbacks
+ * Uses chainid.network chains.json for accurate chain data and icons
  */
 export function useChainLogos(): UseChainLogosReturn {
-  // Test a few main chains to see what Funkit API provides
-  const testChainIds = ['1', '137', '42161', '10']
-
   const {
-    data: chainInfoResults,
+    data: chainListData,
     isLoading,
     error,
-  } = useQuery({
-    queryKey: ['chain-logos', 'funkit-test'],
-    queryFn: async () => {
-      console.log('🔍 Testing Funkit API for chain logo information...')
+  } = useQuery<ChainListChain[]>({
+    queryKey: ['chain-logos', 'chainlist'],
+    queryFn: async (): Promise<ChainListChain[]> => {
+      console.log('🔍 Fetching chain information from chainlist API...')
 
-      const results = await Promise.allSettled(
-        testChainIds.map(async (chainId) => {
-          try {
-            const result = await enhancedApiService.getChainInformation(chainId)
-            return {
-              chainId,
-              result,
-            }
-          } catch (error) {
-            console.warn(`Failed to get chain info for ${chainId}:`, error)
-            return {
-              chainId,
-              result: { success: false, error: 'Failed to fetch' },
-            }
-          }
-        })
-      )
+      const response = await window.fetch('https://chainid.network/chains.json')
+      if (!response.ok) {
+        throw new Error(`Failed to fetch chains: ${response.statusText}`)
+      }
 
-      return results.map((result, index) => ({
-        chainId: testChainIds[index],
-        data: result.status === 'fulfilled' ? result.value.result : { success: false },
-      }))
+      const chains = await response.json()
+      console.log('✅ Successfully fetched chain data from chainlist')
+      return chains
     },
-    staleTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 30 * 60 * 1000, // 30 minutes cache
     refetchOnWindowFocus: false,
   })
 
   const getChainLogo = (chainId: string): ChainLogoInfo => {
-    // Check if we have Funkit API data for this chain
-    const chainResult = chainInfoResults?.find((r) => r.chainId === chainId)
-    const chainData = chainResult?.data
+    const chainIdNumber = parseInt(chainId, 10)
+
+    // Find chain data from chainlist
+    const chainData = chainListData?.find((chain) => chain.chainId === chainIdNumber)
 
     let logoUrl: string | undefined
     let name = 'Unknown'
     let symbol = 'Unknown'
 
-    if (chainData?.success && chainData.data) {
-      name = chainData.data.chainName || 'Unknown'
-      symbol = chainData.data.chainSymbol || 'Unknown'
+    if (chainData) {
+      name = chainData.name || chainData.chain || 'Unknown'
+      symbol = chainData.nativeCurrency?.symbol || 'Unknown'
 
-      // Check if Funkit API provides logo/icon information
-      const chainInfo = chainData.data.chainInfo
-      logoUrl = chainInfo?.iconUrl || chainInfo?.logoUrl || chainInfo?.icon || chainInfo?.logo
-
-      // Log what we found for debugging
-      if (logoUrl) {
-        console.log(`✅ Found chain logo from Funkit API for ${chainId}:`, logoUrl)
+      // Chainlist provides icon as relative path, need to construct full URL
+      if (chainData.icon) {
+        logoUrl = `https://icons.llamao.fi/icons/chains/rsz_${chainData.icon.replace('ipfs://', '')}.jpg`
+        console.log(`✅ Found chain logo from chainlist for ${chainId}: ${logoUrl}`)
       } else {
-        console.log(
-          `⚠️ No chain logo found in Funkit API for ${chainId}, available fields:`,
-          Object.keys(chainInfo || {})
-        )
+        console.log(`⚠️ No icon found in chainlist for chain ${chainId}`)
       }
     }
 

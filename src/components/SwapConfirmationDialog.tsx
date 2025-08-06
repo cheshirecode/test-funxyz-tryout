@@ -1,6 +1,7 @@
 import React from 'react'
 import { X, ArrowDown } from 'lucide-react'
 import type { TokenData } from '@types'
+import { useTokenImageError, useGasCalculation } from '@utils/hooks'
 
 interface SwapConfirmationDialogProps {
   isOpen: boolean
@@ -16,7 +17,7 @@ interface SwapConfirmationDialogProps {
   gasPrice?: {
     success: boolean
     data?: {
-      gasPrice?: any
+      gasPrice?: unknown
       chainId?: string
       gasPriceWei?: number
       gasPriceGwei?: number
@@ -34,11 +35,6 @@ interface SwapConfirmationDialogProps {
   isLoading?: boolean
 }
 
-// Fallback image URL for when token icons fail to load
-// Used due to rate-limiting from cryptologos.cc - provides generic crypto icon as fallback
-const FALLBACK_ICON_URL =
-  'https://images.icon-icons.com/1858/PNG/512/iconfinder-cdn-4263517_117865.png'
-
 export const SwapConfirmationDialog: React.FC<SwapConfirmationDialogProps> = ({
   isOpen,
   onClose,
@@ -53,35 +49,23 @@ export const SwapConfirmationDialog: React.FC<SwapConfirmationDialogProps> = ({
   gasPrice,
   isLoading = false,
 }) => {
+  // React hooks must be called unconditionally
+  // Use gas calculation hook
+  const { estimatedGasFeeUsd, totalCostUsd } = useGasCalculation({
+    gasPrice,
+    tokenData,
+    sourceToken,
+    targetToken,
+    usdAmount,
+  })
+
+  // Use image error handling hook
+  const { handleImageError } = useTokenImageError()
+
   if (!isOpen) return null
 
   const sourceTokenData = tokenData[sourceToken]
   const targetTokenData = tokenData[targetToken]
-
-  // Calculate estimated gas fee in USD using tokenSwap costs
-  const gasCostEth = gasPrice?.data?.estimatedCosts?.tokenSwap?.costEth || 0.00005 // Default ETH cost
-
-  // Get ETH price to convert gas cost from ETH to USD
-  const ethPrice =
-    tokenData['ETH']?.usdPrice ||
-    (sourceToken === 'ETH'
-      ? tokenData[sourceToken]?.usdPrice
-      : targetToken === 'ETH'
-        ? tokenData[targetToken]?.usdPrice
-        : 3500) // Default ETH price
-
-  const estimatedGasFeeUsd = gasCostEth * ethPrice
-
-  // Calculate total cost in USD (swap amount + gas fee)
-  const totalCostUsd = parseFloat(usdAmount || '0') + estimatedGasFeeUsd
-
-  // Handle image error with fallback
-  const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    const target = event.target as HTMLImageElement
-    if (target.src !== FALLBACK_ICON_URL) {
-      target.src = FALLBACK_ICON_URL
-    }
-  }
 
   return (
     <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>

@@ -1,14 +1,10 @@
 import React from 'react'
 import { useSwapFeature } from '../features'
+import { useTokenImageError, useSwapSummaryData } from '@utils/hooks'
 
 interface SwapSummaryProps {
   className?: string
 }
-
-// Fallback image URL for when token icons fail to load
-// Used due to rate-limiting from cryptologos.cc - provides generic crypto icon as fallback
-const FALLBACK_ICON_URL =
-  'https://images.icon-icons.com/1858/PNG/512/iconfinder-cdn-4263517_117865.png'
 
 export const SwapSummary: React.FC<SwapSummaryProps> = ({ className = '' }) => {
   const {
@@ -23,16 +19,21 @@ export const SwapSummary: React.FC<SwapSummaryProps> = ({ className = '' }) => {
     tokenData,
   } = useSwapFeature()
 
-  const sourceTokenData = tokenData?.[sourceToken]
-  const targetTokenData = tokenData?.[targetToken]
+  // Use swap summary data hook for calculations and formatting
+  const { sourceTokenData, targetTokenData } = useSwapSummaryData({
+    sourceToken,
+    targetToken,
+    usdAmount,
+    sourceTokenAmount,
+    targetTokenAmount,
+    exchangeRate,
+    swapping,
+    swapComplete,
+    tokenData,
+  })
 
-  // Handle image error with fallback
-  const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    const target = event.target as HTMLImageElement
-    if (target.src !== FALLBACK_ICON_URL) {
-      target.src = FALLBACK_ICON_URL
-    }
-  }
+  // Use image error handling hook
+  const { handleImageError } = useTokenImageError()
 
   return (
     <div

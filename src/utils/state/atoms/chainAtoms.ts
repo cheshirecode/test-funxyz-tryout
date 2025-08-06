@@ -12,7 +12,7 @@ export const currentChainIdAtom = atom(
     const selectedChainId = get(selectedChainIdAtom)
     return isSupportedChain(selectedChainId) ? selectedChainId : '1'
   },
-  (get, set, newChainId: string) => {
+  (_get, set, newChainId: string) => {
     if (isSupportedChain(newChainId)) {
       set(selectedChainIdAtom, newChainId)
     }

@@ -1,14 +1,14 @@
-import React from 'react'
 import { ChevronDownIcon } from 'lucide-react'
 import { useChain } from '@utils/hooks/chain'
 import { useChainLogos } from '@utils/hooks/chain/useChainLogos'
-import { useDropdown } from '@utils/hooks/ui/useDropdown'
+import { useDropdown, useChainImageError } from '@utils/hooks/ui'
 
 export const ChainSelector = () => {
   const { currentChainId, setCurrentChainId, availableChains } = useChain()
 
   const { getChainLogo, isLoading: logosLoading } = useChainLogos()
   const { isOpen, toggle, close, dropdownRef } = useDropdown()
+  const { handleImageError } = useChainImageError(currentChainId, getChainLogo)
 
   const handleChainSelect = (chainId: string) => {
     setCurrentChainId(chainId)
@@ -17,18 +17,6 @@ export const ChainSelector = () => {
 
   const currentChain = availableChains.find((chain) => chain.id === currentChainId)
   const currentChainLogo = getChainLogo(currentChainId)
-
-  // Handle image error with fallback
-  const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    const target = event.target as HTMLImageElement
-    const chainId = target.getAttribute('data-chain-id')
-    if (chainId) {
-      const chainLogo = getChainLogo(chainId)
-      if (target.src !== chainLogo.fallbackLogoUrl) {
-        target.src = chainLogo.fallbackLogoUrl
-      }
-    }
-  }
 
   return (
     <div className='relative' ref={dropdownRef} data-tutorial='network-switcher'>

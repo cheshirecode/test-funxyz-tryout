@@ -49,7 +49,10 @@ export const useClipboard = (options: UseClipboardOptions = {}): UseClipboardRet
   const copy = useCallback(
     async (text: string): Promise<void> => {
       try {
-        await navigator.clipboard.writeText(text)
+        if (typeof window === 'undefined' || !window.navigator?.clipboard) {
+          throw new Error('Clipboard API is not available')
+        }
+        await window.navigator.clipboard.writeText(text)
         setCopied(true)
         onSuccess?.()
 
