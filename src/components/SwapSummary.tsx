@@ -5,6 +5,11 @@ interface SwapSummaryProps {
   className?: string
 }
 
+// Fallback image URL for when token icons fail to load
+// Used due to rate-limiting from cryptologos.cc - provides generic crypto icon as fallback
+const FALLBACK_ICON_URL =
+  'https://images.icon-icons.com/1858/PNG/512/iconfinder-cdn-4263517_117865.png'
+
 export const SwapSummary: React.FC<SwapSummaryProps> = ({ className = '' }) => {
   const {
     sourceToken,
@@ -20,6 +25,14 @@ export const SwapSummary: React.FC<SwapSummaryProps> = ({ className = '' }) => {
 
   const sourceTokenData = tokenData?.[sourceToken]
   const targetTokenData = tokenData?.[targetToken]
+
+  // Handle image error with fallback
+  const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const target = event.target as HTMLImageElement
+    if (target.src !== FALLBACK_ICON_URL) {
+      target.src = FALLBACK_ICON_URL
+    }
+  }
 
   return (
     <div
@@ -37,10 +50,7 @@ export const SwapSummary: React.FC<SwapSummaryProps> = ({ className = '' }) => {
               src={sourceTokenData?.icon || ''}
               alt={sourceToken}
               className='w-6 h-6 rounded-full'
-              onError={(e) => {
-                const target = e.target as HTMLImageElement
-                target.style.display = 'none'
-              }}
+              onError={handleImageError}
             />
             <span className='text-text-light-primary dark:text-text-dark-primary font-medium'>
               {sourceToken}
@@ -63,10 +73,7 @@ export const SwapSummary: React.FC<SwapSummaryProps> = ({ className = '' }) => {
               src={targetTokenData?.icon || ''}
               alt={targetToken}
               className='w-6 h-6 rounded-full'
-              onError={(e) => {
-                const target = e.target as HTMLImageElement
-                target.style.display = 'none'
-              }}
+              onError={handleImageError}
             />
             <span className='text-text-light-primary dark:text-text-dark-primary font-medium'>
               {targetToken}
@@ -95,6 +102,11 @@ export const SwapSummary: React.FC<SwapSummaryProps> = ({ className = '' }) => {
           <div className='text-xs text-text-light-secondary dark:text-text-dark-secondary'>
             Total Value
           </div>
+        </div>
+
+        {/* Fallback Icon Notice */}
+        <div className='text-xs text-text-light-secondary dark:text-text-dark-secondary text-center'>
+          * Generic crypto icons may appear due to rate-limiting from cryptologos.cc
         </div>
       </div>
     </div>

@@ -34,6 +34,11 @@ interface SwapConfirmationDialogProps {
   isLoading?: boolean
 }
 
+// Fallback image URL for when token icons fail to load
+// Used due to rate-limiting from cryptologos.cc - provides generic crypto icon as fallback
+const FALLBACK_ICON_URL =
+  'https://images.icon-icons.com/1858/PNG/512/iconfinder-cdn-4263517_117865.png'
+
 export const SwapConfirmationDialog: React.FC<SwapConfirmationDialogProps> = ({
   isOpen,
   onClose,
@@ -69,6 +74,14 @@ export const SwapConfirmationDialog: React.FC<SwapConfirmationDialogProps> = ({
 
   // Calculate total cost in USD (swap amount + gas fee)
   const totalCostUsd = parseFloat(usdAmount || '0') + estimatedGasFeeUsd
+
+  // Handle image error with fallback
+  const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const target = event.target as HTMLImageElement
+    if (target.src !== FALLBACK_ICON_URL) {
+      target.src = FALLBACK_ICON_URL
+    }
+  }
 
   return (
     <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
@@ -109,6 +122,7 @@ export const SwapConfirmationDialog: React.FC<SwapConfirmationDialogProps> = ({
                       src={sourceTokenData.icon}
                       alt={sourceToken}
                       className='w-8 h-8 rounded-full'
+                      onError={handleImageError}
                     />
                   )}
                   <div>
@@ -147,6 +161,7 @@ export const SwapConfirmationDialog: React.FC<SwapConfirmationDialogProps> = ({
                       src={targetTokenData.icon}
                       alt={targetToken}
                       className='w-8 h-8 rounded-full'
+                      onError={handleImageError}
                     />
                   )}
                   <div>
@@ -208,6 +223,11 @@ export const SwapConfirmationDialog: React.FC<SwapConfirmationDialogProps> = ({
                 ${totalCostUsd.toFixed(4)}
               </span>
             </div>
+          </div>
+
+          {/* Fallback Icon Notice */}
+          <div className='text-xs text-text-light-secondary dark:text-text-dark-secondary text-center'>
+            * Generic crypto icons may appear due to rate-limiting from cryptologos.cc
           </div>
         </div>
 

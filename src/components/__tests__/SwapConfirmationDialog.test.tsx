@@ -168,4 +168,10 @@ describe('SwapConfirmationDialog', () => {
 
     expect(screen.queryByText('Exchange Rate')).not.toBeInTheDocument()
   })
+
+  it('should display fallback icon notice subtext', () => {
+    render(<SwapConfirmationDialog {...defaultProps} />)
+
+    expect(screen.getByText('* Generic crypto icons may appear due to rate-limiting from cryptologos.cc')).toBeInTheDocument()
+  })
 })
