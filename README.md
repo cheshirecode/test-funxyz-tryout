@@ -26,6 +26,8 @@ flowchart TB
         C[Token Swap Interface]
         L[Animated Loaders]
         M[Noto Sans + Lato Fonts]
+        S[Interactive Tutorial System]
+        T[Multi-Chain Network Switcher]
     end
 
     subgraph "🧠 State Layer"
@@ -33,6 +35,8 @@ flowchart TB
         E[Theme Persistence]
         F[localStorage Sync]
         N[Refresh Controls]
+        U[Chain Selection State]
+        V[Tutorial Progress State]
     end
 
     subgraph "🔌 API Layer"
@@ -41,13 +45,15 @@ flowchart TB
         I[TanStack Query]
         O[API Deduplication]
         P[128+ Available Functions]
+        W[Chainlist API Integration]
+        X[Dynamic Chain Logos]
     end
 
     subgraph "🛠️ Build Tools"
         J[Vite 6 + SWC]
-        K[Vitest + 16 Test Files]
+        K[Vitest + 20 Test Files]
         Q[Lighthouse CI]
-        R[3,670+ Test Lines]
+        R[4,200+ Test Lines]
     end
 
     A --> D
@@ -62,15 +68,19 @@ flowchart TB
     P --> G
     Q --> J
     R --> K
+    S --> V
+    T --> U
+    U --> W
+    W --> X
 
     classDef ui fill:#e1f5fe,stroke:#01579b,stroke-width:2px
     classDef state fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
     classDef api fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
     classDef build fill:#fff3e0,stroke:#e65100,stroke-width:2px
 
-    class A,B,C,L,M ui
-    class D,E,F,N state
-    class G,H,I,O,P api
+    class A,B,C,L,M,S,T ui
+    class D,E,F,N,U,V state
+    class G,H,I,O,P,W,X api
     class J,K,Q,R build
 ```
 
@@ -84,7 +94,7 @@ flowchart TB
 | **Vite 6 + SWC**        | Fastest possible development experience           |
 | **Tailwind CSS**        | Rapid development with consistent theming         |
 | **Lighthouse CI**       | Automated performance and accessibility audits    |
-| **Vitest**              | Modern testing with 3,670+ lines of coverage      |
+| **Vitest**              | Modern testing with 4,200+ lines of coverage      |
 
 ## 🎯 Key Features & Technical Implementation
 
@@ -103,14 +113,27 @@ flowchart TB
 - **Persistent State Synchronization** - localStorage integration with intelligent refresh controls
 - **Modular Micro-Frontend Design** - Scalable architecture supporting component isolation and decoupled systems
 - **Advanced Caching Strategy** - TanStack Query with background updates and smart refresh management
+- **Business Logic Separation** - Feature-based hooks architecture with reusable business logic patterns
+- **Component Composition** - Clean separation of presentational components from business logic
 
 ### 🚀 **Developer Experience & Quality**
 
 - **Lightning-Fast Development** - Sub-100ms hot reload with Vite 6 + SWC compilation
-- **Comprehensive Test Coverage** - 16 test files with 3,670+ lines ensuring reliability and real-world validation
+- **Comprehensive Test Coverage** - 20 test files with 4,200+ lines ensuring reliability and real-world validation
 - **100% Type Safety** - Strict TypeScript eliminating runtime type errors
 - **Continuous Quality Monitoring** - Lighthouse CI preventing performance regressions
 - **Automated Quality Assurance** - Production-grade testing with API integration coverage
+
+### 🎓 **Interactive Learning & Multi-Chain Support**
+
+- **Guided Tutorial System** - Interactive overlay with step-by-step walkthroughs covering all major features
+- **Keyboard Accessibility** - Full keyboard navigation support with ESC key to close, click-outside dismissal
+- **Smart Tutorial Positioning** - Dynamic tooltip placement with viewport boundary detection and mobile optimization
+- **Feature Discovery** - Covers token swap, demo mode, theme switching, and network selection
+- **Multi-Chain Network Switcher** - Support for multiple blockchain networks with persistent selection
+- **Dynamic Chain Logos** - Real-time logo fetching from Chainlist.org with intelligent fallback mechanisms
+- **Chain State Management** - Jotai-powered state synchronization with localStorage persistence
+- **Seamless API Integration** - Automatic chain ID propagation across all pricing and token services
 
 ### 🎨 **User Experience & Accessibility**
 
