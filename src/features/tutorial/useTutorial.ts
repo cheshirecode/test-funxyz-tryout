@@ -79,6 +79,20 @@ export const useTutorial = (isOpen: boolean, onClose: () => void) => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [isOpen, isActive, handleClose])
 
+  // Handle escape key to close tutorial
+  useEffect(() => {
+    if (!isOpen) return
+
+    const handleEscapeKey = (event: Event & { key: string }) => {
+      if (event.key === 'Escape') {
+        handleClose()
+      }
+    }
+
+    document.addEventListener('keydown', handleEscapeKey)
+    return () => document.removeEventListener('keydown', handleEscapeKey)
+  }, [isOpen, handleClose])
+
   // Find and position the target element
   useEffect(() => {
     if (!isActive) return
