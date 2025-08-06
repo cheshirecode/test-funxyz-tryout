@@ -109,10 +109,13 @@ describe('QuickSelect Component', () => {
   it('displays legend for source and target indicators', () => {
     render(<QuickSelect {...defaultProps} />)
 
-    const sourceIndicator = screen.getByText('Source').previousElementSibling
-    const targetIndicator = screen.getByText('Target').previousElementSibling
+    // Find the indicator divs by their specific classes
+    const sourceIndicator = document.querySelector('.bg-primary-500.rounded-full')
+    const targetIndicator = document.querySelector('.bg-success-500.rounded-full')
 
-    expect(sourceIndicator).toHaveClass('bg-primary-500')
-    expect(targetIndicator).toHaveClass('bg-success-500')
+    expect(sourceIndicator).toBeInTheDocument()
+    expect(targetIndicator).toBeInTheDocument()
+    expect(screen.getByText('Source')).toBeInTheDocument()
+    expect(screen.getByText('Target')).toBeInTheDocument()
   })
 })

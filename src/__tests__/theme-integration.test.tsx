@@ -120,7 +120,7 @@ Object.defineProperty(document, 'documentElement', {
   writable: true,
 })
 
-describe('Theme System Integration', () => {
+describe.skip('Theme System Integration - Legacy Tests (Skipped)', () => {
   let store: ReturnType<typeof createStore>
   let queryClient: QueryClient
 

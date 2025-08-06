@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { vi } from 'vitest'
 import { AmountInput } from '../AmountInput'
 
@@ -35,8 +35,7 @@ describe('AmountInput Component', () => {
     render(<AmountInput usdAmount='100' setUsdAmount={mockSetUsdAmount} />)
 
     const input = screen.getByRole('spinbutton')
-    input.value = '200'
-    input.dispatchEvent(new Event('input', { bubbles: true }))
+    fireEvent.change(input, { target: { value: '200' } })
 
     expect(mockSetUsdAmount).toHaveBeenCalledWith('200')
   })

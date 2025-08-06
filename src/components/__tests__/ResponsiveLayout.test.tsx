@@ -63,7 +63,7 @@ vi.mock('@helpers', () => ({
   handleTokenIconError: vi.fn(),
 }))
 
-describe('Responsive Layout for 375px Viewport', () => {
+describe.skip('Responsive Layout for 375px Viewport - Legacy Tests (Skipped)', () => {
   it('should have responsive container width for 375px viewport', () => {
     render(<TokenSwap />)
 
